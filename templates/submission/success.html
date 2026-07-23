@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Submission Successful{% endblock %}
+
+{% block content %}
+
+<div class="container" style="max-width:700px;">
+
+<div class="card shadow mt-5">
+
+<div class="card-body text-center">
+
+<h1 class="text-success">
+
+✅
+
+</h1>
+
+<h3>
+
+Submission Successful
+
+</h3>
+
+<p class="mt-3">
+
+Thank you.
+
+The Phase 8 completion report has been submitted successfully.
+
+</p>
+
+<hr>
+
+<p>
+
+<strong>Panchayath</strong><br>
+
+{{ squad.panchayath.name }}
+
+</p>
+
+<p>
+
+<strong>Squad</strong><br>
+
+{{ squad.squad_no }}
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

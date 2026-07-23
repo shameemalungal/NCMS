@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">NCMS Dashboard</h2>
+
+<div class="row g-4">
+
+    <div class="col-md-3">
+        <div class="card border-primary">
+            <div class="card-body">
+                <h6>Campaigns</h6>
+                <h2>{{ campaigns }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-success">
+            <div class="card-body">
+                <h6>Panchayaths</h6>
+                <h2>{{ panchayaths }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-info">
+            <div class="card-body">
+                <h6>Squads</h6>
+                <h2>{{ squads }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-warning">
+            <div class="card-body">
+                <h6>Submitted</h6>
+                <h2>{{ submitted }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-danger">
+            <div class="card-body">
+                <h6>Pending</h6>
+                <h2>{{ pending }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-success">
+            <div class="card-body">
+                <h6>Completed</h6>
+                <h2>{{ completed }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-secondary">
+            <div class="card-body">
+                <h6>Completion</h6>
+                <h2>{{ completion }}%</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-dark">
+            <div class="card-body">
+                <h6>Total Population</h6>
+                <h2>{{ "{:,}".format(population) }}</h2>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

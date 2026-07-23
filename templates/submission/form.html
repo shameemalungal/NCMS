@@ -1,0 +1,349 @@
+{% extends "base.html" %}
+
+{% block title %}NADCP Phase 8 Completion Report{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-3" style="max-width:1200px;">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-success text-white">
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h4 class="mb-0">
+                    NADCP Phase 8 Completion Report
+                </h4>
+
+                <span class="badge bg-light text-success fs-6">
+                    Phase 8
+                </span>
+
+            </div>
+        </div>
+
+        <div class="card-body">
+
+            <form method="POST" id="submissionForm">
+
+                {{ form.hidden_tag() }}
+
+                <!-- ===================================================== -->
+                <!-- Squad Information                                     -->
+                <!-- ===================================================== -->
+
+                <div class="card border-primary shadow-sm mb-4">
+
+                    <div class="card-header bg-primary text-white">
+
+                        <strong>Squad Information</strong>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row">
+
+                            <div class="col-lg-4 mb-3">
+
+                                <small class="text-secondary fw-semibold">
+                                    Panchayath
+                                </small>
+
+                                <br>
+
+                                <strong>
+                                    {{ squad.panchayath.name }}
+                                </strong>
+
+                            </div>
+
+                            <div class="col-lg-2 mb-3">
+
+                                <small class="text-secondary fw-semibold">
+                                    Squad
+                                </small>
+
+                                <br>
+
+                                <span class="badge bg-primary fs-6">
+
+                                    {{ squad.squad_no }}
+
+                                </span>
+
+                            </div>
+
+                            <div class="col-lg-2 mb-3">
+
+                                <small class="text-secondary fw-semibold">
+                                    Days
+                                </small>
+
+                                <br>
+
+                                <span class="badge bg-primary fs-6">
+
+                                    {{ squad.squad_days }}
+
+                                </span>
+
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+
+                                <small class="text-secondary fw-semibold">
+                                    Member
+                                </small>
+
+                                <br>
+
+                                <strong>
+
+                                    {{ squad.squad_member }}
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-lg-6">
+
+                                <small class="text-secondary fw-semibold">
+                                    Office
+                                </small>
+
+                                <br>
+
+                                <strong>
+
+                                    {{ squad.office }}
+
+                                </strong>
+
+                            </div>
+
+                            <div class="col-lg-6">
+
+                                <small class="text-secondary fw-semibold">
+                                    Pashudhan ID
+                                </small>
+
+                                <br>
+
+                                <strong>
+
+                                    {{ squad.pashudhan_id }}
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ===================================================== -->
+                <!-- Entry Cards                                           -->
+                <!-- ===================================================== -->
+
+                <div class="row g-3">
+
+                    <!-- Achievement -->
+
+                    <div class="col-lg-5">
+
+                        <div class="card border-warning shadow-sm h-100">
+
+                            <div class="card-header bg-warning text-dark">
+
+                                <strong>
+                                    Campaign Achievement
+                                </strong>
+
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="row align-items-center mb-3">
+
+                                    <div class="col">
+
+                                        A. Squad Days Worked
+
+                                    </div>
+
+                                    <div class="col-auto">
+
+                                        {{ form.days_worked(
+                                            class="form-control text-end",
+                                            style="width:80px;",
+                                            placeholder="0"
+                                        ) }}
+
+                                    </div>
+
+                                </div>
+
+                                <div class="row align-items-center mb-3">
+
+                                    <div class="col">
+
+                                        B. Vaccinations Done
+
+                                    </div>
+
+                                    <div class="col-auto">
+
+                                        {{ form.vaccinations_done(
+                                            class="form-control text-end",
+                                            style="width:80px;",
+                                            placeholder="0"
+                                        ) }}
+
+                                    </div>
+
+                                </div>
+
+                                <div class="row align-items-center">
+
+                                    <div class="col">
+
+                                        C. Pashudhan Entries
+
+                                    </div>
+
+                                    <div class="col-auto">
+
+                                        {{ form.pashudhan_entries(
+                                            class="form-control text-end",
+                                            style="width:80px;",
+                                            placeholder="0"
+                                        ) }}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Leftover -->
+
+                    <div class="col-lg-7">
+
+                        <div class="card border-danger shadow-sm h-100">
+
+                            <div class="card-header bg-danger-subtle">
+
+                                <strong>
+                                    Reasons for Leftover Animals
+                                </strong>
+
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="row align-items-center mb-3">
+
+                                    <div class="col">
+                                        D. Diseased
+                                    </div>
+
+                                    <div class="col-auto">
+
+                                        {{ form.diseased(
+                                            class="form-control text-end",
+                                            style="width:80px;",
+                                            placeholder="0"
+                                        ) }}
+
+                                    </div>
+
+                                </div>
+
+                                <div class="row align-items-center mb-3">
+
+                                    <div class="col">
+                                        E. Below 4 Months
+                                    </div>
+
+                                    <div class="col-auto">
+
+                                        {{ form.below_4_months(
+                                            class="form-control text-end",
+                                            style="width:80px;",
+                                            placeholder="0"
+                                        ) }}
+
+                                    </div>
+
+                                </div>
+
+                                <div class="row align-items-center mb-3">
+
+                                    <div class="col">
+                                        F. Pregnant
+                                    </div>
+
+                                    <div class="col-auto">
+
+                                        {{ form.pregnant(
+                                            class="form-control text-end",
+                                            style="width:80px;",
+                                            placeholder="0"
+                                        ) }}
+
+                                    </div>
+
+                                </div>
+
+                                <div class="row align-items-center mb-4">
+
+                                    <div class="col">
+                                        G. Unwilling
+                                    </div>
+
+                                    <div class="col-auto">
+
+                                        {{ form.unwilling(
+                                            class="form-control text-end",
+                                            style="width:80px;",
+                                            placeholder="0"
+                                        ) }}
+
+                                    </div>
+
+                                </div>
+
+                                <hr>
+
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                                    <strong>
+                                        H. Other Reasons
+                                    </strong>
+
+                                    <button
+                                        type="button"
+                                        id="addReason"
+                                        class="btn btn-outline-danger btn-sm">
+
+                                        + Add Reason
+
+                                    </button>
+
+                                </div>
+
+                                <div id="otherReasonsContainer">
+
+                                    <!-- Dynamic rows start here -->
+                                    
