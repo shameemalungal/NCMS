@@ -1,0 +1,110 @@
+body{
+    font-family:'Poppins',sans-serif;
+    background:#f5f7fb;
+}
+
+.dashboard-title{
+    font-weight:700;
+    color:#1f2937;
+}
+
+.dashboard-subtitle{
+    color:#6b7280;
+    margin-bottom:25px;
+}
+
+.stat-card{
+    border:none;
+    border-radius:18px;
+    box-shadow:0 5px 18px rgba(0,0,0,.08);
+    transition:.25s;
+}
+
+.stat-card:hover{
+    transform:translateY(-4px);
+}
+
+.icon-box{
+    width:70px;
+    height:70px;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-size:30px;
+}
+
+.icon-blue{
+    background:#2563eb;
+}
+
+.icon-green{
+    background:#16a34a;
+}
+
+.icon-cyan{
+    background:#06b6d4;
+}
+
+.icon-dark{
+    background:#374151;
+}
+
+.stat-value{
+    font-size:2rem;
+    font-weight:700;
+    margin:0;
+}
+
+.stat-title{
+    color:#4b5563;
+    font-weight:600;
+    margin-bottom:4px;
+}
+
+.panel-card{
+    border:none;
+    border-radius:18px;
+    box-shadow:0 5px 18px rgba(0,0,0,.08);
+}
+
+.status-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:16px 0;
+    border-bottom:1px solid #ececec;
+}
+
+.status-item:last-child{
+    border-bottom:none;
+}
+
+.status-left{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.status-icon{
+    width:34px;
+    text-align:center;
+    font-size:22px;
+}
+
+.progress{
+    height:18px;
+    border-radius:20px;
+}
+
+.info-card{
+    border-radius:18px;
+    border:1px solid #b9d8ff;
+    background:#eef6ff;
+}
+
+.info-icon{
+    font-size:36px;
+    color:#3b82f6;
+}

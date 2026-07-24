@@ -1,85 +1,214 @@
 {% extends "base.html" %}
 
-{% block title %}
-Dashboard
+{% block title %}Dashboard{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}">
 {% endblock %}
 
 {% block content %}
 
-<h2 class="mb-4">NCMS Dashboard</h2>
+<div class="mb-4">
+    <h2 class="dashboard-title">Dashboard</h2>
+    <p class="dashboard-subtitle">
+        Welcome to NADCP Campaign Management System
+    </p>
+</div>
 
 <div class="row g-4">
 
-    <div class="col-md-3">
-        <div class="card border-primary">
-            <div class="card-body">
-                <h6>Campaigns</h6>
-                <h2>{{ campaigns }}</h2>
+    <!-- Campaign -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card">
+            <div class="card-body d-flex justify-content-between align-items-center">
+
+                <div>
+                    <div class="stat-title">Campaigns</div>
+                    <p class="stat-value">{{ campaigns }}</p>
+                </div>
+
+                <div class="icon-box icon-blue">
+                    <i class="fa-solid fa-bullseye"></i>
+                </div>
+
             </div>
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="card border-success">
-            <div class="card-body">
-                <h6>Panchayaths</h6>
-                <h2>{{ panchayaths }}</h2>
+    <!-- Panchayath -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card">
+            <div class="card-body d-flex justify-content-between align-items-center">
+
+                <div>
+                    <div class="stat-title">Panchayaths</div>
+                    <p class="stat-value">{{ panchayaths }}</p>
+                </div>
+
+                <div class="icon-box icon-green">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                </div>
+
             </div>
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="card border-info">
-            <div class="card-body">
-                <h6>Squads</h6>
-                <h2>{{ squads }}</h2>
+    <!-- Squads -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card">
+            <div class="card-body d-flex justify-content-between align-items-center">
+
+                <div>
+                    <div class="stat-title">Squads</div>
+                    <p class="stat-value">{{ squads }}</p>
+                </div>
+
+                <div class="icon-box icon-cyan">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+
             </div>
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="card border-warning">
-            <div class="card-body">
-                <h6>Submitted</h6>
-                <h2>{{ submitted }}</h2>
+    <!-- Population -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card">
+            <div class="card-body d-flex justify-content-between align-items-center">
+
+                <div>
+                    <div class="stat-title">Population</div>
+                    <p class="stat-value">{{ "{:,}".format(population) }}</p>
+                </div>
+
+                <div class="icon-box icon-dark">
+                    <i class="fa-solid fa-cow"></i>
+                </div>
+
             </div>
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="card border-danger">
+    <!-- Submission Status -->
+
+    <div class="col-lg-5">
+
+        <div class="card panel-card">
+
             <div class="card-body">
-                <h6>Pending</h6>
-                <h2>{{ pending }}</h2>
+
+                <h5 class="mb-4">Submission Status</h5>
+
+                <div class="status-item">
+
+                    <div class="status-left">
+
+                        <div class="status-icon text-success">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+
+                        <strong>Submitted</strong>
+
+                    </div>
+
+                    <h5>{{ submitted }}</h5>
+
+                </div>
+
+                <div class="status-item">
+
+                    <div class="status-left">
+
+                        <div class="status-icon text-warning">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+
+                        <strong>Pending</strong>
+
+                    </div>
+
+                    <h5>{{ pending }}</h5>
+
+                </div>
+
+                <div class="status-item">
+
+                    <div class="status-left">
+
+                        <div class="status-icon text-primary">
+                            <i class="fa-solid fa-flag-checkered"></i>
+                        </div>
+
+                        <strong>Completed</strong>
+
+                    </div>
+
+                    <h5>{{ completed }}</h5>
+
+                </div>
+
             </div>
+
         </div>
+
     </div>
 
-    <div class="col-md-3">
-        <div class="card border-success">
-            <div class="card-body">
-                <h6>Completed</h6>
-                <h2>{{ completed }}</h2>
-            </div>
-        </div>
-    </div>
+    <!-- Progress -->
 
-    <div class="col-md-3">
-        <div class="card border-secondary">
-            <div class="card-body">
-                <h6>Completion</h6>
-                <h2>{{ completion }}%</h2>
-            </div>
-        </div>
-    </div>
+    <div class="col-lg-7">
 
-    <div class="col-md-3">
-        <div class="card border-dark">
+        <div class="card panel-card">
+
             <div class="card-body">
-                <h6>Total Population</h6>
-                <h2>{{ "{:,}".format(population) }}</h2>
+
+                <div class="d-flex justify-content-between mb-3">
+
+                    <h5>Overall Progress</h5>
+
+                    <strong>{{ completion }}%</strong>
+
+                </div>
+
+                <div class="progress mb-4">
+
+                    <div class="progress-bar bg-success"
+                         style="width:{{ completion }}%">
+
+                    </div>
+
+                </div>
+
+                <div class="info-card p-4">
+
+                    <div class="d-flex">
+
+                        <div class="me-3 info-icon">
+
+                            <i class="fa-solid fa-circle-info"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h5>Welcome to NCMS</h5>
+
+                            <p class="mb-0">
+                                Monitor campaign progress, squad performance,
+                                submission status and upcoming reports from a
+                                single dashboard.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
+
         </div>
+
     </div>
 
 </div>
