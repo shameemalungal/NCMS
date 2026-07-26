@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Campaign Management{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-0">Campaign Management</h2>
+            <small class="text-muted">
+                Manage vaccination campaigns
+            </small>
+        </div>
+
+        <a href="{{ url_for('campaign.create') }}"
+           class="btn btn-success">
+
+            <i class="bi bi-plus-circle"></i>
+            New Campaign
+
+        </a>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <form method="GET" class="row mb-3">
+
+                <div class="col-md-5">
+
+                    <input
+                        type="text"
+                        name="q"
+                        value="{{ search }}"
+                        class="form-control"
+                        placeholder="Search Campaign">
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <button
+                        class="btn btn-primary">
+
+                        Search
+
+                    </button>
+
+                </div>
+
+            </form>
+
+            {% if campaigns %}
+
+            <div class="table-responsive">
+
+                <table class="table table-striped align-middle">
+
+                    <thead class="table-success">
+
+                    <tr>
+
+                        <th>Name</th>
+                        <th>Code</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Status</th>
+                        <th width="220">Action</th>
+
+                    </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    {% for c in campaigns %}
+
+                    <tr>
+
+                        <td>{{ c.name }}</td>
+
+                        <td>{{ c.code }}</td>
+
+                        <td>{{ c.start_date or "" }}</td>
+
+                        <td>{{ c.end_date or "" }}</td>
+
+                        <td>
+
+                            {% if c.is_active %}
+
+                            <span class="badge bg-success">
+
+                                Active
+
+                            </span>
+
+                            {% else %}
+
+                            <span class="badge bg-secondary">
+
+                                {{ c.status }}
+
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="{{ url_for('campaign.edit', id=c.id) }}"
+                                class="btn btn-sm btn-primary">
+
+                                Edit
+
+                            </a>
+
+                            {% if not c.is_active %}
+
+                            <a
+                                href="{{ url_for('campaign.activate', id=c.id) }}"
+                                class="btn btn-sm btn-success">
+
+                                Activate
+
+                            </a>
+
+                            {% endif %}
+
+                            <a
+                                href="{{ url_for('campaign.delete', id=c.id) }}"
+                                class="btn btn-sm btn-danger"
+                                onclick="return confirm('Delete campaign?')">
+
+                                Delete
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="text-center py-5">
+
+                <h5>No campaigns found.</h5>
+
+                <p class="text-muted">
+
+                    Click <strong>New Campaign</strong>
+                    to create your first campaign.
+
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

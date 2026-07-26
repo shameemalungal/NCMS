@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from flask import Flask
 
 from config import Config
@@ -27,9 +28,13 @@ def create_app():
     from app.dashboard import dashboard_bp
     from app.masterdata import masterdata_bp
     from app.submission import submission_bp
+    from app.campaign import campaign_bp
+    from app.reports import reports_bp
 
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(masterdata_bp)
     app.register_blueprint(submission_bp)
+    app.register_blueprint(campaign_bp)
+    app.register_blueprint(reports_bp)
 
     return app
