@@ -1,14 +1,34 @@
+import secrets
 from datetime import datetime
 
 from app.extensions import db
+
+
+class TimestampMixin:
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False,
+    )
+
+    updated_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow,
+        nullable=False,
+    )
 
 
 # ==========================================================
 # Campaign
 # ==========================================================
 
-class Campaign(db.Model):
+class Campaign(TimestampMixin, db.Model):
     __tablename__ = "campaigns"
+
+    STATUS_DRAFT = "Draft"
+    STATUS_ACTIVE = "Active"
+    STATUS_CLOSED = "Closed"
 
     id = db.Column(db.Integer, primary_key=True)
 
@@ -39,7 +59,7 @@ class Campaign(db.Model):
     status = db.Column(
         db.String(20),
         nullable=False,
-        default="Draft",
+        default=STATUS_DRAFT,
         index=True
     )
 
@@ -49,22 +69,30 @@ class Campaign(db.Model):
         default=False
     )
 
-    created_at = db.Column(
-        db.DateTime,
-        default=datetime.utcnow
-    )
-
-    updated_at = db.Column(
-        db.DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow
-    )
-
     squads = db.relationship(
         "Squad",
         back_populates="campaign",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
+        lazy=True,
     )
+
+    panchayaths = db.relationship(
+        "Panchayath",
+        back_populates="campaign",
+        cascade="all, delete-orphan",
+        lazy=True,
+    )
+
+    imports = db.relationship(
+        "ImportHistory",
+        back_populates="campaign",
+        cascade="all, delete-orphan",
+        lazy=True,
+    )
+
+    @property
+    def total_population(self):
+        return sum(panchayath.population for panchayath in self.panchayaths)
 
     def __repr__(self):
         return f"<Campaign {self.code}>"
@@ -85,14 +113,28 @@ class Campaign(db.Model):
 # Panchayath
 # ==========================================================
 
-class Panchayath(db.Model):
+class Panchayath(TimestampMixin, db.Model):
     __tablename__ = "panchayaths"
+
+    __table_args__ = (
+        db.UniqueConstraint(
+            "campaign_id",
+            "name",
+            name="uq_campaign_panchayath",
+        ),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
 
+    campaign_id = db.Column(
+        db.Integer,
+        db.ForeignKey("campaigns.id"),
+        nullable=False,
+        index=True
+    )
+
     name = db.Column(
         db.String(120),
-        unique=True,
         nullable=False,
         index=True
     )
@@ -102,11 +144,22 @@ class Panchayath(db.Model):
         default=0
     )
 
+    campaign = db.relationship(
+        "Campaign",
+        back_populates="panchayaths",
+        lazy=True,
+    )
+
     squads = db.relationship(
         "Squad",
         back_populates="panchayath",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
+        lazy=True,
     )
+
+    @property
+    def total_squads(self):
+        return len(self.squads)
 
     def __repr__(self):
         return f"<Panchayath {self.name}>"
@@ -116,7 +169,7 @@ class Panchayath(db.Model):
 # Squad
 # ==========================================================
 
-class Squad(db.Model):
+class Squad(TimestampMixin, db.Model):
     __tablename__ = "squads"
 
     __table_args__ = (
@@ -156,27 +209,16 @@ class Squad(db.Model):
 
     target = db.Column(
         db.Integer,
-        default=0
-    )
-
-    squad_member = db.Column(
-        db.String(200),
-        nullable=False
-    )
-
-    office = db.Column(
-        db.String(200)
-    )
-
-    pashudhan_id = db.Column(
-        db.String(100),
-        nullable=False
+        nullable=False,
+        default=0,
     )
 
     submission_token = db.Column(
         db.String(100),
         unique=True,
-        nullable=False
+        nullable=False,
+        index=True,
+        default=lambda: secrets.token_hex(16),
     )
 
     status = db.Column(
@@ -187,20 +229,34 @@ class Squad(db.Model):
 
     campaign = db.relationship(
         "Campaign",
-        back_populates="squads"
+        back_populates="squads",
+        lazy=True,
     )
 
     panchayath = db.relationship(
         "Panchayath",
-        back_populates="squads"
+        back_populates="squads",
+        lazy=True,
     )
 
     submission = db.relationship(
         "Submission",
         back_populates="squad",
         uselist=False,
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
+        lazy=True,
     )
+
+    members = db.relationship(
+        "SquadMember",
+        back_populates="squad",
+        cascade="all, delete-orphan",
+        lazy=True,
+    )
+
+    @property
+    def member_count(self):
+        return len(self.members)
 
     def __repr__(self):
         return f"<Squad {self.squad_no}>"
@@ -210,7 +266,7 @@ class Squad(db.Model):
 # Submission
 # ==========================================================
 
-class Submission(db.Model):
+class Submission(TimestampMixin, db.Model):
     __tablename__ = "submissions"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -299,16 +355,74 @@ class Submission(db.Model):
         default=datetime.utcnow
     )
 
-    updated_at = db.Column(
-        db.DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow
-    )
-
     squad = db.relationship(
         "Squad",
-        back_populates="submission"
+        back_populates="submission",
+        lazy=True,
     )
 
     def __repr__(self):
         return f"<Submission {self.id}>"
+
+
+class SquadMember(TimestampMixin, db.Model):
+    __tablename__ = "squad_members"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    squad_id = db.Column(
+        db.Integer,
+        db.ForeignKey("squads.id"),
+        nullable=False,
+        index=True
+    )
+
+    member_name = db.Column(
+        db.String(200),
+        nullable=False
+    )
+
+    office = db.Column(db.String(100))
+
+    pashudhan_id = db.Column(db.String(50))
+
+    full_text = db.Column(db.Text)
+
+    squad = db.relationship(
+        "Squad",
+        back_populates="members",
+        lazy=True,
+    )
+
+    def __repr__(self):
+        return f"<SquadMember {self.member_name}>"
+
+
+class ImportHistory(TimestampMixin, db.Model):
+    __tablename__ = "import_history"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    campaign_id = db.Column(
+        db.Integer,
+        db.ForeignKey("campaigns.id"),
+        nullable=False,
+        index=True,
+    )
+
+    import_type = db.Column(db.String(50), nullable=False)
+    filename = db.Column(db.String(255), nullable=False)
+    total_rows = db.Column(db.Integer, default=0)
+    imported_rows = db.Column(db.Integer, default=0)
+    failed_rows = db.Column(db.Integer, default=0)
+    status = db.Column(db.String(50), nullable=False, default="Pending")
+    duration_seconds = db.Column(db.Integer, default=0)
+
+    campaign = db.relationship(
+        "Campaign",
+        back_populates="imports",
+        lazy=True,
+    )
+
+    def __repr__(self):
+        return f"<ImportHistory {self.filename}>"
