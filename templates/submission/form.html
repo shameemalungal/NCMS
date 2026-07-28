@@ -2,348 +2,215 @@
 
 {% block title %}NADCP Phase 8 Completion Report{% endblock %}
 
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/submission.css') }}">
+{% endblock %}
+
+{% macro render_number_field(field, label, hint='') %}
+<div class="submission-field">
+    <label for="{{ field.id }}" class="form-label fw-semibold">{{ label }}</label>
+    <div class="input-group input-group-lg">
+        {{ field(class="form-control" ~ (" is-invalid" if field.errors else ""), placeholder="0", autocomplete="off", min="0", step="1") }}
+        <span class="input-group-text">Nos.</span>
+    </div>
+    {% if hint %}
+    <div class="form-text">{{ hint }}</div>
+    {% endif %}
+    {% if field.errors %}
+    <div class="invalid-feedback d-block">{{ field.errors[0] }}</div>
+    {% endif %}
+</div>
+{% endmacro %}
+
 {% block content %}
-
-<div class="container-fluid py-3" style="max-width:1200px;">
-
-    <div class="card shadow">
-
-        <div class="card-header bg-success text-white">
-            <div class="d-flex justify-content-between align-items-center">
-
-                <h4 class="mb-0">
-                    NADCP Phase 8 Completion Report
-                </h4>
-
-                <span class="badge bg-light text-success fs-6">
-                    Phase 8
-                </span>
-
+<div class="container-fluid py-4 submission-shell">
+    <div class="submission-hero card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-8">
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                        <span class="submission-pill">NADCP Phase 8</span>
+                        <span class="submission-pill subtle">Submission Portal</span>
+                    </div>
+                    <h2 class="fw-bold mb-2">Completion report for squad {{ squad.squad_no }}</h2>
+                    <p class="mb-4">Capture the campaign outcome clearly before the report is finalized.</p>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="small text-white-50">Panchayath</div>
+                            <div class="fw-semibold">{{ squad.panchayath.name }}</div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="small text-white-50">Member</div>
+                            <div class="fw-semibold">{{ squad.squad_member or '—' }}</div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="small text-white-50">Office</div>
+                            <div class="fw-semibold">{{ squad.office or '—' }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="submission-highlight">
+                        <div class="submission-highlight-title">Overall total</div>
+                        <div class="submission-highlight-value" id="summaryTotal">0</div>
+                        <div class="submission-highlight-caption">animals accounted for</div>
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
 
-        <div class="card-body">
+    {% if form.errors %}
+    <div class="alert alert-danger shadow-sm">Please review the highlighted fields and submit again.</div>
+    {% endif %}
 
-            <form method="POST" id="submissionForm">
+    <form method="POST" id="submissionForm" novalidate>
+        {{ form.hidden_tag() }}
 
-                {{ form.hidden_tag() }}
-
-                <!-- ===================================================== -->
-                <!-- Squad Information                                     -->
-                <!-- ===================================================== -->
-
-                <div class="card border-primary shadow-sm mb-4">
-
-                    <div class="card-header bg-primary text-white">
-
-                        <strong>Squad Information</strong>
-
+        <div class="row g-4">
+            <div class="col-xl-8">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white border-0">
+                        <h5 class="mb-0 fw-bold">Squad members</h5>
                     </div>
-
                     <div class="card-body">
-
-                        <div class="row">
-
-                            <div class="col-lg-4 mb-3">
-
-                                <small class="text-secondary fw-semibold">
-                                    Panchayath
-                                </small>
-
-                                <br>
-
-                                <strong>
-                                    {{ squad.panchayath.name }}
-                                </strong>
-
+                        {% if members %}
+                        <div class="row g-3">
+                            {% for member in members %}
+                            <div class="col-md-6 col-xl-4">
+                                <div class="member-card">
+                                    <div class="member-card-name">{{ member.member_name or 'Member' }}</div>
+                                    <div class="member-card-meta">Office</div>
+                                    <div class="member-card-value">{{ member.office or '—' }}</div>
+                                    <div class="member-card-meta">Pashudhan ID</div>
+                                    <div class="member-card-value">{{ member.pashudhan_id or '—' }}</div>
+                                </div>
                             </div>
-
-                            <div class="col-lg-2 mb-3">
-
-                                <small class="text-secondary fw-semibold">
-                                    Squad
-                                </small>
-
-                                <br>
-
-                                <span class="badge bg-primary fs-6">
-
-                                    {{ squad.squad_no }}
-
-                                </span>
-
-                            </div>
-
-                            <div class="col-lg-2 mb-3">
-
-                                <small class="text-secondary fw-semibold">
-                                    Days
-                                </small>
-
-                                <br>
-
-                                <span class="badge bg-primary fs-6">
-
-                                    {{ squad.squad_days }}
-
-                                </span>
-
-                            </div>
-
-                            <div class="col-lg-4 mb-3">
-
-                                <small class="text-secondary fw-semibold">
-                                    Member
-                                </small>
-
-                                <br>
-
-                                <strong>
-
-                                    {{ squad.squad_member }}
-
-                                </strong>
-
-                            </div>
-
+                            {% endfor %}
                         </div>
-
-                        <div class="row">
-
-                            <div class="col-lg-6">
-
-                                <small class="text-secondary fw-semibold">
-                                    Office
-                                </small>
-
-                                <br>
-
-                                <strong>
-
-                                    {{ squad.office }}
-
-                                </strong>
-
-                            </div>
-
-                            <div class="col-lg-6">
-
-                                <small class="text-secondary fw-semibold">
-                                    Pashudhan ID
-                                </small>
-
-                                <br>
-
-                                <strong>
-
-                                    {{ squad.pashudhan_id }}
-
-                                </strong>
-
-                            </div>
-
-                        </div>
-
+                        {% else %}
+                        <div class="member-card empty">No squad members were found for this submission.</div>
+                        {% endif %}
                     </div>
-
                 </div>
 
-                <!-- ===================================================== -->
-                <!-- Entry Cards                                           -->
-                <!-- ===================================================== -->
-
-                <div class="row g-3">
-
-                    <!-- Achievement -->
-
-                    <div class="col-lg-5">
-
-                        <div class="card border-warning shadow-sm h-100">
-
-                            <div class="card-header bg-warning text-dark">
-
-                                <strong>
-                                    Campaign Achievement
-                                </strong>
-
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white border-0">
+                        <h5 class="mb-0 fw-bold">Vaccination details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                {{ render_number_field(form.days_worked, 'A. Squad days worked', 'Track the number of days the squad worked.') }}
                             </div>
-
-                            <div class="card-body">
-
-                                <div class="row align-items-center mb-3">
-
-                                    <div class="col">
-
-                                        A. Squad Days Worked
-
-                                    </div>
-
-                                    <div class="col-auto">
-
-                                        {{ form.days_worked(
-                                            class="form-control text-end",
-                                            style="width:80px;",
-                                            placeholder="0"
-                                        ) }}
-
-                                    </div>
-
-                                </div>
-
-                                <div class="row align-items-center mb-3">
-
-                                    <div class="col">
-
-                                        B. Vaccinations Done
-
-                                    </div>
-
-                                    <div class="col-auto">
-
-                                        {{ form.vaccinations_done(
-                                            class="form-control text-end",
-                                            style="width:80px;",
-                                            placeholder="0"
-                                        ) }}
-
-                                    </div>
-
-                                </div>
-
-                                <div class="row align-items-center">
-
-                                    <div class="col">
-
-                                        C. Pashudhan Entries
-
-                                    </div>
-
-                                    <div class="col-auto">
-
-                                        {{ form.pashudhan_entries(
-                                            class="form-control text-end",
-                                            style="width:80px;",
-                                            placeholder="0"
-                                        ) }}
-
-                                    </div>
-
-                                </div>
-
+                            <div class="col-md-4">
+                                {{ render_number_field(form.vaccinations_done, 'B. Vaccinations done', 'Count of animals vaccinated in this submission.') }}
                             </div>
+                            <div class="col-md-4">
+                                {{ render_number_field(form.pashudhan_entries, 'C. Pashudhan entries', 'Number of pashudhan entries completed.') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white border-0">
+                        <h5 class="mb-0 fw-bold">Leftover animals</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                {{ render_number_field(form.diseased, 'D. Diseased') }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ render_number_field(form.below_4_months, 'E. Below 4 months') }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ render_number_field(form.pregnant, 'F. Pregnant') }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ render_number_field(form.unwilling, 'G. Unwilling') }}
+                            </div>
                         </div>
 
-                    </div>
-
-                    <!-- Leftover -->
-
-                    <div class="col-lg-7">
-
-                        <div class="card border-danger shadow-sm h-100">
-
-                            <div class="card-header bg-danger-subtle">
-
-                                <strong>
-                                    Reasons for Leftover Animals
-                                </strong>
-
+                        <div class="mt-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                                <div>
+                                    <h6 class="fw-bold mb-1">H. Other reasons</h6>
+                                    <p class="text-muted small mb-0">Add any additional categories that explain the leftover count.</p>
+                                </div>
+                                <button type="button" class="btn btn-outline-danger btn-sm" id="addReasonBtn">
+                                    <i class="fas fa-plus me-1"></i>Add reason
+                                </button>
                             </div>
 
-                            <div class="card-body">
-
-                                <div class="row align-items-center mb-3">
-
-                                    <div class="col">
-                                        D. Diseased
-                                    </div>
-
-                                    <div class="col-auto">
-
-                                        {{ form.diseased(
-                                            class="form-control text-end",
-                                            style="width:80px;",
-                                            placeholder="0"
-                                        ) }}
-
-                                    </div>
-
+                            <div id="otherReasonsContainer" class="d-flex flex-column gap-2">
+                                <div class="reason-row">
+                                    <input type="text" class="form-control" name="other_reason[]" placeholder="Reason">
+                                    <input type="number" class="form-control" name="other_count[]" min="0" step="1" placeholder="0">
+                                    <button type="button" class="btn btn-outline-secondary remove-reason">Remove</button>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                                <div class="row align-items-center mb-3">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white border-0">
+                        <h5 class="mb-0 fw-bold">Remarks</h5>
+                    </div>
+                    <div class="card-body">
+                        {{ form.remarks(class="form-control" ~ (" is-invalid" if form.remarks.errors else ""), rows=4, placeholder="Add any notes for the reporting team...") }}
+                        {% if form.remarks.errors %}
+                        <div class="invalid-feedback d-block">{{ form.remarks.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
-                                    <div class="col">
-                                        E. Below 4 Months
-                                    </div>
+            <div class="col-xl-4">
+                <div class="card shadow-sm border-0 sticky-summary">
+                    <div class="card-header bg-white border-0">
+                        <h5 class="mb-0 fw-bold">Live summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="summary-list">
+                            <div class="summary-item">
+                                <span class="summary-label">Vaccinations</span>
+                                <span class="summary-value" id="summaryVaccinations">0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Pashudhan entries</span>
+                                <span class="summary-value" id="summaryPashudhan">0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Leftover total</span>
+                                <span class="summary-value text-danger" id="summaryLeftover">0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Other reasons</span>
+                                <span class="summary-value" id="summaryOther">0</span>
+                            </div>
+                        </div>
 
-                                    <div class="col-auto">
+                        <div class="alert alert-light mt-4 mb-0" role="status">
+                            <strong>Submission note</strong>
+                            <div class="small mt-2">A final confirmation is shown before the report is saved.</div>
+                        </div>
 
-                                        {{ form.below_4_months(
-                                            class="form-control text-end",
-                                            style="width:80px;",
-                                            placeholder="0"
-                                        ) }}
+                        <button type="submit" class="btn btn-success w-100 py-2 mt-4 fw-semibold" id="submitButton">
+                            <span class="me-2"><i class="fas fa-paper-plane"></i></span>
+                            <span id="submitLabel">Submit report</span>
+                            <span id="submitSpinner" class="ms-2 d-none"><i class="fas fa-spinner fa-spin"></i></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
 
-                                    </div>
-
-                                </div>
-
-                                <div class="row align-items-center mb-3">
-
-                                    <div class="col">
-                                        F. Pregnant
-                                    </div>
-
-                                    <div class="col-auto">
-
-                                        {{ form.pregnant(
-                                            class="form-control text-end",
-                                            style="width:80px;",
-                                            placeholder="0"
-                                        ) }}
-
-                                    </div>
-
-                                </div>
-
-                                <div class="row align-items-center mb-4">
-
-                                    <div class="col">
-                                        G. Unwilling
-                                    </div>
-
-                                    <div class="col-auto">
-
-                                        {{ form.unwilling(
-                                            class="form-control text-end",
-                                            style="width:80px;",
-                                            placeholder="0"
-                                        ) }}
-
-                                    </div>
-
-                                </div>
-
-                                <hr>
-
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-
-                                    <strong>
-                                        H. Other Reasons
-                                    </strong>
-
-                                    <button
-                                        type="button"
-                                        id="addReason"
-                                        class="btn btn-outline-danger btn-sm">
-
-                                        + Add Reason
-
-                                    </button>
-
-                                </div>
-
-                                <div id="otherReasonsContainer">
-
-                                    <!-- Dynamic rows start here -->
-                                    
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/submission.js') }}"></script>
+{% endblock %}

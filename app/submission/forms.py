@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, SubmitField
+from wtforms import IntegerField, SubmitField, TextAreaField
 from wtforms.validators import NumberRange, Optional
 from wtforms.widgets import NumberInput
 
@@ -139,6 +139,16 @@ class SubmissionForm(FlaskForm):
             "autocomplete": "off",
             "step": "1",
             "min": "0"
+        }
+    )
+
+    remarks = TextAreaField(
+        "Remarks",
+        validators=[Optional()],
+        render_kw={
+            "rows": 4,
+            "placeholder": "Add any notes for the reporting team...",
+            "autocomplete": "off"
         }
     )
 

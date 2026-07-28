@@ -1,0 +1,213 @@
+/* ==========================================
+   NCMS Submission Experience
+   ========================================== */
+
+.submission-shell {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.submission-hero {
+    border-radius: 24px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0ea5a4 0%, #4f46e5 100%);
+    color: #fff;
+    border: none;
+}
+
+.submission-hero .card-body {
+    padding: 2rem;
+}
+
+.submission-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.submission-pill.subtle {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.submission-highlight {
+    border-radius: 22px;
+    padding: 1.6rem;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.submission-highlight-title {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.submission-highlight-value {
+    font-size: 2.3rem;
+    font-weight: 700;
+    margin-top: 0.35rem;
+}
+
+.submission-highlight-caption {
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.member-card {
+    padding: 1.15rem;
+    border-radius: 18px;
+    background: #f8fafc;
+    border: 1px solid #edf2f7;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.04);
+    height: 100%;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.member-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08);
+}
+
+.member-card-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.6rem;
+}
+
+.member-card-meta {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #64748b;
+    margin-top: 0.45rem;
+}
+
+.member-card-value {
+    font-weight: 600;
+    color: #334155;
+}
+
+.member-card.empty {
+    text-align: center;
+    color: #64748b;
+}
+
+.submission-field {
+    margin-bottom: 0.25rem;
+}
+
+.submission-field .form-control,
+.submission-field .form-select,
+textarea.form-control {
+    border-radius: 14px;
+    border-color: #dbe4ee;
+    padding: 0.8rem 0.95rem;
+    font-size: 1rem;
+}
+
+.submission-field .form-control:focus,
+textarea.form-control:focus {
+    border-color: #0ea5a4;
+    box-shadow: 0 0 0 0.2rem rgba(14, 165, 164, 0.15);
+}
+
+.submission-field .input-group-text {
+    border-radius: 0 14px 14px 0;
+    background: #f8fafc;
+    color: #64748b;
+    min-width: 64px;
+    justify-content: center;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.invalid-feedback {
+    display: block;
+    color: #dc3545;
+    font-size: 0.9rem;
+    margin-top: 0.4rem;
+}
+
+.reason-row {
+    display: grid;
+    grid-template-columns: 1.4fr 0.8fr auto;
+    gap: 0.7rem;
+    align-items: center;
+}
+
+.reason-row .form-control {
+    border-radius: 12px;
+}
+
+.remove-reason {
+    border-radius: 12px;
+}
+
+.sticky-summary {
+    position: sticky;
+    top: 1rem;
+}
+
+.summary-list {
+    display: grid;
+    gap: 0.8rem;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.9rem 1rem;
+    border-radius: 14px;
+    background: #f8fafc;
+}
+
+.summary-label {
+    color: #64748b;
+    font-weight: 600;
+}
+
+.summary-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+#submitButton {
+    border-radius: 14px;
+    min-height: 46px;
+}
+
+#submitButton:disabled {
+    opacity: 0.8;
+}
+
+@media (max-width: 767px) {
+    .submission-hero .card-body {
+        padding: 1.4rem;
+    }
+
+    .reason-row {
+        grid-template-columns: 1fr;
+    }
+
+    .sticky-summary {
+        position: relative;
+        top: auto;
+    }
+
+    #submitButton {
+        width: 100%;
+    }
+}
