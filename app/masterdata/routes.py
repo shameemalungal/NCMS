@@ -1,88 +1,78 @@
-import os
+from pathlib import Path
 import tempfile
 
 from flask import (
+    Blueprint,
     flash,
     redirect,
     render_template,
-    url_for
+    request,
 )
 
-from app.masterdata import masterdata_bp
-from app.masterdata.forms import MasterDataUploadForm
-from app.masterdata.importer import MasterDataImporter
+from app.models import Campaign
+from app.masterdata.forms import MasterDataImportForm
+from app.masterdata.services import validate_excel
+
+
+masterdata_bp = Blueprint(
+    "masterdata",
+    __name__,
+    url_prefix="/masterdata",
+)
 
 
 @masterdata_bp.route("/", methods=["GET", "POST"])
 def index():
 
-    form = MasterDataUploadForm()
+    form = MasterDataImportForm()
 
-    if form.validate_on_submit():
+    campaigns = Campaign.query.order_by(
+        Campaign.name
+    ).all()
 
-        campaign_name = form.campaign_name.data.strip()
-        uploaded_file = form.excel_file.data
+    form.campaign.choices = [
+        (c.id, f"{c.name} ({c.code})")
+        for c in campaigns
+    ]
 
-        # Create a Windows-safe temporary file
-        fd, temp_path = tempfile.mkstemp(suffix=".xlsx")
-        os.close(fd)
+    validation = None
 
-        try:
-            # Save uploaded file
-            uploaded_file.save(temp_path)
+    if request.method == "POST":
 
-            # Run importer
-            importer = MasterDataImporter(
-                temp_path,
-                campaign_name
-            )
+        if form.validate_on_submit():
 
-            summary = importer.import_data()
+            uploaded = form.excel_file.data
 
-            # Print summary in terminal (for debugging)
-            print("\n========== IMPORT SUMMARY ==========")
-            print(summary)
-            print("====================================\n")
+            suffix = Path(uploaded.filename).suffix
 
-            if summary["errors"]:
+            with tempfile.NamedTemporaryFile(
+                delete=False,
+                suffix=suffix
+            ) as temp:
 
-                for error in summary["errors"]:
-                    flash(error, "danger")
+                uploaded.save(temp.name)
 
-            else:
+                validation = validate_excel(temp.name)
+
+            if validation.success:
 
                 flash(
-                    (
-                        f"Import completed successfully.<br><br>"
-                        f"<strong>Campaign:</strong> {campaign_name}<br>"
-                        f"<strong>Panchayaths Created:</strong> {summary['panchayaths_created']}<br>"
-                        f"<strong>Panchayaths Updated:</strong> {summary['panchayaths_updated']}<br>"
-                        f"<strong>Squads Created:</strong> {summary['squads_created']}<br>"
-                        f"<strong>Squads Updated:</strong> {summary['squads_updated']}"
-                    ),
+                    validation.message,
                     "success"
                 )
 
-        except Exception as e:
+            else:
 
-            print("\n========== IMPORT ERROR ==========")
-            print(e)
-            print("==================================\n")
+                for error in validation.errors:
 
-            flash(f"Unexpected Error: {str(e)}", "danger")
-
-        finally:
-
-            # Delete temporary file
-            if os.path.exists(temp_path):
-                try:
-                    os.remove(temp_path)
-                except PermissionError:
-                    pass
-
-        return redirect(url_for("masterdata.index"))
+                    flash(
+                        error,
+                        "danger"
+                    )
 
     return render_template(
         "masterdata/index.html",
-        form=form
+        page_title="Master Data Import",
+        form=form,
+        validation=validation,
     )

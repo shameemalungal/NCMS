@@ -1,40 +1,186 @@
 {% extends "base.html" %}
 
-{% block title %}
-Master Data
-{% endblock %}
+{% block title %}Master Data Import{% endblock %}
 
 {% block content %}
 
-<div class="container mt-4">
+<div class="container-fluid">
 
-    <h2>Master Data</h2>
+    <div class="row justify-content-center">
 
-    <hr>
+        <div class="col-lg-8">
 
-    <form method="POST" enctype="multipart/form-data">
+            <div class="card shadow-sm border-0 rounded-4">
 
-        {{ form.hidden_tag() }}
+                <div class="card-header bg-white border-0 py-4">
 
-        <div class="mb-3">
+                    <h2 class="fw-bold mb-1">
+                        Master Data Import
+                    </h2>
 
-            {{ form.campaign_name.label(class="form-label") }}
+                    <p class="text-muted mb-0">
+                        Import Panchayaths and Squad Master Data from an Excel file.
+                    </p>
 
-            {{ form.campaign_name(class="form-control") }}
+                </div>
+
+                <div class="card-body">
+
+                    <form method="POST"
+                          enctype="multipart/form-data">
+
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-4">
+
+                            {{ form.campaign.label(class="form-label fw-semibold") }}
+
+                            {{ form.campaign(class="form-select") }}
+
+                            {% for error in form.campaign.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+
+                        </div>
+
+                        <div class="mb-4">
+
+                            {{ form.excel_file.label(class="form-label fw-semibold") }}
+
+                            {{ form.excel_file(class="form-control") }}
+
+                            {% for error in form.excel_file.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+
+                            <small class="text-muted">
+                                Accepted format: <strong>.xlsx</strong>
+                            </small>
+
+                        </div>
+
+                        <div class="alert alert-info">
+
+                            <strong>Excel should contain:</strong>
+
+                            <ul class="mb-0 mt-2">
+
+                                <li>Panchayath</li>
+                                <li>Squad No</li>
+                                <li>Squad Days</li>
+                                <li>Squad Member</li>
+                                <li>Office</li>
+                                <li>Pashudhan ID</li>
+
+                            </ul>
+
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+
+                            {{ form.validate(class="btn btn-primary px-4") }}
+
+                        </div>
+
+                    </form>
+{% if validation %}
+
+<hr class="my-4">
+
+<h4 class="fw-bold mb-3">
+    Validation Result
+</h4>
+
+<div class="row mb-4">
+
+    <div class="col-md-4">
+
+        <div class="card border-success">
+
+            <div class="card-body">
+
+                <h6 class="text-muted">Rows Found</h6>
+
+                <h2>{{ validation.rows }}</h2>
+
+            </div>
 
         </div>
 
-        <div class="mb-3">
+    </div>
 
-            {{ form.excel_file.label(class="form-label") }}
+</div>
 
-            {{ form.excel_file(class="form-control") }}
+<h5 class="mt-4">
+    Headers Found
+</h5>
+
+<ul>
+
+{% for header in validation.headers %}
+
+    <li>{{ header }}</li>
+
+{% endfor %}
+
+</ul>
+
+{% if validation.preview %}
+
+<h5 class="mt-4">
+    Preview (First 20 Rows)
+</h5>
+
+<div class="table-responsive">
+
+<table class="table table-bordered table-striped">
+
+<thead>
+
+<tr>
+
+{% for header in validation.headers %}
+
+<th>{{ header }}</th>
+
+{% endfor %}
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for row in validation.preview %}
+
+<tr>
+
+{% for value in row %}
+
+<td>{{ value }}</td>
+
+{% endfor %}
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+{% endif %}
+
+{% endif %}
+                </div>
+
+            </div>
 
         </div>
 
-        {{ form.submit(class="btn btn-success") }}
-
-    </form>
+    </div>
 
 </div>
 

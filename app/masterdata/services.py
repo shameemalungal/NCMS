@@ -1,82 +1,90 @@
-from app.extensions import db
-from app.models import Campaign, Panchayath, Squad
+from openpyxl import load_workbook
 
 
-class MasterDataService:
+REQUIRED_COLUMNS = [
+    "PANCHAYATH",
+    "SQUAD No.",
+    "SQUAD DAYS",
+    "SQUAD",
+    "Pashudhan ID",
+]
 
-    @staticmethod
-    def get_or_create_campaign(name):
 
-        campaign = Campaign.query.filter_by(name=name).first()
+class ValidationResult:
 
-        if campaign:
-            return campaign, False
+    def __init__(self):
 
-        campaign = Campaign(
-            name=name,
-            status="Active"
+        self.success = False
+
+        self.message = ""
+
+        self.headers = []
+
+        self.rows = 0
+
+        self.errors = []
+
+        self.preview = []
+
+
+def validate_excel(filepath):
+
+    result = ValidationResult()
+
+    try:
+
+        workbook = load_workbook(
+            filepath,
+            data_only=True,
         )
 
-        db.session.add(campaign)
+        sheet = workbook["Pashudhan ID wise Achievement"]
 
-        return campaign, True
+        headers = []
 
-    @staticmethod
-    def get_or_create_panchayath(name, population):
+        for cell in sheet[1]:
+            if cell.value:
+                headers.append(str(cell.value).strip())
+            else:
+                headers.append("")
 
-        p = Panchayath.query.filter_by(name=name).first()
+        result.headers = headers
 
-        if p:
-            p.population = population
-            return p, False
+        missing = [
+            column
+            for column in REQUIRED_COLUMNS
+            if column not in headers
+        ]
 
-        p = Panchayath(
-            name=name,
-            population=population
-        )
+        if missing:
 
-        db.session.add(p)
+            result.errors.append(
+                f"Missing columns: {', '.join(missing)}"
+            )
 
-        return p, True
+            return result
 
-    @staticmethod
-    def get_or_create_squad(
-        campaign,
-        panchayath,
-        squad_no,
-        squad_days,
-        squad_member,
-        office,
-        pashudhan_id,
-        submission_token
-    ):
+        for row in sheet.iter_rows(
+            min_row=2,
+            values_only=True,
+        ):
 
-        squad = Squad.query.filter_by(
-            campaign_id=campaign.id,
-            pashudhan_id=pashudhan_id
-        ).first()
+            if all(v is None for v in row):
+                continue
 
-        if squad:
+            result.rows += 1
 
-            squad.squad_no = squad_no
-            squad.squad_days = squad_days
-            squad.squad_member = squad_member
-            squad.office = office
+            if len(result.preview) < 20:
+                result.preview.append(row[:len(result.headers)])
 
-            return squad, False
+        result.success = True
 
-        squad = Squad(
-            campaign=campaign,
-            panchayath=panchayath,
-            squad_no=squad_no,
-            squad_days=squad_days,
-            squad_member=squad_member,
-            office=office,
-            pashudhan_id=pashudhan_id,
-            submission_token=submission_token,
-            status="Pending"
-        )
+        result.message = "Validation completed successfully."
 
-        db.session.add(squad)
+        return result
 
-        return squad, True
+    except Exception as ex:
+
+        result.errors.append(str(ex))
+
+        return result

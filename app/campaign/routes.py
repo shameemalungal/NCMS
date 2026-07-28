@@ -1,39 +1,44 @@
 from flask import (
-    render_template,
-    redirect,
-    url_for,
+    Blueprint,
     flash,
-    request,
+    redirect,
+    render_template,
+    url_for,
 )
 
-from app.campaign import campaign_bp
-from app.campaign.forms import CampaignForm
 from app.extensions import db
 from app.models import Campaign
+from app.campaign.forms import CampaignForm
 
+
+campaign_bp = Blueprint(
+    "campaign",
+    __name__,
+    url_prefix="/campaign",
+)
+
+
+# ==========================================================
+# Campaign List
+# ==========================================================
 
 @campaign_bp.route("/")
 def index():
 
-    search = request.args.get("search", "").strip()
-
-    query = Campaign.query
-
-    if search:
-        query = query.filter(
-            Campaign.name.ilike(f"%{search}%")
-        )
-
-    campaigns = query.order_by(
-        Campaign.start_date.desc()
+    campaigns = Campaign.query.order_by(
+        Campaign.created_at.desc()
     ).all()
 
     return render_template(
         "campaign/index.html",
+        page_title="Campaign Management",
         campaigns=campaigns,
-        search=search,
     )
 
+
+# ==========================================================
+# Add Campaign
+# ==========================================================
 
 @campaign_bp.route("/add", methods=["GET", "POST"])
 def add():
@@ -42,36 +47,14 @@ def add():
 
     if form.validate_on_submit():
 
-        if Campaign.query.filter_by(code=form.code.data.strip()).first():
-
-            flash(
-                "Campaign code already exists.",
-                "danger",
-            )
-
-            return render_template(
-                "campaign/form.html",
-                form=form,
-                title="New Campaign",
-            )
-
-        if form.status.data == "Active":
-
-            Campaign.query.filter_by(
-                status="Active"
-            ).update(
-                {"status": "Draft"}
-            )
-
         campaign = Campaign(
-            name=form.name.data.strip(),
-            code=form.code.data.strip().upper(),
-            description=form.description.data.strip()
-            if form.description.data
-            else "",
+            name=form.name.data,
+            code=form.code.data.upper(),
+            description=form.description.data,
             start_date=form.start_date.data,
             end_date=form.end_date.data,
             status=form.status.data,
+            is_active=form.is_active.data,
         )
 
         db.session.add(campaign)
@@ -86,10 +69,15 @@ def add():
 
     return render_template(
         "campaign/form.html",
+        page_title="Add Campaign",
         form=form,
-        title="New Campaign",
+        mode="Add",
     )
 
+
+# ==========================================================
+# Edit Campaign
+# ==========================================================
 
 @campaign_bp.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
@@ -100,43 +88,9 @@ def edit(id):
 
     if form.validate_on_submit():
 
-        duplicate = Campaign.query.filter(
-            Campaign.code == form.code.data.strip().upper(),
-            Campaign.id != campaign.id,
-        ).first()
+        form.populate_obj(campaign)
 
-        if duplicate:
-
-            flash(
-                "Campaign code already exists.",
-                "danger",
-            )
-
-            return render_template(
-                "campaign/form.html",
-                form=form,
-                title="Edit Campaign",
-            )
-
-        if form.status.data == "Active":
-
-            Campaign.query.filter(
-                Campaign.id != campaign.id,
-                Campaign.status == "Active",
-            ).update(
-                {"status": "Draft"}
-            )
-
-        campaign.name = form.name.data.strip()
-        campaign.code = form.code.data.strip().upper()
-        campaign.description = (
-            form.description.data.strip()
-            if form.description.data
-            else ""
-        )
-        campaign.start_date = form.start_date.data
-        campaign.end_date = form.end_date.data
-        campaign.status = form.status.data
+        campaign.code = campaign.code.upper()
 
         db.session.commit()
 
@@ -149,17 +103,23 @@ def edit(id):
 
     return render_template(
         "campaign/form.html",
+        page_title="Edit Campaign",
         form=form,
-        title="Edit Campaign",
+        mode="Edit",
     )
 
 
-@campaign_bp.route("/delete/<int:id>", methods=["POST"])
+# ==========================================================
+# Delete Campaign
+# ==========================================================
+
+@campaign_bp.route("/delete/<int:id>")
 def delete(id):
 
     campaign = Campaign.query.get_or_404(id)
 
     db.session.delete(campaign)
+
     db.session.commit()
 
     flash(
@@ -167,6 +127,4 @@ def delete(id):
         "success",
     )
 
-    return redirect(
-        url_for("campaign.index")
-    )
+    return redirect(url_for("campaign.index"))

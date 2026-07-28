@@ -1,19 +1,40 @@
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileRequired
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
+
+from wtforms import (
+    SelectField,
+    FileField,
+    SubmitField,
+)
+
+from wtforms.validators import (
+    DataRequired,
+)
+
+from flask_wtf.file import (
+    FileAllowed,
+    FileRequired,
+)
 
 
-class MasterDataUploadForm(FlaskForm):
-    campaign_name = StringField(
-        "Campaign Name",
+class MasterDataImportForm(FlaskForm):
+
+    campaign = SelectField(
+        "Campaign",
+        coerce=int,
         validators=[DataRequired()],
-        default="NADCP Phase 8"
     )
 
     excel_file = FileField(
         "Excel File",
-        validators=[FileRequired()]
+        validators=[
+            FileRequired(message="Please select an Excel file."),
+            FileAllowed(
+                ["xlsx"],
+                "Only .xlsx files are allowed."
+            ),
+        ],
     )
 
-    submit = SubmitField("Import Master Data")
+    validate = SubmitField("Validate File")
+
+    import_data = SubmitField("Import Master Data")

@@ -1,106 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}NCMS{% endblock %}</title>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
 
-    <title>{% block title %}NCMS{% endblock %}</title>
-
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-
-    <!-- Main CSS -->
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
-
-    {% block styles %}{% endblock %}
-
+{% block styles %}{% endblock %}
 </head>
-
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm">
+<div class="app-layout">
+{% include 'partials/sidebar.html' %}
 
-    <div class="container-fluid px-4">
+<div class="main-wrapper">
 
-        <a class="navbar-brand fw-bold"
-           href="{{ url_for('dashboard.dashboard') }}">
-            NCMS
-        </a>
+{% include 'partials/navbar.html' %}
 
-        <button class="navbar-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarNav">
+<main class="page-content">
 
-            <span class="navbar-toggler-icon"></span>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm">
+{{ message|safe }}
+<button class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
 
-        </button>
+{% block content %}{% endblock %}
 
-        <div class="collapse navbar-collapse"
-             id="navbarNav">
+</main>
 
-            <ul class="navbar-nav">
+{% include 'partials/footer.html' %}
 
-                <li class="nav-item">
-                    <a class="nav-link"
-                       href="{{ url_for('dashboard.dashboard') }}">
-                        Dashboard
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link"
-                       href="{{ url_for('masterdata.index') }}">
-                        Master Data
-                    </a>
-                </li>
-
-            </ul>
-
-        </div>
-
-    </div>
-
-</nav>
-
-<div class="container-fluid mt-4 px-4">
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-
-            <div class="alert alert-{{ category }} alert-dismissible fade show">
-
-                {{ message|safe }}
-
-                <button class="btn-close"
-                        data-bs-dismiss="alert">
-                </button>
-
-            </div>
-
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
-    {% block content %}{% endblock %}
-
+</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-
 {% block scripts %}{% endblock %}
-
 </body>
 </html>

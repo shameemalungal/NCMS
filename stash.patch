@@ -756,7 +756,7 @@ index 82363eb..264ea4d 100644
 -            "submission/success.html",
 -            squad=squad
 +        return redirect(
-+            url_for("dashboard.dashboard")
++            url_for("dashboard.index")
          )
  
      form = SubmissionForm()
@@ -894,7 +894,7 @@ index 82363eb..264ea4d 100644
  
 -            )
 +        return redirect(
-+            url_for("dashboard.dashboard")
++            url_for("dashboard.index")
 +        )
  
      return render_template(
@@ -1304,7 +1304,7 @@ index 3153b14..5117432 100644
 -    <div class="container-fluid px-4">
 -
 -        <a class="navbar-brand fw-bold"
--           href="{{ url_for('dashboard.dashboard') }}">
+-           href="{{ url_for('dashboard.index') }}">
 -            NCMS
 -        </a>
 -
@@ -1324,7 +1324,7 @@ index 3153b14..5117432 100644
 -
 -                <li class="nav-item">
 -                    <a class="nav-link"
--                       href="{{ url_for('dashboard.dashboard') }}">
+-                       href="{{ url_for('dashboard.index') }}">
 -                        Dashboard
 -                    </a>
 -                </li>
@@ -1347,7 +1347,7 @@ index 3153b14..5117432 100644
 +<h4><i class="bi bi-shield-check"></i> NCMS</h4>
 +<p class="text-white-50">NADCP Campaign Management System</p>
 +<div class="list-group list-group-flush">
-+<a class="list-group-item list-group-item-action" href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
++<a class="list-group-item list-group-item-action" href="{{ url_for('dashboard.index') }}">Dashboard</a>
 +<a class="list-group-item list-group-item-action" href="{{ url_for('masterdata.index') }}">Master Data</a>
 +<a class="list-group-item list-group-item-action" href="{{ url_for('campaign.index') }}">Campaigns</a>
 +<a class="list-group-item list-group-item-action" href="{{ url_for('submission.index') }}">Squad Submission</a>

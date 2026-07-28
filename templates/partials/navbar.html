@@ -1,0 +1,97 @@
+<nav class="topbar">
+
+    <!-- Left Section -->
+    <div class="d-flex align-items-center">
+
+        <!-- Mobile Sidebar Toggle -->
+        <button class="btn btn-light d-lg-none me-3"
+                id="sidebarToggle"
+                type="button">
+
+            <i class="fa-solid fa-bars"></i>
+
+        </button>
+
+        <!-- Dynamic Page Title -->
+        <div>
+
+            <h4 class="mb-0 fw-bold">
+                {% block page_title %}
+                    Dashboard
+                {% endblock %}
+            </h4>
+
+            <small class="text-muted">
+                NADCP Campaign Management System
+            </small>
+
+        </div>
+
+    </div>
+
+    <!-- Right Section -->
+    <div class="d-flex align-items-center gap-3">
+
+        <!-- Search (Future Use) -->
+        <div class="d-none d-md-block">
+
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Search..."
+                style="width:220px;">
+
+        </div>
+
+        <!-- Notifications -->
+        <button class="btn btn-light position-relative">
+
+            <i class="fa-regular fa-bell"></i>
+
+            <span
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+
+                0
+
+            </span>
+
+        </button>
+
+        <!-- Profile -->
+
+        <div class="d-flex align-items-center">
+
+            <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center"
+                 style="width:42px;height:42px;">
+
+                <i class="fa-solid fa-user"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const toggle = document.getElementById("sidebarToggle");
+
+    const sidebar = document.querySelector(".sidebar");
+
+    if (toggle && sidebar) {
+
+        toggle.addEventListener("click", function () {
+
+            sidebar.classList.toggle("show");
+
+        });
+
+    }
+
+});
+
+</script>

@@ -30,11 +30,13 @@ def create_app():
     from app.submission import submission_bp
     from app.campaign import campaign_bp
     from app.reports import reports_bp
+    from app.panchayath import panchayath_bp
 
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(masterdata_bp)
     app.register_blueprint(submission_bp)
     app.register_blueprint(campaign_bp)
     app.register_blueprint(reports_bp)
+    app.register_blueprint(panchayath_bp)
 
     return app

@@ -1,0 +1,391 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - NCMS{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- Hero Banner -->
+    <div class="card border-0 shadow-sm mb-4 dashboard-hero">
+        <div class="card-body">
+
+            <div class="row align-items-center">
+
+                <div class="col-lg-8">
+
+                    <h2 class="fw-bold mb-2">
+                        Welcome to NCMS
+                    </h2>
+
+                    <p class="text-muted mb-4">
+                        NADCP Campaign Management System
+                    </p>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <div class="small text-muted">
+                                Active Campaign
+                            </div>
+
+                            <h4 class="fw-bold">
+                                {{ dashboard.campaign }}
+                            </h4>
+
+                        </div>
+
+                        <div class="col-md-3">
+
+                            <div class="small text-muted">
+                                Status
+                            </div>
+
+                            <span class="badge bg-success px-3 py-2">
+                                {{ dashboard.status }}
+                            </span>
+
+                        </div>
+
+                        <div class="col-md-3">
+
+                            <div class="small text-muted">
+                                Days Remaining
+                            </div>
+
+                            <h3 class="fw-bold text-primary">
+                                {{ dashboard.days_remaining }}
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-lg-4 text-center">
+
+                    <div class="achievement-circle">
+
+                        <h1 class="display-4 fw-bold">
+                            {{ dashboard.achievement }}%
+                        </h1>
+
+                        <div class="text-muted">
+                            Overall Achievement
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- KPI Cards -->
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card dashboard-card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="small text-muted">
+                        Active Campaigns
+                    </div>
+
+                    <h2 class="fw-bold mt-2">
+                        {{ dashboard.campaigns }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card dashboard-card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="small text-muted">
+                        Total Squads
+                    </div>
+
+                    <h2 class="fw-bold mt-2">
+                        {{ dashboard.squads }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card dashboard-card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="small text-muted">
+                        Submitted Squads
+                    </div>
+
+                    <h2 class="fw-bold mt-2">
+                        {{ dashboard.submitted }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card dashboard-card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="small text-muted">
+                        Vaccinations
+                    </div>
+
+                    <h2 class="fw-bold mt-2">
+                        {{ dashboard.vaccinations }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Progress + Achievement -->
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-header bg-white border-0">
+
+                    <h5 class="mb-0 fw-bold">
+                        Vaccination Progress
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <canvas id="progressChart" height="120"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-header bg-white border-0">
+
+                    <h5 class="fw-bold mb-0">
+                        Achievement Status
+                    </h5>
+
+                </div>
+
+                <div class="card-body text-center">
+
+                    {% if dashboard.achievement >= 95 %}
+
+                        <h2>🏆</h2>
+
+                        <h5 class="text-success">
+                            Outstanding Achievement
+                        </h5>
+
+                        <p class="text-muted">
+                            Excellent work. The campaign is performing exceptionally well.
+                        </p>
+
+                    {% elif dashboard.achievement >= 85 %}
+
+                        <h2>🎉</h2>
+
+                        <h5 class="text-primary">
+                            Excellent Progress
+                        </h5>
+
+                        <p class="text-muted">
+                            The campaign is progressing very well.
+                        </p>
+
+                    {% elif dashboard.achievement >= 70 %}
+
+                        <h2>👍</h2>
+
+                        <h5 class="text-info">
+                            Good Progress
+                        </h5>
+
+                        <p class="text-muted">
+                            Keep up the momentum to achieve the target.
+                        </p>
+
+                    {% elif dashboard.achievement >= 50 %}
+
+                        <h2>⚠️</h2>
+
+                        <h5 class="text-warning">
+                            Keep Going
+                        </h5>
+
+                        <p class="text-muted">
+                            Additional effort is required to improve performance.
+                        </p>
+
+                    {% else %}
+
+                        <h2>🚨</h2>
+
+                        <h5 class="text-danger">
+                            Needs Attention
+                        </h5>
+
+                        <p class="text-muted">
+                            Immediate action is recommended to improve achievement.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Quick Actions + Recent Activity -->
+
+    <div class="row g-4">
+
+        <div class="col-lg-4">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-white border-0">
+
+                    <h5 class="fw-bold mb-0">
+                        Quick Actions
+                    </h5>
+
+                </div>
+
+                <div class="list-group list-group-flush">
+
+                    <a href="#" class="list-group-item list-group-item-action">
+                        📥 Import Master Data
+                    </a>
+
+                    <a href="#" class="list-group-item list-group-item-action">
+                        🎯 Campaign Management
+                    </a>
+
+                    <a href="#" class="list-group-item list-group-item-action">
+                        👥 Squad Monitor
+                    </a>
+
+                    <a href="#" class="list-group-item list-group-item-action">
+                        📊 Reports
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-white border-0">
+
+                    <h5 class="fw-bold mb-0">
+                        Recent Activity
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Date</th>
+                                <th>Activity</th>
+                                <th>Status</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+
+                                <td colspan="3" class="text-center text-muted py-4">
+
+                                    No recent activity available.
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+{% endblock %}

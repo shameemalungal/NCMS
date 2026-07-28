@@ -4,46 +4,40 @@ from wtforms import (
     TextAreaField,
     DateField,
     SelectField,
-    SubmitField,
     BooleanField,
+    SubmitField,
 )
-from wtforms.validators import DataRequired, Length, ValidationError
-
-from app.models import Campaign
+from wtforms.validators import DataRequired, Length
 
 
 class CampaignForm(FlaskForm):
 
     name = StringField(
         "Campaign Name",
-        validators=[
-            DataRequired(),
-            Length(max=100)
-        ]
+        validators=[DataRequired(), Length(max=100)],
+        render_kw={"placeholder": "Example: NADCP Phase IX"},
     )
 
     code = StringField(
         "Campaign Code",
-        validators=[
-            DataRequired(),
-            Length(max=30)
-        ]
+        validators=[DataRequired(), Length(max=30)],
+        render_kw={"placeholder": "Example: NADCP-IX"},
     )
 
     description = TextAreaField(
-        "Description"
+        "Description",
+        validators=[Length(max=1000)],
+        render_kw={"rows": 4},
     )
 
     start_date = DateField(
         "Start Date",
-        validators=[DataRequired()],
-        format="%Y-%m-%d"
+        format="%Y-%m-%d",
     )
 
     end_date = DateField(
         "End Date",
-        validators=[DataRequired()],
-        format="%Y-%m-%d"
+        format="%Y-%m-%d",
     )
 
     status = SelectField(
@@ -51,35 +45,11 @@ class CampaignForm(FlaskForm):
         choices=[
             ("Draft", "Draft"),
             ("Active", "Active"),
+            ("Completed", "Completed"),
             ("Closed", "Closed"),
         ],
-        validators=[DataRequired()]
     )
 
-    is_active = BooleanField(
-        "Set as Active Campaign"
-    )
+    is_active = BooleanField("Active Campaign")
 
     submit = SubmitField("Save Campaign")
-
-    def __init__(self, original_code=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.original_code = original_code
-
-    def validate_code(self, field):
-        if field.data == self.original_code:
-            return
-
-        campaign = Campaign.query.filter_by(code=field.data).first()
-
-        if campaign:
-            raise ValidationError(
-                "Campaign code already exists."
-            )
-
-    def validate_end_date(self, field):
-        if self.start_date.data and field.data:
-            if field.data < self.start_date.data:
-                raise ValidationError(
-                    "End Date cannot be earlier than Start Date."
-                )

@@ -1,0 +1,68 @@
+<aside class="sidebar">
+
+    <div class="sidebar-brand">
+        <i class="fa-solid fa-shield-dog me-2"></i>NCMS
+    </div>
+
+    <ul class="sidebar-menu">
+
+        <li class="small text-uppercase text-muted px-3 mt-2 mb-2">Main</li>
+
+        <li>
+            <a href="{{ url_for('dashboard.index') }}" class="active">
+                <i class="fa-solid fa-house"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+
+        <li class="small text-uppercase text-muted px-3 mt-4 mb-2">Operations</li>
+
+        <li>
+            <a href="{{ url_for('campaign.index') }}">
+                <i class="fa-solid fa-bullseye"></i>
+                <span>Campaigns</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('masterdata.index') }}">
+                <i class="fa-solid fa-file-import"></i>
+                <span>Import Master Data</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="#">
+                <i class="fa-solid fa-users"></i>
+                <span>Squad Monitor</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="#">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+                <span>Public Submission</span>
+            </a>
+        </li>
+
+        <li class="small text-uppercase text-muted px-3 mt-4 mb-2">Analytics</li>
+
+        <li>
+            <a href="#">
+                <i class="fa-solid fa-chart-column"></i>
+                <span>Reports</span>
+            </a>
+        </li>
+
+        <li class="small text-uppercase text-muted px-3 mt-4 mb-2">System</li>
+
+        <li>
+            <a href="#">
+                <i class="fa-solid fa-gear"></i>
+                <span>Settings</span>
+            </a>
+        </li>
+
+    </ul>
+
+</aside>

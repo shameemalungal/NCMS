@@ -1,43 +1,28 @@
-from flask import render_template
+from flask import Blueprint, render_template
 
-from app.dashboard import dashboard_bp
-from app.models import Campaign, Panchayath, Squad, Submission
+dashboard_bp = Blueprint(
+    "dashboard",
+    __name__,
+    url_prefix="/"
+)
 
 
 @dashboard_bp.route("/")
-def dashboard():
+def index():
 
-    campaigns = Campaign.query.count()
-
-    panchayaths = Panchayath.query.count()
-
-    squads = Squad.query.count()
-
-    submitted = Submission.query.count()
-
-    pending = Squad.query.filter_by(status="Pending").count()
-
-    completed = Squad.query.filter_by(status="Completed").count()
-
-    population = sum(
-        p.population or 0
-        for p in Panchayath.query.all()
-    )
-
-    completion = 0
-
-    if squads:
-        completion = round((submitted / squads) * 100, 1)
+    dashboard = {
+        "campaign": "NADCP Phase IX",
+        "status": "Active",
+        "days_remaining": 124,
+        "campaigns": 1,
+        "squads": 0,
+        "submitted": 0,
+        "vaccinations": 0,
+        "achievement": 0,
+    }
 
     return render_template(
-        "dashboard.html",
-
-        campaigns=campaigns,
-        panchayaths=panchayaths,
-        squads=squads,
-        submitted=submitted,
-        pending=pending,
-        completed=completed,
-        population=population,
-        completion=completion
+        "dashboard/index.html",
+        page_title="Dashboard",
+        dashboard=dashboard,
     )

@@ -1,110 +1,361 @@
-body{
-    font-family:'Poppins',sans-serif;
-    background:#f5f7fb;
+/* ==========================================
+   NCMS Dashboard
+   ========================================== */
+
+.dashboard-hero {
+    border-radius: 22px;
+    overflow: hidden;
+    border: none;
+    background: linear-gradient(135deg, #0ea5a4 0%, #4f46e5 100%);
+    color: #fff;
 }
 
-.dashboard-title{
-    font-weight:700;
-    color:#1f2937;
+.dashboard-hero .card-body {
+    padding: 2.5rem;
 }
 
-.dashboard-subtitle{
-    color:#6b7280;
-    margin-bottom:25px;
+.dashboard-hero h2,
+.dashboard-hero h3,
+.dashboard-hero h4 {
+    color: #ffffff;
 }
 
-.stat-card{
-    border:none;
-    border-radius:18px;
-    box-shadow:0 5px 18px rgba(0,0,0,.08);
-    transition:.25s;
+.dashboard-hero .text-muted {
+    color: rgba(255, 255, 255, 0.85) !important;
 }
 
-.stat-card:hover{
-    transform:translateY(-4px);
+.dashboard-hero .small {
+    color: rgba(255, 255, 255, 0.75);
 }
 
-.icon-box{
-    width:70px;
-    height:70px;
-    border-radius:18px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#fff;
-    font-size:30px;
+.dashboard-hero .badge {
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 30px;
 }
 
-.icon-blue{
-    background:#2563eb;
+/* ==========================================
+   Achievement Circle
+   ========================================== */
+
+.achievement-circle {
+    width: 220px;
+    height: 220px;
+    margin: auto;
+    border-radius: 50%;
+    background: rgba(255,255,255,.15);
+    backdrop-filter: blur(10px);
+    border: 6px solid rgba(255,255,255,.25);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    transition: .35s;
 }
 
-.icon-green{
-    background:#16a34a;
+.achievement-circle:hover {
+
+    transform: scale(1.04);
+
 }
 
-.icon-cyan{
-    background:#06b6d4;
+.achievement-circle h1 {
+
+    margin-bottom: .3rem;
+    color: white;
+
 }
 
-.icon-dark{
-    background:#374151;
+.achievement-circle div {
+
+    color: rgba(255,255,255,.85);
+
 }
 
-.stat-value{
-    font-size:2rem;
-    font-weight:700;
-    margin:0;
+/* ==========================================
+   KPI Cards
+   ========================================== */
+
+.dashboard-card {
+
+    border-radius: 18px;
+    transition: .30s ease;
+    cursor: default;
+
 }
 
-.stat-title{
-    color:#4b5563;
-    font-weight:600;
-    margin-bottom:4px;
+.dashboard-card .card-body {
+
+    padding: 1.7rem;
+
 }
 
-.panel-card{
-    border:none;
-    border-radius:18px;
-    box-shadow:0 5px 18px rgba(0,0,0,.08);
+.dashboard-card:hover {
+
+    transform: translateY(-6px);
+
+    box-shadow: 0 18px 35px rgba(0,0,0,.12) !important;
+
 }
 
-.status-item{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:16px 0;
-    border-bottom:1px solid #ececec;
+.dashboard-card .small {
+
+    color: #6c757d;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+
 }
 
-.status-item:last-child{
-    border-bottom:none;
+.dashboard-card h2 {
+
+    color: #222;
+    margin-top: 10px;
+
 }
 
-.status-left{
-    display:flex;
-    align-items:center;
-    gap:14px;
+/* ==========================================
+   Card Styling
+   ========================================== */
+
+.card {
+
+    border-radius: 18px;
+
 }
 
-.status-icon{
-    width:34px;
-    text-align:center;
-    font-size:22px;
+.card-header {
+
+    padding: 1rem 1.5rem;
+
+    background: white;
+
+    border-bottom: 1px solid #f0f0f0;
+
 }
 
-.progress{
-    height:18px;
-    border-radius:20px;
+.card-body {
+
+    padding: 1.5rem;
+
 }
 
-.info-card{
-    border-radius:18px;
-    border:1px solid #b9d8ff;
-    background:#eef6ff;
+/* ==========================================
+   Quick Actions
+   ========================================== */
+
+.list-group-item {
+
+    border: none;
+
+    padding: 16px 22px;
+
+    font-weight: 500;
+
+    transition: .25s;
+
 }
 
-.info-icon{
-    font-size:36px;
-    color:#3b82f6;
+.list-group-item:hover {
+
+    background: #eef8ff;
+
+    color: #0ea5a4;
+
+    padding-left: 30px;
+
+}
+
+/* ==========================================
+   Recent Activity
+   ========================================== */
+
+.table {
+
+    margin-bottom: 0;
+
+}
+
+.table thead th {
+
+    border-top: none;
+
+    font-weight: 600;
+
+    color: #555;
+
+}
+
+.table tbody td {
+
+    vertical-align: middle;
+
+}
+
+/* ==========================================
+   Chart
+   ========================================== */
+
+#progressChart {
+
+    width: 100% !important;
+
+    max-height: 320px;
+
+}
+
+/* ==========================================
+   Achievement Card
+   ========================================== */
+
+.card h5 {
+
+    font-weight: 600;
+
+}
+
+.card p {
+
+    line-height: 1.7;
+
+}
+
+/* ==========================================
+   Hover Animation
+   ========================================== */
+
+.card {
+
+    transition: .25s;
+
+}
+
+.card:hover {
+
+    box-shadow: 0 15px 40px rgba(0,0,0,.08);
+
+}
+
+/* ==========================================
+   Fade Animation
+   ========================================== */
+
+.dashboard-hero,
+.dashboard-card,
+.card {
+
+    animation: fadeUp .6s ease;
+
+}
+
+@keyframes fadeUp {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(20px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
+}
+
+/* ==========================================
+   Responsive
+   ========================================== */
+
+@media (max-width:992px) {
+
+    .dashboard-hero .card-body {
+
+        padding: 2rem;
+
+    }
+
+    .achievement-circle {
+
+        width: 180px;
+
+        height: 180px;
+
+        margin-top: 30px;
+
+    }
+
+}
+
+@media (max-width:768px) {
+
+    .dashboard-hero {
+
+        text-align: center;
+
+    }
+
+    .achievement-circle {
+
+        width: 160px;
+
+        height: 160px;
+
+    }
+
+    .dashboard-card {
+
+        margin-bottom: 10px;
+
+    }
+
+    .card-header {
+
+        text-align: center;
+
+    }
+
+}
+
+@media (max-width:576px) {
+
+    .dashboard-hero .card-body {
+
+        padding: 1.5rem;
+
+    }
+
+    .dashboard-hero h2 {
+
+        font-size: 1.7rem;
+
+    }
+
+    .achievement-circle {
+
+        width: 140px;
+
+        height: 140px;
+
+    }
+
+    .achievement-circle h1 {
+
+        font-size: 2rem;
+
+    }
+
+    .list-group-item {
+
+        font-size: .95rem;
+
+    }
+
 }
