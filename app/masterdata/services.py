@@ -40,15 +40,35 @@ def validate_excel(filepath):
 
         sheet = workbook["Pashudhan ID wise Achievement"]
 
-        headers = []
+        ####################################################
+        # Read first row
+        ####################################################
 
-        for cell in sheet[1]:
-            if cell.value:
-                headers.append(str(cell.value).strip())
-            else:
-                headers.append("")
+        raw_headers = [
+            cell.value
+            for cell in sheet[1]
+        ]
+
+        ####################################################
+        # Keep only non-empty columns
+        ####################################################
+
+        valid_indexes = [
+            i
+            for i, h in enumerate(raw_headers)
+            if h not in (None, "")
+        ]
+
+        headers = [
+            str(raw_headers[i]).strip()
+            for i in valid_indexes
+        ]
 
         result.headers = headers
+
+        ####################################################
+        # Validate required columns
+        ####################################################
 
         missing = [
             column
@@ -64,21 +84,38 @@ def validate_excel(filepath):
 
             return result
 
+        ####################################################
+        # Read preview
+        ####################################################
+
         for row in sheet.iter_rows(
             min_row=2,
             values_only=True,
         ):
 
-            if all(v is None for v in row):
+            filtered_row = [
+                row[i]
+                if i < len(row)
+                else ""
+                for i in valid_indexes
+            ]
+
+            if all(
+                v in (None, "")
+                for v in filtered_row
+            ):
                 continue
 
             result.rows += 1
 
             if len(result.preview) < 20:
-                result.preview.append(row[:len(result.headers)])
+
+                result.preview.append([
+                    "" if v is None else v
+                    for v in filtered_row
+                ])
 
         result.success = True
-
         result.message = "Validation completed successfully."
 
         return result

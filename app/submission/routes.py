@@ -30,20 +30,7 @@ def submit(token):
 
     if form.validate_on_submit():
         try:
-            other_reasons = request.form.getlist("other_reason[]")
-            other_counts = request.form.getlist("other_count[]")
-
-            first_reason = ""
-            first_count = 0
-
-            if other_reasons:
-                first_reason = other_reasons[0].strip()
-
-            if other_counts:
-                try:
-                    first_count = int(other_counts[0] or 0)
-                except ValueError:
-                    first_count = 0
+            
 
             submission = Submission(
                 squad_id=squad.id,
@@ -54,12 +41,13 @@ def submit(token):
                 below_4_months=form.below_4_months.data or 0,
                 pregnant=form.pregnant.data or 0,
                 unwilling=form.unwilling.data or 0,
-                other_reason=first_reason,
-                other_count=first_count,
-                vaccination_reason=(form.remarks.data or "").strip(),
+                other_reason=(form.other_reason.data or "").strip(),
+                other_count=form.other_count.data or 0,
+                vaccination_reason=None,
+                remarks=(form.remarks.data or "").strip(),
                 vaccination_percentage=0,
                 pashudhan_percentage=0,
-                submitted_from=request.remote_addr,
+                submitted_from=request.remote_addr,               
                 status="Submitted"
             )
 

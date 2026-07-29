@@ -134,24 +134,34 @@
                         </div>
 
                         <div class="mt-4">
-                            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                                <div>
-                                    <h6 class="fw-bold mb-1">H. Other reasons</h6>
-                                    <p class="text-muted small mb-0">Add any additional categories that explain the leftover count.</p>
-                                </div>
-                                <button type="button" class="btn btn-outline-danger btn-sm" id="addReasonBtn">
-                                    <i class="fas fa-plus me-1"></i>Add reason
-                                </button>
-                            </div>
+                            <h6 class="fw-bold mb-3">H. Other Reason</h6>
 
-                            <div id="otherReasonsContainer" class="d-flex flex-column gap-2">
-                                <div class="reason-row">
-                                    <input type="text" class="form-control" name="other_reason[]" placeholder="Reason">
-                                    <input type="number" class="form-control" name="other_count[]" min="0" step="1" placeholder="0">
-                                    <button type="button" class="btn btn-outline-secondary remove-reason">Remove</button>
+                            <div class="row g-3">
+
+                                <div class="col-md-8">
+                                    <label class="form-label">Reason</label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        name="other_reason"
+                                        value="{{ submission.other_reason if submission else '' }}"
+                                        placeholder="Specify other reason (if any)">
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Count</label>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        name="other_count"
+                                        min="0"
+                                        value="{{ submission.other_count if submission else 0 }}">
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+</div>
                     </div>
                 </div>
 

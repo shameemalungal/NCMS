@@ -1,8 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, SubmitField, TextAreaField
+from wtforms import IntegerField, SubmitField, TextAreaField, StringField
 from wtforms.validators import NumberRange, Optional
 from wtforms.widgets import NumberInput
-
 
 NUMBER_WIDGET = NumberInput()
 
@@ -139,6 +138,28 @@ class SubmissionForm(FlaskForm):
             "autocomplete": "off",
             "step": "1",
             "min": "0"
+        }
+    )
+
+    other_reason = StringField(
+        "H. Other Reason",
+        validators=[Optional()],
+        render_kw={
+            "placeholder": "Specify other reason (if any)"
+        }
+    )
+
+    other_count = IntegerField(
+        "Other Count",
+        validators=[
+            Optional(),
+            NumberRange(min=0)
+        ],
+        widget=NUMBER_WIDGET,
+        render_kw={
+            "placeholder": "0",
+            "min": "0",
+            "step": "1"
         }
     )
 

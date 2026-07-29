@@ -21,41 +21,74 @@ class MasterDataImporter:
         self.reader = ExcelReader(filepath)
 
         self.campaign = None
-
         self.panchayaths = {}
         self.squads = {}
 
     def import_data(self):
 
+        print("=" * 80)
+        print("MASTER DATA IMPORT STARTED")
+        print("=" * 80)
+
         self.reader.load()
+        print("Workbook Loaded")
+
         self.reader.validate()
+        print("Workbook Validated")
 
         rows = self.reader.get_squad_rows()
 
+        print(f"Rows Found : {len(rows)}")
+
+        if rows:
+            print("First Row :", rows[0])
+
         errors = WorkbookValidator.validate_rows(rows)
 
+        print(f"Validation Errors : {len(errors)}")
+
         if errors:
+            print(errors)
             raise Exception("\n".join(errors))
 
         population = self.reader.get_population()
 
+        print(f"Population Records : {len(population)}")
+
         try:
 
+            print("\nCreating Campaign...")
             self.create_campaign()
+            print("Campaign ID :", self.campaign.id)
 
+            print("\nImporting Panchayaths...")
             self.import_panchayaths(rows, population)
+            print("Panchayaths Imported :", len(self.panchayaths))
 
+            print("\nImporting Squads...")
             self.import_squads(rows)
+            print("Squads Imported :", len(self.squads))
 
+            print("\nImporting Members...")
             self.import_members(rows)
 
+            print("Members Added")
+
+            print("\nCreating Import History...")
             self.create_import_history()
 
+            print("\nCommitting Transaction...")
             db.session.commit()
 
-        except Exception:
+            print("\nIMPORT COMPLETED SUCCESSFULLY")
+
+        except Exception as ex:
 
             db.session.rollback()
+
+            print("\nIMPORT FAILED")
+            print(type(ex).__name__)
+            print(ex)
 
             raise
 
@@ -85,6 +118,11 @@ class MasterDataImporter:
                 for row in rows
             }
         )
+
+        print("Unique Panchayaths :", len(unique_names))
+
+        if unique_names:
+            print("First Five :", unique_names[:5])
 
         for name in unique_names:
 
@@ -134,6 +172,8 @@ class MasterDataImporter:
 
     def import_members(self, rows):
 
+        count = 0
+
         for row in rows:
 
             key = (
@@ -166,6 +206,10 @@ class MasterDataImporter:
             )
 
             db.session.add(member)
+
+            count += 1
+
+        print("Members Imported :", count)
 
     ##############################################################
 

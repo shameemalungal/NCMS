@@ -322,6 +322,10 @@ class Submission(TimestampMixin, db.Model):
         default=0
     )
 
+    remarks = db.Column(
+        db.Text
+    )
+    
     vaccination_percentage = db.Column(
         db.Float,
         default=0
