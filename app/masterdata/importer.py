@@ -1,213 +1,138 @@
 import re
 import secrets
 
-import pandas as pd
-
 from app.extensions import db
-from app.masterdata.services import MasterDataService
+from app.models import Campaign, Panchayath, Squad, SquadMember, ImportHistory
 
 
 class MasterDataImporter:
-
-    REQUIRED_POP_COLUMNS = [
-        "PANCHAYATH",
-        "Population FMD"
-    ]
-
-    REQUIRED_SQUAD_COLUMNS = [
-        "PANCHAYATH",
-        "SQUAD No.",
-        "SQUAD DAYS",
-        "SQUAD",
-        "Pashudhan ID"
-    ]
-
-    def __init__(self, file_path, campaign_name):
-
+    def __init__(self, file_path, campaign_id):
         self.file_path = file_path
-        self.campaign_name = campaign_name
-
+        self.campaign_id = campaign_id
         self.summary = {
             "campaign_created": False,
             "panchayaths_created": 0,
             "panchayaths_updated": 0,
             "squads_created": 0,
             "squads_updated": 0,
-            "errors": []
+            "members_created": 0,
+            "errors": [],
         }
 
-    @staticmethod
-    def clean_columns(df):
-        df.columns = (
-            df.columns.astype(str)
-            .str.replace("\n", " ", regex=False)
-            .str.strip()
-            .str.replace(r"\s+", " ", regex=True)
-        )
-        return df
-
-    @staticmethod
-    def validate_columns(df, required, sheet_name):
-
-        missing = []
-
-        for col in required:
-            if col not in df.columns:
-                missing.append(col)
-
-        if missing:
-            raise Exception(
-                f"{sheet_name}: Missing columns -> {', '.join(missing)}"
-            )
+    def _get_or_create_campaign(self):
+        campaign = Campaign.query.get(self.campaign_id)
+        if campaign is None:
+            raise Exception("Selected campaign not found.")
+        return campaign
 
     def import_data(self):
-
         try:
+            campaign = self._get_or_create_campaign()
 
-            workbook = pd.ExcelFile(self.file_path)
+            from openpyxl import load_workbook
 
-            if "Panchayath Population" not in workbook.sheet_names:
-                raise Exception("Sheet 'Panchayath Population' not found.")
+            workbook = load_workbook(self.file_path, data_only=True)
+            sheet = workbook["Pashudhan ID wise Achievement"]
+            population_sheet = workbook["Panchayath Population"] if "Panchayath Population" in workbook.sheetnames else None
 
-            if "Pashudhan ID wise Achievement" not in workbook.sheet_names:
-                raise Exception("Sheet 'Pashudhan ID wise Achievement' not found.")
+            population_map = {}
+            if population_sheet is not None:
+                for row in population_sheet.iter_rows(min_row=2, values_only=True):
+                    panchayath_name = row[0] if len(row) > 0 else None
+                    population = row[1] if len(row) > 1 else 0
+                    if not panchayath_name:
+                        continue
+                    name = str(panchayath_name).strip()
+                    if not name or name.lower() == "nan" or "total" in name.lower():
+                        continue
+                    population_map[name] = int(population or 0)
 
-            pop_df = pd.read_excel(
-                workbook,
-                sheet_name="Panchayath Population"
-            )
-
-            squad_df = pd.read_excel(
-                workbook,
-                sheet_name="Pashudhan ID wise Achievement"
-            )
-
-            pop_df = self.clean_columns(pop_df)
-            squad_df = self.clean_columns(squad_df)
-
-            self.validate_columns(
-                pop_df,
-                self.REQUIRED_POP_COLUMNS,
-                "Panchayath Population"
-            )
-
-            self.validate_columns(
-                squad_df,
-                self.REQUIRED_SQUAD_COLUMNS,
-                "Pashudhan ID wise Achievement"
-            )
-
-            campaign, created = (
-                MasterDataService.get_or_create_campaign(
-                    self.campaign_name
-                )
-            )
-
-            self.summary["campaign_created"] = created
+            headers = [str(c.value).strip() if c.value is not None else "" for c in sheet[1]]
+            header_index = {h: i for i, h in enumerate(headers) if h}
 
             panchayath_cache = {}
 
-            # -------------------------------------------------
-            # Import Panchayaths
-            # -------------------------------------------------
-
-            for _, row in pop_df.iterrows():
-
-                # Skip blank rows
-                if pd.isna(row["PANCHAYATH"]):
+            for row in sheet.iter_rows(min_row=2, values_only=True):
+                if all(v in (None, "") for v in row):
                     continue
 
-                name = str(row["PANCHAYATH"]).strip()
-
-                # Skip blank names
-                if not name:
+                name = str(row[header_index["PANCHAYATH"]]).strip()
+                if not name or name.lower() == "nan" or "total" in name.lower():
                     continue
 
-                # Skip NaN text
-                if name.lower() == "nan":
-                    continue
+                squad_no = int(row[header_index["SQUAD No."]])
+                squad_days = int(row[header_index["SQUAD DAYS"]] or 0)
+                member_text = str(row[header_index["SQUAD"]]).strip()
+                pashudhan_id = str(row[header_index["Pashudhan ID"]]).strip()
+                population = population_map.get(name, 0)
 
-                # Skip total/footer rows
-                if "total" in name.lower():
-                    continue
+                panchayath = panchayath_cache.get(name)
+                if panchayath is None:
+                    panchayath = Panchayath.query.filter_by(campaign_id=campaign.id, name=name).first()
+                    if panchayath is None:
+                        panchayath = Panchayath(campaign_id=campaign.id, name=name, population=population)
+                        db.session.add(panchayath)
+                        db.session.flush()
+                        self.summary["panchayaths_created"] += 1
+                    else:
+                        panchayath.population = population
+                        self.summary["panchayaths_updated"] += 1
+                    panchayath_cache[name] = panchayath
 
-                population = row["Population FMD"]
-
-                if pd.isna(population):
-                    population = 0
-
-                population = int(population)
-
-                panchayath, created = (
-                    MasterDataService.get_or_create_panchayath(
-                        name=name,
-                        population=population
+                squad = Squad.query.filter_by(campaign_id=campaign.id, squad_no=squad_no).first()
+                if squad is None:
+                    squad = Squad(
+                        campaign_id=campaign.id,
+                        panchayath_id=panchayath.id,
+                        squad_no=squad_no,
+                        squad_days=squad_days,
+                        target=population,
+                        submission_token=secrets.token_hex(16),
+                        status="Pending",
                     )
-                )
-
-                panchayath_cache[name] = panchayath
-
-                if created:
-                    self.summary["panchayaths_created"] += 1
-                else:
-                    self.summary["panchayaths_updated"] += 1
-
-            db.session.flush()
-
-            # -------------------------------------------------
-            # Import Squads
-            # -------------------------------------------------
-
-            for _, row in squad_df.iterrows():
-
-                name = str(row["PANCHAYATH"]).strip()
-
-                if name not in panchayath_cache:
-                    raise Exception(
-                        f"Panchayath '{name}' not found."
-                    )
-
-                member = str(row["SQUAD"]).strip()
-
-                office = ""
-
-                match = re.match(
-                    r"^(.*?)\s*\((.*?)\)$",
-                    member
-                )
-
-                if match:
-                    member = match.group(1).strip()
-                    office = match.group(2).strip()
-
-                squad, created = (
-                    MasterDataService.get_or_create_squad(
-                        campaign=campaign,
-                        panchayath=panchayath_cache[name],
-                        squad_no=int(row["SQUAD No."]),
-                        squad_days=int(row["SQUAD DAYS"]),
-                        squad_member=member,
-                        office=office,
-                        pashudhan_id=str(
-                            row["Pashudhan ID"]
-                        ).strip(),
-                        submission_token=secrets.token_hex(24)
-                    )
-                )
-
-                if created:
+                    db.session.add(squad)
+                    db.session.flush()
                     self.summary["squads_created"] += 1
                 else:
+                    squad.panchayath_id = panchayath.id
+                    squad.squad_days = squad_days
+                    squad.target = population
                     self.summary["squads_updated"] += 1
 
+                member_name = member_text
+                office = ""
+                match = re.match(r"^(.*?)\s*\((.*?)\)$", member_text)
+                if match:
+                    member_name = match.group(1).strip()
+                    office = match.group(2).strip()
+
+                existing_member = SquadMember.query.filter_by(squad_id=squad.id, pashudhan_id=pashudhan_id).first()
+                if existing_member is None:
+                    db.session.add(
+                        SquadMember(
+                            squad_id=squad.id,
+                            member_name=member_name,
+                            office=office,
+                            pashudhan_id=pashudhan_id,
+                            full_text=member_text,
+                        )
+                    )
+                    self.summary["members_created"] += 1
+                else:
+                    existing_member.member_name = member_name
+                    existing_member.office = office
+                    existing_member.full_text = member_text
+
+            db.session.add(
+                ImportHistory(
+                    campaign_id=campaign.id,
+                    filename=self.file_path.split("/")[-1].split("\\")[-1],
+                    status="SUCCESS",
+                )
+            )
             db.session.commit()
-
             return self.summary
-
         except Exception as e:
-
             db.session.rollback()
-
             self.summary["errors"].append(str(e))
-
             return self.summary
