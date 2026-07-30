@@ -42,7 +42,7 @@ class MasterDataImporter:
             self.summary["errors"].extend(validation.errors)
             return self.summary
 
-        campaign = db.session.get(Campaign, self.campaign_id)
+        campaign = Campaign.query.get(self.campaign_id)
         if campaign is None:
             self.summary["errors"].append("Selected campaign not found.")
             return self.summary
