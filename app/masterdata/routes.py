@@ -1,7 +1,8 @@
+import os
 from pathlib import Path
 import tempfile
 
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, flash, render_template
 
 from app.models import Campaign
 from app.masterdata.forms import MasterDataImportForm
@@ -15,56 +16,47 @@ masterdata_bp = Blueprint("masterdata", __name__, url_prefix="/masterdata")
 @masterdata_bp.route("/", methods=["GET", "POST"])
 def index():
     form = MasterDataImportForm()
-
     campaigns = Campaign.query.order_by(Campaign.name).all()
-    form.campaign.choices = [(c.id, f"{c.name} ({c.code})") for c in campaigns]
+    form.campaign.choices = [(campaign.id, f"{campaign.name} ({campaign.code})") for campaign in campaigns]
 
     validation = None
     import_summary = None
-    preview_mode = False
 
     if form.validate_on_submit():
         uploaded = form.excel_file.data
-        suffix = Path(uploaded.filename).suffix or ".xlsx"
+        suffix = Path(uploaded.filename).suffix.lower() or ".xlsx"
+        temp_path = None
 
-        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp:
-            uploaded.save(temp.name)
-            validation = validate_excel(temp.name)
+        try:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
+                temp_path = temp_file.name
+                uploaded.save(temp_path)
 
+            validation = validate_excel(temp_path)
             if not validation.success:
                 for error in validation.errors:
                     flash(error, "danger")
-                return render_template(
-                    "masterdata/index.html",
-                    page_title="Master Data Import",
-                    form=form,
-                    validation=validation,
-                    import_summary=None,
-                    preview_mode=False,
-                )
-
-            preview_mode = True
-
-            if form.import_data.data:
-                importer = MasterDataImporter(
-                    file_path=temp.name,
+            elif form.import_data.data:
+                import_summary = MasterDataImporter(
+                    file_path=temp_path,
                     campaign_id=form.campaign.data,
-                )
-                import_summary = importer.import_data()
-                if import_summary.get("errors"):
+                ).import_data()
+                if import_summary["errors"]:
                     for error in import_summary["errors"]:
                         flash(error, "danger")
                 else:
                     flash("Master data imported successfully.", "success")
-                    return redirect(url_for("masterdata.index"))
             else:
                 flash(validation.message, "info")
+        finally:
+            if temp_path and os.path.exists(temp_path):
+                os.remove(temp_path)
 
     return render_template(
         "masterdata/index.html",
         page_title="Master Data Import",
         form=form,
+        campaigns_available=bool(campaigns),
         validation=validation,
         import_summary=import_summary,
-        preview_mode=preview_mode,
     )
