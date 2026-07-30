@@ -9,34 +9,42 @@
             <div class="card shadow-sm border-0 rounded-4">
                 <div class="card-header bg-white border-0 py-4">
                     <h2 class="fw-bold mb-1">Master Data Import</h2>
-                    <p class="text-muted mb-0">Import Panchayaths and Squad Master Data from an Excel file.</p>
+                    <p class="text-muted mb-0">Validate and import Panchayaths, squads, and squad members for a campaign.</p>
                 </div>
                 <div class="card-body">
+                    {% if not campaigns_available %}
+                    <div class="alert alert-warning">
+                        Create a campaign before importing its master data.
+                    </div>
+                    {% endif %}
+
                     <form method="POST" enctype="multipart/form-data">
                         {{ form.hidden_tag() }}
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 {{ form.campaign.label(class="form-label fw-semibold") }}
-                                {{ form.campaign(class="form-select") }}
+                                {{ form.campaign(class="form-select", disabled=not campaigns_available) }}
                                 {% for error in form.campaign.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
                             </div>
                             <div class="col-md-6">
                                 {{ form.excel_file.label(class="form-label fw-semibold") }}
-                                {{ form.excel_file(class="form-control") }}
+                                {{ form.excel_file(class="form-control", disabled=not campaigns_available) }}
                                 {% for error in form.excel_file.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
                                 <small class="text-muted">Accepted format: <strong>.xlsx</strong></small>
                             </div>
                         </div>
 
                         <div class="alert alert-info">
-                            <strong>Expected sheet:</strong> Pashudhan ID wise Achievement
+                            <strong>Required sheet:</strong> Pashudhan ID wise Achievement
                             <br>
                             <strong>Required columns:</strong> PANCHAYATH, SQUAD No., SQUAD DAYS, SQUAD, Pashudhan ID
+                            <br>
+                            <strong>Optional sheet:</strong> Panchayath Population (Panchayath name and population in the first two columns)
                         </div>
 
                         <div class="d-flex gap-2 justify-content-end">
-                            {{ form.validate(class="btn btn-outline-primary px-4") }}
-                            {{ form.import_data(class="btn btn-primary px-4") }}
+                            {{ form.validate(class="btn btn-outline-primary px-4", disabled=not campaigns_available) }}
+                            {{ form.import_data(class="btn btn-primary px-4", disabled=not campaigns_available) }}
                         </div>
                     </form>
 
@@ -44,14 +52,25 @@
                     <hr class="my-4">
                     <h4 class="fw-bold mb-3">Validation Result</h4>
                     <div class="row g-3 mb-4">
-                        <div class="col-md-4"><div class="border rounded-3 p-3"><div class="text-muted">Rows Found</div><div class="fs-3 fw-bold">{{ validation.rows }}</div></div></div>
-                        <div class="col-md-4"><div class="border rounded-3 p-3"><div class="text-muted">Status</div><div class="fs-3 fw-bold">{{ 'Valid' if validation.success else 'Failed' }}</div></div></div>
+                        <div class="col-md-4"><div class="border rounded-3 p-3"><div class="text-muted">Data Rows</div><div class="fs-3 fw-bold">{{ validation.rows }}</div></div></div>
+                        <div class="col-md-4"><div class="border rounded-3 p-3"><div class="text-muted">Status</div><div class="fs-3 fw-bold">{{ "Valid" if validation.success else "Failed" }}</div></div></div>
                     </div>
 
+                    {% if validation.errors %}
+                    <div class="alert alert-danger">
+                        <strong>Fix the following before importing:</strong>
+                        <ul class="mb-0 mt-2">
+                            {% for error in validation.errors %}<li>{{ error }}</li>{% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    {% if validation.headers %}
                     <h5>Headers Found</h5>
                     <ul class="mb-3">
                         {% for header in validation.headers %}<li>{{ header }}</li>{% endfor %}
                     </ul>
+                    {% endif %}
 
                     {% if validation.preview %}
                     <h5>Preview (First 20 Rows)</h5>
@@ -62,7 +81,7 @@
                             </thead>
                             <tbody>
                                 {% for row in validation.preview %}
-                                <tr>{% for value in row %}<td>{{ value or '' }}</td>{% endfor %}</tr>
+                                <tr>{% for value in row %}<td>{{ value if value is not none else "" }}</td>{% endfor %}</tr>
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -73,11 +92,12 @@
                     {% if import_summary %}
                     <hr class="my-4">
                     <h4 class="fw-bold mb-3">Import Summary</h4>
+                    <p class="text-muted">Processed {{ import_summary.source_rows }} source rows. Re-importing the same workbook updates matching master data instead of duplicating it.</p>
                     <div class="row g-3">
                         <div class="col-md-3"><div class="border rounded-3 p-3"><div class="text-muted">Panchayaths Created</div><div class="fs-3 fw-bold">{{ import_summary.panchayaths_created }}</div></div></div>
                         <div class="col-md-3"><div class="border rounded-3 p-3"><div class="text-muted">Panchayaths Updated</div><div class="fs-3 fw-bold">{{ import_summary.panchayaths_updated }}</div></div></div>
-                        <div class="col-md-3"><div class="border rounded-3 p-3"><div class="text-muted">Squads Created</div><div class="fs-3 fw-bold">{{ import_summary.squads_created }}</div></div></div>
-                        <div class="col-md-3"><div class="border rounded-3 p-3"><div class="text-muted">Members Created</div><div class="fs-3 fw-bold">{{ import_summary.members_created }}</div></div></div>
+                        <div class="col-md-3"><div class="border rounded-3 p-3"><div class="text-muted">Squads Created / Updated</div><div class="fs-3 fw-bold">{{ import_summary.squads_created }} / {{ import_summary.squads_updated }}</div></div></div>
+                        <div class="col-md-3"><div class="border rounded-3 p-3"><div class="text-muted">Members Created / Updated</div><div class="fs-3 fw-bold">{{ import_summary.members_created }} / {{ import_summary.members_updated }}</div></div></div>
                     </div>
                     {% if import_summary.errors %}
                     <div class="alert alert-danger mt-3 mb-0">
