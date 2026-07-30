@@ -43,7 +43,7 @@
                         </div>
 
                         <div class="d-flex gap-2 justify-content-end">
-                            {{ form.validate(class="btn btn-outline-primary px-4", disabled=not campaigns_available) }}
+                            {{ form.validate_file(class="btn btn-outline-primary px-4", disabled=not campaigns_available) }}
                             {{ form.import_data(class="btn btn-primary px-4", disabled=not campaigns_available) }}
                         </div>
                     </form>
