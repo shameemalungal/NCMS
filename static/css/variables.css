@@ -1,0 +1,72 @@
+/* ==========================================================
+   NCMS UI Design System v1.0
+   variables.css
+   ========================================================== */
+
+:root {
+
+    /* Brand Colors */
+    --primary: #16A34A;
+    --primary-dark: #15803D;
+    --primary-light: #DCFCE7;
+
+    --secondary: #0EA5A4;
+    --secondary-light: #CCFBF1;
+
+    --accent: #2563EB;
+    --accent-light: #DBEAFE;
+
+    --success: #16A34A;
+    --warning: #F59E0B;
+    --danger: #DC2626;
+    --info: #0284C7;
+
+    /* Background */
+    --background: #F8FAFC;
+    --surface: #FFFFFF;
+    --surface-alt: #F1F5F9;
+
+    /* Typography */
+    --text: #0F172A;
+    --text-muted: #64748B;
+    --text-light: #94A3B8;
+
+    /* Borders */
+    --border: #E2E8F0;
+
+    /* Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --radius-xl: 24px;
+    --radius-pill: 999px;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(15,23,42,.05);
+    --shadow-md: 0 10px 30px rgba(15,23,42,.08);
+    --shadow-lg: 0 20px 40px rgba(15,23,42,.12);
+
+    /* Layout */
+    --sidebar-width: 270px;
+    --header-height: 70px;
+
+    /* Spacing */
+    --space-xs: .25rem;
+    --space-sm: .5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-xxl: 3rem;
+
+    /* Animation */
+    --transition: .25s ease;
+
+    /* Fonts */
+    --font-family:
+        "Inter",
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+}
