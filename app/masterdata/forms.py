@@ -1,23 +1,10 @@
 from flask_wtf import FlaskForm
-
-from wtforms import (
-    SelectField,
-    FileField,
-    SubmitField,
-)
-
-from wtforms.validators import (
-    DataRequired,
-)
-
-from flask_wtf.file import (
-    FileAllowed,
-    FileRequired,
-)
+from flask_wtf.file import FileAllowed, FileRequired
+from wtforms import FileField, SelectField, SubmitField
+from wtforms.validators import DataRequired
 
 
 class MasterDataImportForm(FlaskForm):
-
     campaign = SelectField(
         "Campaign",
         coerce=int,
@@ -28,13 +15,9 @@ class MasterDataImportForm(FlaskForm):
         "Excel File",
         validators=[
             FileRequired(message="Please select an Excel file."),
-            FileAllowed(
-                ["xlsx"],
-                "Only .xlsx files are allowed."
-            ),
+            FileAllowed(["xlsx"], "Only .xlsx files are allowed."),
         ],
     )
 
-    validate = SubmitField("Validate File")
-
+    validate_file = SubmitField("Validate File")
     import_data = SubmitField("Import Master Data")
