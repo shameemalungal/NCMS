@@ -5,7 +5,6 @@ from flask import Flask
 from config import Config
 from app.extensions import db, migrate
 
-from app.routes.import_routes import bp as import_bp
 from app.dashboard import dashboard_bp
 from app.submission import submission_bp
 from app.campaign import campaign_bp
@@ -29,8 +28,7 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
 
-    # Register Blueprints
-    app.register_blueprint(import_bp)
+    # Register blueprints
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(submission_bp)
     app.register_blueprint(campaign_bp)
