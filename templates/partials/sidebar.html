@@ -1,68 +1,86 @@
 <aside class="sidebar">
 
+    <!-- Brand -->
     <div class="sidebar-brand">
-        <i class="fa-solid fa-shield-dog me-2"></i>NCMS
+        <div class="brand-logo">
+            <i class="bi bi-shield-check"></i>
+        </div>
+
+        <div class="brand-text">
+            <h4>NCMS</h4>
+            <small>NADCP Campaign</small>
+        </div>
     </div>
 
-    <ul class="sidebar-menu">
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
 
-        <li class="small text-uppercase text-muted px-3 mt-2 mb-2">Main</li>
+        <div class="nav-section">
+            <span class="nav-title">MAIN</span>
 
-        <li>
-            <a href="{{ url_for('dashboard.index') }}" class="active">
-                <i class="fa-solid fa-house"></i>
+            <a href="{{ url_for('dashboard.index') }}"
+               class="nav-link {% if request.endpoint=='dashboard.index' %}active{% endif %}">
+                <i class="bi bi-speedometer2"></i>
                 <span>Dashboard</span>
             </a>
-        </li>
 
-        <li class="small text-uppercase text-muted px-3 mt-4 mb-2">Operations</li>
-
-        <li>
-            <a href="{{ url_for('campaign.index') }}">
-                <i class="fa-solid fa-bullseye"></i>
-                <span>Campaigns</span>
+            <a href="{{ url_for('submission.index') }}"
+               class="nav-link {% if request.blueprint=='submission' %}active{% endif %}">
+                <i class="bi bi-ui-checks-grid"></i>
+                <span>Submissions</span>
             </a>
-        </li>
 
-        <li>
-            <a href="{{ url_for('masterdata.index') }}">
-                <i class="fa-solid fa-file-import"></i>
-                <span>Import Master Data</span>
+            <a href="{{ url_for('masterdata.index') }}"
+               class="nav-link {% if request.blueprint=='masterdata' %}active{% endif %}">
+                <i class="bi bi-database"></i>
+                <span>Master Data</span>
             </a>
-        </li>
 
-        <li>
-            <a href="#">
-                <i class="fa-solid fa-users"></i>
-                <span>Squad Monitor</span>
+            <a href="#"
+               class="nav-link">
+                <i class="bi bi-people"></i>
+                <span>Squads</span>
             </a>
-        </li>
 
-        <li>
-            <a href="#">
-                <i class="fa-solid fa-mobile-screen-button"></i>
-                <span>Public Submission</span>
-            </a>
-        </li>
-
-        <li class="small text-uppercase text-muted px-3 mt-4 mb-2">Analytics</li>
-
-        <li>
-            <a href="#">
-                <i class="fa-solid fa-chart-column"></i>
+            <a href="#"
+               class="nav-link">
+                <i class="bi bi-graph-up-arrow"></i>
                 <span>Reports</span>
             </a>
-        </li>
 
-        <li class="small text-uppercase text-muted px-3 mt-4 mb-2">System</li>
+        </div>
 
-        <li>
-            <a href="#">
-                <i class="fa-solid fa-gear"></i>
+        <div class="nav-section">
+
+            <span class="nav-title">
+                ADMINISTRATION
+            </span>
+
+            <a href="#"
+               class="nav-link">
+                <i class="bi bi-gear"></i>
                 <span>Settings</span>
             </a>
-        </li>
 
-    </ul>
+        </div>
+
+    </nav>
+
+    <!-- Footer -->
+    <div class="sidebar-footer">
+
+        <div class="campaign-card">
+
+            <small>Active Campaign</small>
+
+            <h6>NADCP Phase IX</h6>
+
+            <span class="badge bg-success">
+                Active
+            </span>
+
+        </div>
+
+    </div>
 
 </aside>

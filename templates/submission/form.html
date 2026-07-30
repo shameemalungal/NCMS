@@ -1,226 +1,219 @@
 {% extends "base.html" %}
 
-{% block title %}NADCP Phase 8 Completion Report{% endblock %}
+{% from "components/card.html" import card %}
+{% from "components/form_field.html" import form_field %}
 
-{% block styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/submission.css') }}">
+{% block title %}Public Submission{% endblock %}
+
+{% block page_title %}
+Public Submission
 {% endblock %}
 
-{% macro render_number_field(field, label, hint='') %}
-<div class="submission-field">
-    <label for="{{ field.id }}" class="form-label fw-semibold">{{ label }}</label>
-    <div class="input-group input-group-lg">
-        {{ field(class="form-control" ~ (" is-invalid" if field.errors else ""), placeholder="0", autocomplete="off", min="0", step="1") }}
-        <span class="input-group-text">Nos.</span>
-    </div>
-    {% if hint %}
-    <div class="form-text">{{ hint }}</div>
-    {% endif %}
-    {% if field.errors %}
-    <div class="invalid-feedback d-block">{{ field.errors[0] }}</div>
-    {% endif %}
-</div>
-{% endmacro %}
+{% block page_subtitle %}
+NADCP Phase IX Campaign Data Submission
+{% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4 submission-shell">
-    <div class="submission-hero card border-0 shadow-sm mb-4">
-        <div class="card-body">
-            <div class="row align-items-center g-4">
-                <div class="col-lg-8">
-                    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-                        <span class="submission-pill">NADCP Phase 8</span>
-                        <span class="submission-pill subtle">Submission Portal</span>
+
+<div class="container-fluid">
+
+    <div class="row">
+
+        <div class="col-lg-10 mx-auto">
+
+            <!-- Campaign Information -->
+            <div class="ncms-card mb-4">
+
+                <h4 class="mb-4">
+                    <i class="bi bi-megaphone"></i>
+                    Campaign Information
+                </h4>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        {{ form.campaign.label(class="form-label") }}
+                        {{ form.campaign(class="form-select") }}
                     </div>
-                    <h2 class="fw-bold mb-2">Completion report for squad {{ squad.squad_no }}</h2>
-                    <p class="mb-4">Capture the campaign outcome clearly before the report is finalized.</p>
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <div class="small text-white-50">Panchayath</div>
-                            <div class="fw-semibold">{{ squad.panchayath.name }}</div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="small text-white-50">Member</div>
-                            <div class="fw-semibold">{{ squad.squad_member or '—' }}</div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="small text-white-50">Office</div>
-                            <div class="fw-semibold">{{ squad.office or '—' }}</div>
-                        </div>
+
+                    <div class="col-md-6 mb-3">
+                        {{ form.date.label(class="form-label") }}
+                        {{ form.date(class="form-control") }}
                     </div>
+
                 </div>
-                <div class="col-lg-4">
-                    <div class="submission-highlight">
-                        <div class="submission-highlight-title">Overall total</div>
-                        <div class="submission-highlight-value" id="summaryTotal">0</div>
-                        <div class="submission-highlight-caption">animals accounted for</div>
-                    </div>
-                </div>
+
             </div>
+
+            <!-- Squad Information -->
+            <div class="ncms-card mb-4">
+
+                <h4 class="mb-4">
+                    <i class="bi bi-people"></i>
+                    Squad Information
+                </h4>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        {{ form.squad.label(class="form-label") }}
+                        {{ form.squad(class="form-select") }}
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        {{ form.panchayath.label(class="form-label") }}
+                        {{ form.panchayath(class="form-control", readonly=True) }}
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Vaccination -->
+            <div class="ncms-card mb-4">
+
+                <h4 class="mb-4">
+                    <i class="bi bi-shield-check"></i>
+                    Vaccination Details
+                </h4>
+
+                <div class="row">
+
+                    <div class="col-md-4">
+                        {{ form.total_animals.label(class="form-label") }}
+                        {{ form.total_animals(class="form-control") }}
+                    </div>
+
+                    <div class="col-md-4">
+                        {{ form.vaccinated.label(class="form-label") }}
+                        {{ form.vaccinated(class="form-control live-calc") }}
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Vaccination %
+                        </label>
+
+                        <input
+                            id="vaccination_percentage"
+                            class="form-control"
+                            readonly>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Pashudhan -->
+            <div class="ncms-card mb-4">
+
+                <h4 class="mb-4">
+                    <i class="bi bi-database"></i>
+                    Pashudhan Entry
+                </h4>
+
+                <div class="row">
+
+                    <div class="col-md-4">
+
+                        {{ form.entries.label(class="form-label") }}
+                        {{ form.entries(class="form-control live-calc") }}
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Entry %
+                        </label>
+
+                        <input
+                            id="entry_percentage"
+                            class="form-control"
+                            readonly>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Difference
+                        </label>
+
+                        <input
+                            id="difference"
+                            class="form-control"
+                            readonly>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Leftover -->
+            <div class="ncms-card mb-4">
+
+                <h4 class="mb-4">
+                    <i class="bi bi-exclamation-circle"></i>
+                    Leftover Details
+                </h4>
+
+                <div class="row">
+
+                    <div class="col-md-3">
+                        {{ form.diseased(class="form-control") }}
+                    </div>
+
+                    <div class="col-md-3">
+                        {{ form.below4months(class="form-control") }}
+                    </div>
+
+                    <div class="col-md-3">
+                        {{ form.pregnant(class="form-control") }}
+                    </div>
+
+                    <div class="col-md-3">
+                        {{ form.unwilling(class="form-control") }}
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Remarks -->
+
+            <div class="ncms-card mb-4">
+
+                <h4 class="mb-4">
+
+                    Remarks
+
+                </h4>
+
+                {{ form.remarks(class="form-control", rows="4") }}
+
+            </div>
+
+            <div class="text-end">
+
+                <button
+                    class="btn btn-ncms btn-lg px-5">
+
+                    <i class="bi bi-check-circle"></i>
+
+                    Submit Report
+
+                </button>
+
+            </div>
+
         </div>
+
     </div>
 
-    {% if form.errors %}
-    <div class="alert alert-danger shadow-sm">Please review the highlighted fields and submit again.</div>
-    {% endif %}
-
-    <form method="POST" id="submissionForm" novalidate>
-        {{ form.hidden_tag() }}
-
-        <div class="row g-4">
-            <div class="col-xl-8">
-                <div class="card shadow-sm border-0 mb-4">
-                    <div class="card-header bg-white border-0">
-                        <h5 class="mb-0 fw-bold">Squad members</h5>
-                    </div>
-                    <div class="card-body">
-                        {% if members %}
-                        <div class="row g-3">
-                            {% for member in members %}
-                            <div class="col-md-6 col-xl-4">
-                                <div class="member-card">
-                                    <div class="member-card-name">{{ member.member_name or 'Member' }}</div>
-                                    <div class="member-card-meta">Office</div>
-                                    <div class="member-card-value">{{ member.office or '—' }}</div>
-                                    <div class="member-card-meta">Pashudhan ID</div>
-                                    <div class="member-card-value">{{ member.pashudhan_id or '—' }}</div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        {% else %}
-                        <div class="member-card empty">No squad members were found for this submission.</div>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="card shadow-sm border-0 mb-4">
-                    <div class="card-header bg-white border-0">
-                        <h5 class="mb-0 fw-bold">Vaccination details</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                {{ render_number_field(form.days_worked, 'A. Squad days worked', 'Track the number of days the squad worked.') }}
-                            </div>
-                            <div class="col-md-4">
-                                {{ render_number_field(form.vaccinations_done, 'B. Vaccinations done', 'Count of animals vaccinated in this submission.') }}
-                            </div>
-                            <div class="col-md-4">
-                                {{ render_number_field(form.pashudhan_entries, 'C. Pashudhan entries', 'Number of pashudhan entries completed.') }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card shadow-sm border-0 mb-4">
-                    <div class="card-header bg-white border-0">
-                        <h5 class="mb-0 fw-bold">Leftover animals</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                {{ render_number_field(form.diseased, 'D. Diseased') }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ render_number_field(form.below_4_months, 'E. Below 4 months') }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ render_number_field(form.pregnant, 'F. Pregnant') }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ render_number_field(form.unwilling, 'G. Unwilling') }}
-                            </div>
-                        </div>
-
-                        <div class="mt-4">
-                            <h6 class="fw-bold mb-3">H. Other Reason</h6>
-
-                            <div class="row g-3">
-
-                                <div class="col-md-8">
-                                    <label class="form-label">Reason</label>
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        name="other_reason"
-                                        value="{{ submission.other_reason if submission else '' }}"
-                                        placeholder="Specify other reason (if any)">
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label class="form-label">Count</label>
-                                    <input
-                                        type="number"
-                                        class="form-control"
-                                        name="other_count"
-                                        min="0"
-                                        value="{{ submission.other_count if submission else 0 }}">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 </div>
-                    </div>
-                </div>
 
-                <div class="card shadow-sm border-0">
-                    <div class="card-header bg-white border-0">
-                        <h5 class="mb-0 fw-bold">Remarks</h5>
-                    </div>
-                    <div class="card-body">
-                        {{ form.remarks(class="form-control" ~ (" is-invalid" if form.remarks.errors else ""), rows=4, placeholder="Add any notes for the reporting team...") }}
-                        {% if form.remarks.errors %}
-                        <div class="invalid-feedback d-block">{{ form.remarks.errors[0] }}</div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-4">
-                <div class="card shadow-sm border-0 sticky-summary">
-                    <div class="card-header bg-white border-0">
-                        <h5 class="mb-0 fw-bold">Live summary</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="summary-list">
-                            <div class="summary-item">
-                                <span class="summary-label">Vaccinations</span>
-                                <span class="summary-value" id="summaryVaccinations">0</span>
-                            </div>
-                            <div class="summary-item">
-                                <span class="summary-label">Pashudhan entries</span>
-                                <span class="summary-value" id="summaryPashudhan">0</span>
-                            </div>
-                            <div class="summary-item">
-                                <span class="summary-label">Leftover total</span>
-                                <span class="summary-value text-danger" id="summaryLeftover">0</span>
-                            </div>
-                            <div class="summary-item">
-                                <span class="summary-label">Other reasons</span>
-                                <span class="summary-value" id="summaryOther">0</span>
-                            </div>
-                        </div>
-
-                        <div class="alert alert-light mt-4 mb-0" role="status">
-                            <strong>Submission note</strong>
-                            <div class="small mt-2">A final confirmation is shown before the report is saved.</div>
-                        </div>
-
-                        <button type="submit" class="btn btn-success w-100 py-2 mt-4 fw-semibold" id="submitButton">
-                            <span class="me-2"><i class="fas fa-paper-plane"></i></span>
-                            <span id="submitLabel">Submit report</span>
-                            <span id="submitSpinner" class="ms-2 d-none"><i class="fas fa-spinner fa-spin"></i></span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
-</div>
-{% endblock %}
-
-{% block scripts %}
-<script src="{{ url_for('static', filename='js/submission.js') }}"></script>
 {% endblock %}

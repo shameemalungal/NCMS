@@ -1,70 +1,75 @@
-<nav class="topbar">
+<nav class="top-navbar">
 
-    <!-- Left Section -->
-    <div class="d-flex align-items-center">
+    <div class="navbar-left">
 
         <!-- Mobile Sidebar Toggle -->
-        <button class="btn btn-light d-lg-none me-3"
-                id="sidebarToggle"
-                type="button">
-
-            <i class="fa-solid fa-bars"></i>
-
+        <button id="sidebarToggle"
+                class="icon-btn d-lg-none"
+                type="button"
+                aria-label="Toggle Sidebar">
+            <i class="bi bi-list"></i>
         </button>
 
-        <!-- Dynamic Page Title -->
-        <div>
+        <!-- Breadcrumb / Page Header -->
+        <div class="page-heading">
 
-            <h4 class="mb-0 fw-bold">
+            <h1 class="page-title">
                 {% block page_title %}
-                    Dashboard
+                    NCMS
                 {% endblock %}
-            </h4>
+            </h1>
 
-            <small class="text-muted">
-                NADCP Campaign Management System
-            </small>
+            <div class="page-subtitle">
+
+                {% block page_subtitle %}
+                    NADCP Campaign Management System
+                {% endblock %}
+
+            </div>
 
         </div>
 
     </div>
 
-    <!-- Right Section -->
-    <div class="d-flex align-items-center gap-3">
+    <div class="navbar-right">
 
-        <!-- Search (Future Use) -->
-        <div class="d-none d-md-block">
+        <!-- Campaign Badge -->
+        <div class="campaign-status">
 
-            <input
-                type="text"
-                class="form-control"
-                placeholder="Search..."
-                style="width:220px;">
+            <span class="badge bg-success">
+                <i class="bi bi-check-circle-fill me-1"></i>
+                NADCP Phase IX
+            </span>
 
         </div>
 
-        <!-- Notifications -->
-        <button class="btn btn-light position-relative">
+        <!-- Notification -->
+        <button class="icon-btn" title="Notifications">
 
-            <i class="fa-regular fa-bell"></i>
+            <i class="bi bi-bell"></i>
 
-            <span
-                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-
-                0
-
-            </span>
+            <span class="notification-dot"></span>
 
         </button>
 
-        <!-- Profile -->
+        <!-- User -->
+        <div class="user-profile">
 
-        <div class="d-flex align-items-center">
+            <div class="user-avatar">
 
-            <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center"
-                 style="width:42px;height:42px;">
+                <i class="bi bi-person-fill"></i>
 
-                <i class="fa-solid fa-user"></i>
+            </div>
+
+            <div class="user-details">
+
+                <div class="user-name">
+                    Administrator
+                </div>
+
+                <small>
+                    NCMS
+                </small>
 
             </div>
 
@@ -73,25 +78,3 @@
     </div>
 
 </nav>
-
-<script>
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    const toggle = document.getElementById("sidebarToggle");
-
-    const sidebar = document.querySelector(".sidebar");
-
-    if (toggle && sidebar) {
-
-        toggle.addEventListener("click", function () {
-
-            sidebar.classList.toggle("show");
-
-        });
-
-    }
-
-});
-
-</script>

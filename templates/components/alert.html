@@ -1,0 +1,9 @@
+<div class="alert alert-{{ type|default('info') }} shadow-sm">
+
+    {% if icon %}
+        <i class="{{ icon }}"></i>
+    {% endif %}
+
+    {{ message }}
+
+</div>
