@@ -1,33 +1,13 @@
-<div class="ncms-card {{ class|default('') }}">
+<button
+type="{{ type|default('button') }}"
+class="btn {{ style|default('btn-ncms') }} {{ class|default('') }}"
+{% if disabled %}disabled{% endif %}
+>
 
-    {% if title %}
-    <div class="card-header-simple">
+{% if icon %}
+<i class="{{ icon }}"></i>
+{% endif %}
 
-        <div>
+{{ text }}
 
-            <h5 class="card-title">
-                {{ title }}
-            </h5>
-
-            {% if subtitle %}
-            <div class="card-subtitle">
-                {{ subtitle }}
-            </div>
-            {% endif %}
-
-        </div>
-
-        {% if header_action %}
-            {{ header_action|safe }}
-        {% endif %}
-
-    </div>
-    {% endif %}
-
-    <div class="card-body-simple">
-
-        {{ caller() }}
-
-    </div>
-
-</div>
+</button>

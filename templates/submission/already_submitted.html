@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Already Submitted{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card border-warning shadow">
+
+                <div class="card-header bg-warning">
+
+                    <h3 class="mb-0">
+
+                        Report Already Submitted
+
+                    </h3>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="alert alert-success">
+
+                        <h4 class="mb-2">
+
+                            ✓ Submission Already Received
+
+                        </h4>
+
+                        This squad has already submitted the vaccination report.
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="fw-bold">
+
+                                Campaign
+
+                            </label>
+
+                            <div>
+
+                                {{ squad.campaign.name }}
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="fw-bold">
+
+                                Campaign Code
+
+                            </label>
+
+                            <div>
+
+                                {{ squad.campaign.code }}
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="fw-bold">
+
+                                Panchayath
+
+                            </label>
+
+                            <div>
+
+                                {{ squad.panchayath.name }}
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="fw-bold">
+
+                                Squad Number
+
+                            </label>
+
+                            <div>
+
+                                {{ squad.squad_no }}
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="fw-bold">
+
+                                Submitted On
+
+                            </label>
+
+                            <div>
+
+                                {{ submission.submitted_at.strftime('%d-%m-%Y %I:%M %p') }}
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="fw-bold">
+
+                                Status
+
+                            </label>
+
+                            <div>
+
+                                <span class="badge bg-success">
+
+                                    {{ submission.status }}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <hr>
+
+                    <h5 class="mb-3">
+
+                        Squad Members
+
+                    </h5>
+
+                    <div class="list-group">
+
+                        {% for member in squad.members %}
+
+                        <div class="list-group-item">
+
+                            <strong>
+
+                                {{ member.member_name }}
+
+                            </strong>
+
+                            <br>
+
+                            <small class="text-muted">
+
+                                {{ member.office }}
+
+                            </small>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                    <div class="text-center mt-4">
+
+                        <a
+                            href="{{ url_for('submission.index') }}"
+                            class="btn btn-primary">
+
+                            Back to Submission Home
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

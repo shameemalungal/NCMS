@@ -1,212 +1,849 @@
 {% extends "base.html" %}
 
-{% from "components/card.html" import card %}
-{% from "components/form_field.html" import form_field %}
-
-{% block title %}Public Submission{% endblock %}
-
-{% block page_title %}
-Public Submission
-{% endblock %}
-
-{% block page_subtitle %}
-NADCP Phase IX Campaign Data Submission
-{% endblock %}
+{% block title %}New Submission{% endblock %}
 
 {% block content %}
 
-<div class="container-fluid">
+<div class="container py-4">
 
-    <div class="row">
+    <div class="row justify-content-center">
 
-        <div class="col-lg-10 mx-auto">
+        <div class="col-xl-9 col-lg-10">
 
-            <!-- Campaign Information -->
-            <div class="ncms-card mb-4">
+            <div class="card shadow border-0">
 
-                <h4 class="mb-4">
-                    <i class="bi bi-megaphone"></i>
-                    Campaign Information
-                </h4>
+                <div class="card-header bg-success text-white">
 
-                <div class="row">
-
-                    <div class="col-md-6 mb-3">
-                        {{ form.campaign.label(class="form-label") }}
-                        {{ form.campaign(class="form-select") }}
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        {{ form.date.label(class="form-label") }}
-                        {{ form.date(class="form-control") }}
-                    </div>
+                    <h3 class="mb-0 text-white">
+                        Vaccination Report Submission
+                    </h3>
 
                 </div>
 
-            </div>
+                <div class="card-body">
 
-            <!-- Squad Information -->
-            <div class="ncms-card mb-4">
+                    <!-- =====================================================
+                         SQUAD INFORMATION
+                    ====================================================== -->
 
-                <h4 class="mb-4">
-                    <i class="bi bi-people"></i>
-                    Squad Information
-                </h4>
+                    <div class="row g-3 mb-4">
 
-                <div class="row">
+                        <div class="col-md-6">
 
-                    <div class="col-md-6 mb-3">
-                        {{ form.squad.label(class="form-label") }}
-                        {{ form.squad(class="form-select") }}
+                            <div class="card border-primary h-100">
+
+                                <div class="card-body">
+
+                                    <div class="small text-primary fw-semibold mb-2">
+                                        Campaign
+                                    </div>
+
+                                    <strong>
+                                        {{ squad.campaign.name }}
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="card border-primary h-100">
+
+                                <div class="card-body">
+
+                                    <div class="small text-primary fw-semibold mb-2">
+                                        Panchayath
+                                    </div>
+
+                                    <strong>
+                                        {{ squad.panchayath.name }}
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        {{ form.panchayath.label(class="form-label") }}
-                        {{ form.panchayath(class="form-control", readonly=True) }}
+
+                    <div class="row g-3 mb-4">
+
+                        <div class="col-md-4">
+
+                            <div class="card h-100">
+
+                                <div class="card-body">
+
+                                    <div class="small text-muted mb-2">
+                                        Squad
+                                    </div>
+
+                                    <h3 class="mb-0">
+                                        {{ squad.squad_no }}
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <div class="card h-100">
+
+                                <div class="card-body">
+
+                                    <div class="small text-muted mb-2">
+                                        Target
+                                    </div>
+
+                                    <h3
+                                        class="mb-0"
+                                        id="targetValue"
+                                    >
+                                        {{ squad.target }}
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <div class="card h-100">
+
+                                <div class="card-body">
+
+                                    <div class="small text-muted mb-2">
+                                        Days Allotted
+                                    </div>
+
+                                    <h3 class="mb-0">
+                                        {{ squad.squad_days }}
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
                     </div>
+
+
+                    <!-- =====================================================
+                         SQUAD MEMBERS
+                    ====================================================== -->
+
+                    <div class="card mb-4">
+
+                        <div class="card-header">
+                            Squad Members
+                        </div>
+
+                        <div class="list-group list-group-flush">
+
+                            {% for member in members %}
+
+                            <div class="list-group-item">
+
+                                <strong>
+                                    {{ member.member_name }}
+                                </strong>
+
+                                {% if member.office %}
+
+                                <div class="small text-muted mt-1">
+                                    {{ member.office }}
+                                </div>
+
+                                {% endif %}
+
+                                {% if member.pashudhan_id %}
+
+                                <div class="small text-muted">
+                                    Pashudhan ID: {{ member.pashudhan_id }}
+                                </div>
+
+                                {% endif %}
+
+                            </div>
+
+                            {% else %}
+
+                            <div class="list-group-item text-muted">
+                                No squad members available.
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =====================================================
+                         DATA FOR JAVASCRIPT
+                    ====================================================== -->
+
+                    <div
+                        id="submissionData"
+                        class="d-none"
+                        data-campaign="{{ squad.campaign.name }}"
+                        data-campaign-code="{{ squad.campaign.code }}"
+                        data-panchayath="{{ squad.panchayath.name }}"
+                        data-squad="{{ squad.squad_no }}"
+                        data-target="{{ squad.target }}"
+                        data-days="{{ squad.squad_days }}"
+                    >
+
+                        {% for member in members %}
+
+                        <span
+                            class="member-name"
+                            data-name="{{ member.member_name }}"
+                            data-office="{{ member.office or '' }}"
+                            data-pashudhan-id="{{ member.pashudhan_id or '' }}"
+                        ></span>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- =====================================================
+                         FORM
+                    ====================================================== -->
+
+                    <form
+                        method="POST"
+                        id="wizardForm"
+                        novalidate
+                    >
+
+                        {{ form.hidden_tag() }}
+
+
+                        <!-- =================================================
+                             PROGRESS
+                        ================================================== -->
+
+                        <div class="wizard-progress mb-5">
+
+                            <div
+                                class="wizard-step active"
+                                data-step="1"
+                            >
+
+                                <div class="wizard-circle">
+                                    1
+                                </div>
+
+                                <div class="wizard-title">
+                                    Vaccination
+                                </div>
+
+                            </div>
+
+
+                            <div class="wizard-line"></div>
+
+
+                            <div
+                                class="wizard-step"
+                                data-step="2"
+                            >
+
+                                <div class="wizard-circle">
+                                    2
+                                </div>
+
+                                <div class="wizard-title">
+                                    Review
+                                </div>
+
+                            </div>
+
+
+                            <div class="wizard-line"></div>
+
+
+                            <div
+                                class="wizard-step"
+                                data-step="3"
+                            >
+
+                                <div class="wizard-circle">
+                                    3
+                                </div>
+
+                                <div class="wizard-title">
+                                    Submit
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             STEP 1 - VACCINATION
+                        ================================================== -->
+
+                        <div
+                            class="wizard-page"
+                            id="step1"
+                        >
+
+                            <h3 class="mb-4">
+                                Vaccination Details
+                            </h3>
+
+
+                            <!-- Main figures -->
+
+                            <div class="row g-3 mb-4">
+
+                                <div class="col-md-4">
+
+                                    <label
+                                        for="days_worked"
+                                        class="form-label"
+                                    >
+                                        A. Squad Days Worked
+                                    </label>
+
+                                    {{ form.days_worked(
+                                        class="form-control",
+                                        id="days_worked",
+                                        min="0"
+                                    ) }}
+
+                                </div>
+
+
+                                <div class="col-md-4">
+
+                                    <label
+                                        for="vaccinations"
+                                        class="form-label"
+                                    >
+                                        B. Vaccinations Done
+                                    </label>
+
+                                    {{ form.vaccinations_done(
+                                        class="form-control",
+                                        id="vaccinations",
+                                        min="0"
+                                    ) }}
+
+                                </div>
+
+
+                                <div class="col-md-4">
+
+                                    <label
+                                        for="entries"
+                                        class="form-label"
+                                    >
+                                        C. Pashudhan Entries
+                                    </label>
+
+                                    {{ form.pashudhan_entries(
+                                        class="form-control",
+                                        id="entries",
+                                        min="0"
+                                    ) }}
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Achievement cards -->
+
+                            <div class="row g-3 mb-4">
+
+                                <div class="col-md-4">
+
+                                    <div class="card bg-light h-100">
+
+                                        <div class="card-body">
+
+                                            <div class="small text-muted mb-2">
+                                                Vaccination Achievement
+                                            </div>
+
+                                            <h3
+                                                id="vaccinationPercent"
+                                                class="text-success"
+                                            >
+                                                0.00%
+                                            </h3>
+
+                                            <div class="progress">
+
+                                                <div
+                                                    class="progress-bar bg-success"
+                                                    id="vaccinationBar"
+                                                    style="width: 0%;"
+                                                ></div>
+
+                                            </div>
+
+                                            <div class="small text-muted mt-2">
+                                                Vaccinations / Target
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-md-4">
+
+                                    <div class="card bg-light h-100">
+
+                                        <div class="card-body">
+
+                                            <div class="small text-muted mb-2">
+                                                Pashudhan Achievement
+                                            </div>
+
+                                            <h3
+                                                id="entryPercent"
+                                                class="text-info"
+                                            >
+                                                0.00%
+                                            </h3>
+
+                                            <div class="progress">
+
+                                                <div
+                                                    class="progress-bar bg-info"
+                                                    id="entryBar"
+                                                    style="width: 0%;"
+                                                ></div>
+
+                                            </div>
+
+                                            <div class="small text-muted mt-2">
+                                                Entries / Vaccinations
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-md-4">
+
+                                    <div class="card bg-light h-100">
+
+                                        <div class="card-body">
+
+                                            <div class="small text-muted mb-2">
+                                                Remaining Animals
+                                            </div>
+
+                                            <h3 id="remainingAnimals">
+                                                {{ squad.target }}
+                                            </h3>
+
+                                            <div class="small text-muted mt-2">
+                                                Target - Vaccinations Done
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =================================================
+                                 LOW VACCINATION REASON
+                            ================================================== -->
+
+                            <div
+                                id="vaccinationReasonSection"
+                                class="mb-4"
+                            >
+
+                                <div class="alert alert-warning">
+
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+
+                                    Vaccination achievement is below Target.
+
+                                </div>
+
+                                <label
+                                    for="vaccination_reason"
+                                    class="form-label fw-semibold"
+                                >
+                                    Reason for Low Vaccination Achievement
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                {{ form.vaccination_reason(
+                                    class="form-control",
+                                    id="vaccination_reason",
+                                    rows="3",
+                                    placeholder="Enter reason for low vaccination achievement"
+                                ) }}
+
+                            </div>
+
+
+                            <!-- =================================================
+                                 LEFTOVER DETAILS
+                            ================================================== -->
+
+                            <div class="card mb-4">
+
+                                <div class="card-header">
+                                    Leftover Details
+                                </div>
+
+                                <div class="card-body">
+
+                                    <div class="row g-3">
+
+                                        <div class="col-md-6 col-lg-3">
+
+                                            <label class="form-label">
+                                                D. Diseased
+                                            </label>
+
+                                            {{ form.diseased(
+                                                class="form-control",
+                                                min="0"
+                                            ) }}
+
+                                        </div>
+
+
+                                        <div class="col-md-6 col-lg-3">
+
+                                            <label class="form-label">
+                                                E. Below 4 Months
+                                            </label>
+
+                                            {{ form.below_4_months(
+                                                class="form-control",
+                                                min="0"
+                                            ) }}
+
+                                        </div>
+
+
+                                        <div class="col-md-6 col-lg-3">
+
+                                            <label class="form-label">
+                                                F. Pregnant
+                                            </label>
+
+                                            {{ form.pregnant(
+                                                class="form-control",
+                                                min="0"
+                                            ) }}
+
+                                        </div>
+
+
+                                        <div class="col-md-6 col-lg-3">
+
+                                            <label class="form-label">
+                                                G. Owner Unwilling
+                                            </label>
+
+                                            {{ form.unwilling(
+                                                class="form-control",
+                                                min="0"
+                                            ) }}
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="row g-3 mt-1">
+
+                                        <div class="col-md-8">
+
+                                            <label class="form-label">
+                                                H. Other Reason
+                                            </label>
+
+                                            {{ form.other_reason(
+                                                class="form-control",
+                                                placeholder="Enter other reason, if any"
+                                            ) }}
+
+                                        </div>
+
+
+                                        <div class="col-md-4">
+
+                                            <label class="form-label">
+                                                Other Count
+                                            </label>
+
+                                            {{ form.other_count(
+                                                class="form-control",
+                                                min="0"
+                                            ) }}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =================================================
+                                 LOW PASHUDHAN REASON
+                            ================================================== -->
+
+                            <div
+                                id="pashudhanReasonSection"
+                                class="mb-4"
+                            >
+
+                                <div class="alert alert-warning">
+
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+
+                                    Pashudhan achievement is below Target.
+
+                                </div>
+
+                                <label
+                                    for="pashudhan_reason"
+                                    class="form-label fw-semibold"
+                                >
+                                    Reason for Low Pashudhan Achievement
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                {{ form.pashudhan_reason(
+                                    class="form-control",
+                                    id="pashudhan_reason",
+                                    rows="3",
+                                    placeholder="Enter reason for low Pashudhan achievement"
+                                ) }}
+
+                            </div>
+
+
+                            <!-- Remarks -->
+
+                            <div class="mb-4">
+
+                                <label
+                                    for="remarks"
+                                    class="form-label"
+                                >
+                                    Remarks
+                                </label>
+
+                                {{ form.remarks(
+                                    class="form-control",
+                                    id="remarks",
+                                    rows="3",
+                                    placeholder="Enter remarks, if any"
+                                ) }}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             STEP 2 - REVIEW
+                        ================================================== -->
+
+                        <div
+                            class="wizard-page d-none"
+                            id="step2"
+                        >
+
+                            <h3 class="mb-4">
+
+                                <i class="bi bi-clipboard-check me-2"></i>
+
+                                Review Submission
+
+                            </h3>
+
+
+                            <div
+                                class="alert alert-info"
+                                role="alert"
+                            >
+
+                                <strong>Please note:</strong>
+
+                                Please check all your responses before submission.
+                                After submission, you have to call ADCP Malappuram
+                                to make any edits.
+
+                            </div>
+
+
+                            <div
+                                id="reviewContainer"
+                                class="mt-4"
+                            ></div>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             STEP 3 - SUBMIT
+                        ================================================== -->
+
+                        <div
+                            class="wizard-page d-none"
+                            id="step3"
+                        >
+
+                            <div class="text-center py-5">
+
+                                <div
+                                    class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success-subtle text-success mb-4"
+                                    style="width:72px;height:72px;"
+                                >
+
+                                    <i class="bi bi-check2-circle fs-1"></i>
+
+                                </div>
+
+                                <h2 class="text-success mb-3">
+                                    Ready to Submit
+                                </h2>
+
+                                <p class="text-muted mb-4">
+
+                                    Please confirm that you have reviewed all
+                                    vaccination details before submitting.
+
+                                </p>
+
+
+                                <div
+                                    class="alert alert-warning text-start mx-auto"
+                                    style="max-width:700px;"
+                                >
+
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+
+                                    <strong>Please note:</strong>
+
+                                    Please check all your responses before submission.
+                                    After submission, you have to call ADCP Malappuram
+                                    to make any edits.
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             NAVIGATION
+                        ================================================== -->
+
+                        <hr class="mt-4">
+
+
+                        <div
+                            class="d-flex justify-content-between align-items-center gap-3 flex-wrap"
+                        >
+
+                            <!--
+                                STEP 1:
+                                This occupies exactly the Previous-button position.
+                            -->
+
+                            <a
+                                href="{{ url_for('submission.index') }}"
+                                class="btn btn-outline-secondary"
+                                id="backToSquadBtn"
+                            >
+
+                                <i class="bi bi-arrow-left me-1"></i>
+
+                                Back to Panchayath / Squad Selection
+
+                            </a>
+
+
+                            <!--
+                                STEP 2 / STEP 3:
+                                JS shows this instead of the back-to-selection button.
+                            -->
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary d-none"
+                                id="prevBtn"
+                            >
+
+                                <i class="bi bi-arrow-left me-1"></i>
+
+                                Previous
+
+                            </button>
+
+
+                            <div class="ms-auto">
+
+                                <button
+                                    type="button"
+                                    class="btn btn-success"
+                                    id="nextBtn"
+                                >
+                                    Next
+
+                                    <i class="bi bi-arrow-right ms-1"></i>
+                                </button>
+
+
+                                {{ form.submit(
+                                    class="btn btn-success d-none",
+                                    id="submitBtn",
+                                    value="Submit Vaccination Report"
+                                ) }}
+
+                            </div>
+
+                        </div>
+
+                    </form>
 
                 </div>
-
-            </div>
-
-            <!-- Vaccination -->
-            <div class="ncms-card mb-4">
-
-                <h4 class="mb-4">
-                    <i class="bi bi-shield-check"></i>
-                    Vaccination Details
-                </h4>
-
-                <div class="row">
-
-                    <div class="col-md-4">
-                        {{ form.total_animals.label(class="form-label") }}
-                        {{ form.total_animals(class="form-control") }}
-                    </div>
-
-                    <div class="col-md-4">
-                        {{ form.vaccinated.label(class="form-label") }}
-                        {{ form.vaccinated(class="form-control live-calc") }}
-                    </div>
-
-                    <div class="col-md-4">
-
-                        <label class="form-label">
-                            Vaccination %
-                        </label>
-
-                        <input
-                            id="vaccination_percentage"
-                            class="form-control"
-                            readonly>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- Pashudhan -->
-            <div class="ncms-card mb-4">
-
-                <h4 class="mb-4">
-                    <i class="bi bi-database"></i>
-                    Pashudhan Entry
-                </h4>
-
-                <div class="row">
-
-                    <div class="col-md-4">
-
-                        {{ form.entries.label(class="form-label") }}
-                        {{ form.entries(class="form-control live-calc") }}
-
-                    </div>
-
-                    <div class="col-md-4">
-
-                        <label class="form-label">
-                            Entry %
-                        </label>
-
-                        <input
-                            id="entry_percentage"
-                            class="form-control"
-                            readonly>
-
-                    </div>
-
-                    <div class="col-md-4">
-
-                        <label class="form-label">
-                            Difference
-                        </label>
-
-                        <input
-                            id="difference"
-                            class="form-control"
-                            readonly>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- Leftover -->
-            <div class="ncms-card mb-4">
-
-                <h4 class="mb-4">
-                    <i class="bi bi-exclamation-circle"></i>
-                    Leftover Details
-                </h4>
-
-                <div class="row">
-
-                    <div class="col-md-3">
-                        {{ form.diseased(class="form-control") }}
-                    </div>
-
-                    <div class="col-md-3">
-                        {{ form.below4months(class="form-control") }}
-                    </div>
-
-                    <div class="col-md-3">
-                        {{ form.pregnant(class="form-control") }}
-                    </div>
-
-                    <div class="col-md-3">
-                        {{ form.unwilling(class="form-control") }}
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- Remarks -->
-
-            <div class="ncms-card mb-4">
-
-                <h4 class="mb-4">
-
-                    Remarks
-
-                </h4>
-
-                {{ form.remarks(class="form-control", rows="4") }}
-
-            </div>
-
-            <div class="text-end">
-
-                <button
-                    class="btn btn-ncms btn-lg px-5">
-
-                    <i class="bi bi-check-circle"></i>
-
-                    Submit Report
-
-                </button>
 
             </div>
 
@@ -215,5 +852,895 @@ NADCP Phase IX Campaign Data Submission
     </div>
 
 </div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // =====================================================
+    // ELEMENTS
+    // =====================================================
+
+    const form =
+        document.getElementById("wizardForm");
+
+    const target =
+        parseInt(
+            document.getElementById("targetValue").textContent
+        ) || 0;
+
+    const daysWorked =
+        document.getElementById("days_worked");
+
+    const vaccinations =
+        document.getElementById("vaccinations");
+
+    const entries =
+        document.getElementById("entries");
+
+    const vaccinationPercent =
+        document.getElementById("vaccinationPercent");
+
+    const entryPercent =
+        document.getElementById("entryPercent");
+
+    const vaccinationBar =
+        document.getElementById("vaccinationBar");
+
+    const entryBar =
+        document.getElementById("entryBar");
+
+    const remainingAnimals =
+        document.getElementById("remainingAnimals");
+
+    const vaccinationReasonSection =
+        document.getElementById("vaccinationReasonSection");
+
+    const pashudhanReasonSection =
+        document.getElementById("pashudhanReasonSection");
+
+    const vaccinationReason =
+        document.getElementById("vaccination_reason");
+
+    const pashudhanReason =
+        document.getElementById("pashudhan_reason");
+
+    const nextBtn =
+        document.getElementById("nextBtn");
+
+    const prevBtn =
+        document.getElementById("prevBtn");
+
+    const backToSquadBtn =
+        document.getElementById("backToSquadBtn");
+
+    const submitBtn =
+        document.getElementById("submitBtn");
+
+    const reviewContainer =
+        document.getElementById("reviewContainer");
+
+    const wizardPages =
+        document.querySelectorAll(".wizard-page");
+
+    const wizardSteps =
+        document.querySelectorAll(".wizard-step");
+
+    let currentStep = 1;
+
+
+    // =====================================================
+    // HELPERS
+    // =====================================================
+
+    function numberValue(id) {
+
+        const element =
+            document.getElementById(id);
+
+        if (!element) {
+            return 0;
+        }
+
+        return parseInt(element.value) || 0;
+    }
+
+
+    function textValue(id) {
+
+        const element =
+            document.getElementById(id);
+
+        if (!element) {
+            return "";
+        }
+
+        return element.value.trim();
+    }
+
+
+    function escapeHtml(value) {
+
+        return String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+
+    // =====================================================
+    // CALCULATIONS
+    // =====================================================
+
+    function calculate() {
+
+        const vaccinated =
+            parseInt(vaccinations.value) || 0;
+
+        const pashudhanEntries =
+            parseInt(entries.value) || 0;
+
+
+        // ---------------------------------------------
+        // Vaccination %
+        // Vaccinations / Target × 100
+        // ---------------------------------------------
+
+        let vaccinationPercentage = 0;
+
+        if (target > 0) {
+
+            vaccinationPercentage =
+                (vaccinated / target) * 100;
+        }
+
+
+        // ---------------------------------------------
+        // Pashudhan %
+        // Entries / Vaccinations × 100
+        // ---------------------------------------------
+
+        let pashudhanPercentage = 0;
+
+        if (vaccinated > 0) {
+
+            pashudhanPercentage =
+                (pashudhanEntries / vaccinated) * 100;
+        }
+
+
+        vaccinationPercent.textContent =
+            vaccinationPercentage.toFixed(2) + "%";
+
+        entryPercent.textContent =
+            pashudhanPercentage.toFixed(2) + "%";
+
+
+        vaccinationBar.style.width =
+            Math.min(
+                Math.max(vaccinationPercentage, 0),
+                100
+            ) + "%";
+
+        entryBar.style.width =
+            Math.min(
+                Math.max(pashudhanPercentage, 0),
+                100
+            ) + "%";
+        // ---------------------------------------------
+        // Achievement progress colours
+        // ---------------------------------------------
+
+        // Vaccination target = 83%
+        if (vaccinationPercentage < 83) {
+
+            vaccinationBar.classList.remove(
+                "bg-success"
+            );
+
+            vaccinationBar.classList.add(
+                "bg-danger"
+            );
+
+            vaccinationPercent.classList.remove(
+                "text-success"
+            );
+
+            vaccinationPercent.classList.add(
+                "text-danger"
+            );
+
+        } else {
+
+            vaccinationBar.classList.remove(
+                "bg-danger"
+            );
+
+            vaccinationBar.classList.add(
+                "bg-success"
+            );
+
+            vaccinationPercent.classList.remove(
+                "text-danger"
+            );
+
+            vaccinationPercent.classList.add(
+                "text-success"
+            );
+        }
+
+
+        // Pashudhan target = 97%
+        if (pashudhanPercentage < 97) {
+
+            entryBar.classList.remove(
+                "bg-info"
+            );
+
+            entryBar.classList.add(
+                "bg-danger"
+            );
+
+            entryPercent.classList.remove(
+                "text-info"
+            );
+
+            entryPercent.classList.add(
+                "text-danger"
+            );
+
+        } else {
+
+            entryBar.classList.remove(
+                "bg-danger"
+            );
+
+            entryBar.classList.add(
+                "bg-success"
+            );
+
+            entryPercent.classList.remove(
+                "text-danger",
+                "text-info"
+            );
+
+            entryPercent.classList.add(
+                "text-success"
+            );
+        }
+
+
+        remainingAnimals.textContent =
+            Math.max(
+                target - vaccinated,
+                0
+            );
+
+
+        // ---------------------------------------------
+        // Vaccination reason
+        // Required below 83%
+        // ---------------------------------------------
+
+        if (vaccinationPercentage < 83) {
+
+            vaccinationReasonSection.classList.remove(
+                "d-none"
+            );
+
+            vaccinationReason.required = true;
+
+        } else {
+
+            vaccinationReasonSection.classList.add(
+                "d-none"
+            );
+
+            vaccinationReason.required = false;
+
+            vaccinationReason.value = "";
+        }
+
+
+        // ---------------------------------------------
+        // Pashudhan reason
+        // Required below 97%
+        // ---------------------------------------------
+
+        if (
+            vaccinated > 0 &&
+            pashudhanPercentage >= 97
+        ) {
+
+            pashudhanReasonSection.classList.add(
+                "d-none"
+            );
+
+            pashudhanReason.required = false;
+
+            pashudhanReason.value = "";
+
+        } else {
+
+            pashudhanReasonSection.classList.remove(
+                "d-none"
+            );
+
+            pashudhanReason.required = true;
+        }
+
+
+        return {
+            vaccinated,
+            pashudhanEntries,
+            vaccinationPercentage,
+            pashudhanPercentage
+        };
+    }
+
+
+    // =====================================================
+    // STEP 1 VALIDATION
+    // =====================================================
+
+    function validateVaccinationStep() {
+
+        const result = calculate();
+
+
+        if (
+            daysWorked.value === "" ||
+            parseInt(daysWorked.value) < 0
+        ) {
+
+            alert(
+                "Please enter Squad Days Worked."
+            );
+
+            daysWorked.focus();
+
+            return false;
+        }
+
+
+        if (
+            vaccinations.value === "" ||
+            result.vaccinated < 0
+        ) {
+
+            alert(
+                "Please enter Vaccinations Done."
+            );
+
+            vaccinations.focus();
+
+            return false;
+        }
+
+
+        if (
+            entries.value === "" ||
+            result.pashudhanEntries < 0
+        ) {
+
+            alert(
+                "Please enter Pashudhan Entries."
+            );
+
+            entries.focus();
+
+            return false;
+        }
+
+
+        if (
+            result.pashudhanEntries >
+            result.vaccinated
+        ) {
+
+            alert(
+                "Pashudhan Entries cannot be greater than Vaccinations Done."
+            );
+
+            entries.focus();
+
+            return false;
+        }
+
+
+        if (
+            result.vaccinationPercentage < 83 &&
+            vaccinationReason.value.trim() === ""
+        ) {
+
+            alert(
+                "Please enter the reason for low vaccination achievement."
+            );
+
+            vaccinationReason.focus();
+
+            return false;
+        }
+
+
+        if (
+            result.pashudhanPercentage < 97 &&
+            pashudhanReason.value.trim() === ""
+        ) {
+
+            alert(
+                "Please enter the reason for low Pashudhan achievement."
+            );
+
+            pashudhanReason.focus();
+
+            return false;
+        }
+
+
+        return true;
+    }
+
+
+    // =====================================================
+    // REVIEW
+    // =====================================================
+
+    function buildReview() {
+
+        const result =
+            calculate();
+
+        const submissionData =
+            document.getElementById("submissionData");
+
+
+        const campaign =
+            submissionData.dataset.campaign || "";
+
+        const panchayath =
+            submissionData.dataset.panchayath || "";
+
+        const squad =
+            submissionData.dataset.squad || "";
+
+
+        reviewContainer.innerHTML = `
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered align-middle">
+
+                    <tbody>
+
+                        <tr>
+                            <th style="width:40%">
+                                Campaign
+                            </th>
+                            <td>
+                                ${escapeHtml(campaign)}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Panchayath
+                            </th>
+                            <td>
+                                ${escapeHtml(panchayath)}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Squad
+                            </th>
+                            <td>
+                                ${escapeHtml(squad)}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Target
+                            </th>
+                            <td>
+                                ${target}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Days Worked
+                            </th>
+                            <td>
+                                ${numberValue("days_worked")}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Vaccinations Done
+                            </th>
+                            <td>
+                                ${result.vaccinated}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Vaccination Achievement
+                            </th>
+                            <td>
+                                ${result.vaccinationPercentage.toFixed(2)}%
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Reason for Low Vaccination Achievement
+                            </th>
+                            <td>
+                                ${
+                                    result.vaccinationPercentage < 83
+                                    ? escapeHtml(
+                                        vaccinationReason.value
+                                      )
+                                    : "Not required"
+                                }
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Pashudhan Entries
+                            </th>
+                            <td>
+                                ${result.pashudhanEntries}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Pashudhan Achievement
+                            </th>
+                            <td>
+                                ${result.pashudhanPercentage.toFixed(2)}%
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Reason for Low Pashudhan Achievement
+                            </th>
+                            <td>
+                                ${
+                                    result.pashudhanPercentage < 97
+                                    ? escapeHtml(
+                                        pashudhanReason.value
+                                      )
+                                    : "Not required"
+                                }
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Diseased
+                            </th>
+                            <td>
+                                ${numberValue("diseased")}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Below 4 Months
+                            </th>
+                            <td>
+                                ${numberValue("below_4_months")}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Pregnant
+                            </th>
+                            <td>
+                                ${numberValue("pregnant")}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Owner Unwilling
+                            </th>
+                            <td>
+                                ${numberValue("unwilling")}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Other Reason
+                            </th>
+                            <td>
+                                ${
+                                    escapeHtml(
+                                        textValue("other_reason")
+                                    ) || "-"
+                                }
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Other Count
+                            </th>
+                            <td>
+                                ${numberValue("other_count")}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                Remarks
+                            </th>
+                            <td>
+                                ${
+                                    escapeHtml(
+                                        textValue("remarks")
+                                    ) || "-"
+                                }
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        `;
+    }
+
+
+    // =====================================================
+    // SHOW STEP
+    // =====================================================
+
+    function showStep(step) {
+
+        currentStep = step;
+
+
+        wizardPages.forEach(function (page) {
+
+            page.classList.add("d-none");
+        });
+
+
+        const currentPage =
+            document.getElementById(
+                "step" + step
+            );
+
+        if (currentPage) {
+
+            currentPage.classList.remove(
+                "d-none"
+            );
+        }
+
+
+        // ---------------------------------------------
+        // Progress indicator
+        // ---------------------------------------------
+
+        wizardSteps.forEach(function (wizardStep) {
+
+            const stepNumber =
+                parseInt(
+                    wizardStep.dataset.step
+                );
+
+            wizardStep.classList.remove(
+                "active",
+                "completed"
+            );
+
+
+            if (stepNumber < step) {
+
+                wizardStep.classList.add(
+                    "completed"
+                );
+
+            } else if (stepNumber === step) {
+
+                wizardStep.classList.add(
+                    "active"
+                );
+            }
+        });
+
+
+        // ---------------------------------------------
+        // LEFT navigation
+        // ---------------------------------------------
+
+        if (step === 1) {
+
+            backToSquadBtn.classList.remove(
+                "d-none"
+            );
+
+            prevBtn.classList.add(
+                "d-none"
+            );
+
+        } else {
+
+            backToSquadBtn.classList.add(
+                "d-none"
+            );
+
+            prevBtn.classList.remove(
+                "d-none"
+            );
+        }
+
+
+        // ---------------------------------------------
+        // RIGHT navigation
+        // ---------------------------------------------
+
+        if (step === 3) {
+
+            nextBtn.classList.add(
+                "d-none"
+            );
+
+            submitBtn.classList.remove(
+                "d-none"
+            );
+
+        } else {
+
+            nextBtn.classList.remove(
+                "d-none"
+            );
+
+            submitBtn.classList.add(
+                "d-none"
+            );
+        }
+
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    }
+
+
+    // =====================================================
+    // NEXT
+    // =====================================================
+
+    nextBtn.addEventListener(
+        "click",
+        function () {
+
+            if (currentStep === 1) {
+
+                if (!validateVaccinationStep()) {
+
+                    return;
+                }
+
+                buildReview();
+
+                showStep(2);
+
+                return;
+            }
+
+
+            if (currentStep === 2) {
+
+                showStep(3);
+            }
+        }
+    );
+
+
+    // =====================================================
+    // PREVIOUS
+    // =====================================================
+
+    prevBtn.addEventListener(
+        "click",
+        function () {
+
+            if (currentStep > 1) {
+
+                showStep(
+                    currentStep - 1
+                );
+            }
+        }
+    );
+
+
+    // =====================================================
+    // INPUT EVENTS
+    // =====================================================
+
+    [
+        daysWorked,
+        vaccinations,
+        entries
+    ].forEach(function (element) {
+
+        if (!element) {
+            return;
+        }
+
+        element.addEventListener(
+            "input",
+            calculate
+        );
+
+        element.addEventListener(
+            "change",
+            calculate
+        );
+    });
+
+
+    // =====================================================
+    // FINAL SUBMISSION GUARD
+    // =====================================================
+
+    form.addEventListener(
+        "submit",
+        function (event) {
+
+            if (!validateVaccinationStep()) {
+
+                event.preventDefault();
+
+                showStep(1);
+
+                return;
+            }
+
+
+            submitBtn.disabled = true;
+
+            submitBtn.value =
+                "Submitting...";
+        }
+    );
+
+
+    // =====================================================
+    // INITIAL STATE
+    // =====================================================
+
+    calculate();
+
+    showStep(1);
+
+});
+
+</script>
 
 {% endblock %}

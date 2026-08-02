@@ -2,30 +2,31 @@
 
     <div class="navbar-left">
 
-        <!-- Mobile Sidebar Toggle -->
-        <button id="sidebarToggle"
-                class="icon-btn d-lg-none"
-                type="button"
-                aria-label="Toggle Sidebar">
+        <!-- Mobile Toggle -->
+
+        <button
+            id="sidebarToggle"
+            class="icon-btn d-lg-none"
+            type="button"
+            aria-label="Toggle Sidebar">
+
             <i class="bi bi-list"></i>
+
         </button>
 
-        <!-- Breadcrumb / Page Header -->
         <div class="page-heading">
 
-            <h1 class="page-title">
-                {% block page_title %}
-                    NCMS
-                {% endblock %}
-            </h1>
+            <div class="page-label">
+    {{ page_label|default("NCMS Dashboard") }}
+</div>
 
-            <div class="page-subtitle">
+<h1 class="page-title">
+    {{ page_title|default("Dashboard") }}
+</h1>
 
-                {% block page_subtitle %}
-                    NADCP Campaign Management System
-                {% endblock %}
-
-            </div>
+<div class="page-subtitle">
+    {{ page_subtitle|default("NADCP Campaign Management System") }}
+</div>
 
         </div>
 
@@ -33,17 +34,22 @@
 
     <div class="navbar-right">
 
-        <!-- Campaign Badge -->
+        {% if active_campaign %}
+
         <div class="campaign-status">
 
-            <span class="badge bg-success">
-                <i class="bi bi-check-circle-fill me-1"></i>
-                NADCP Phase IX
+            <span class="badge bg-success px-3 py-2">
+
+                <i class="bi bi-broadcast-pin me-2"></i>
+
+                {{ active_campaign.code }}
+
             </span>
 
         </div>
 
-        <!-- Notification -->
+        {% endif %}
+
         <button class="icon-btn" title="Notifications">
 
             <i class="bi bi-bell"></i>
@@ -52,7 +58,8 @@
 
         </button>
 
-        <!-- User -->
+        <div class="vr mx-2 d-none d-lg-block"></div>
+
         <div class="user-profile">
 
             <div class="user-avatar">
@@ -64,11 +71,15 @@
             <div class="user-details">
 
                 <div class="user-name">
+
                     Administrator
+
                 </div>
 
                 <small>
-                    NCMS
+
+                    NCMS System
+
                 </small>
 
             </div>

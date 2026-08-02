@@ -1,71 +1,163 @@
 from sqlalchemy import func
 
 from app.extensions import db
-from app.models import Squad, Submission
+from app.models import Campaign, Panchayath, Squad, Submission
 
 
 class DashboardService:
 
     @staticmethod
-    def summary():
+    def get_summary():
 
-        submitted = (
-            db.session.query(func.count(Submission.id))
-            .scalar()
-            or 0
+        active_campaign = (
+            Campaign.query.filter_by(is_active=True)
+            .first()
         )
 
-        squads = (
-            db.session.query(func.count(Squad.id))
-            .scalar()
-            or 0
-        )
+        squad_query = Squad.query
 
-        pending = max(squads - submitted, 0)
+        submission_query = Submission.query
+
+        if active_campaign:
+            squad_query = squad_query.filter(
+                Squad.campaign_id == active_campaign.id
+            )
+
+            submission_query = (
+                submission_query
+                .join(Squad)
+                .filter(
+                    Squad.campaign_id == active_campaign.id
+                )
+            )
+
+        total_squads = squad_query.count()
+
+        submitted = submission_query.count()
+
+        pending = max(total_squads - submitted, 0)
 
         vaccinations = (
             db.session.query(
-                func.coalesce(func.sum(Submission.vaccinations_done), 0)
-            ).scalar()
+                func.coalesce(
+                    func.sum(Submission.vaccinations_done),
+                    0,
+                )
+            )
+            .select_from(Submission)
+            .join(Squad)
         )
 
         entries = (
             db.session.query(
-                func.coalesce(func.sum(Submission.pashudhan_entries), 0)
-            ).scalar()
+                func.coalesce(
+                    func.sum(Submission.pashudhan_entries),
+                    0,
+                )
+            )
+            .select_from(Submission)
+            .join(Squad)
         )
 
-        percentage = 0
+        if active_campaign:
+            vaccinations = vaccinations.filter(
+                Squad.campaign_id == active_campaign.id
+            )
 
-        if squads:
+            entries = entries.filter(
+                Squad.campaign_id == active_campaign.id
+            )
 
-            percentage = round((submitted / squads) * 100, 1)
+        vaccinations = vaccinations.scalar() or 0
+
+        entries = entries.scalar() or 0
+
+        target = (
+            squad_query.with_entities(
+                func.coalesce(func.sum(Squad.target), 0)
+            ).scalar()
+            or 0
+        )
+
+        vaccination_percentage = 0
+
+        if target:
+            vaccination_percentage = round(
+                (vaccinations / target) * 100,
+                2,
+            )
+
+        pashudhan_percentage = 0
+
+        if vaccinations:
+            pashudhan_percentage = round(
+                (entries / vaccinations) * 100,
+                2,
+            )
+
+        recent_submissions = (
+            submission_query
+            .order_by(Submission.submitted_at.desc())
+            .limit(10)
+            .all()
+        )
+
+        pending_squads = (
+            squad_query
+            .filter(Squad.status == "Pending")
+            .order_by(Squad.squad_no)
+            .limit(10)
+            .all()
+        )
+
+        panchayath_summary = (
+            db.session.query(
+                Panchayath.name,
+                func.count(Squad.id).label("squads"),
+                func.count(Submission.id).label("submitted"),
+            )
+            .join(Squad, Squad.panchayath_id == Panchayath.id)
+            .outerjoin(
+                Submission,
+                Submission.squad_id == Squad.id,
+            )
+        )
+
+        if active_campaign:
+            panchayath_summary = panchayath_summary.filter(
+                Panchayath.campaign_id == active_campaign.id
+            )
+
+        panchayath_summary = (
+            panchayath_summary
+            .group_by(Panchayath.id)
+            .all()
+        )
 
         return {
+
+            "active_campaign": active_campaign,
 
             "submitted_squads": submitted,
 
             "pending_squads": pending,
 
+            "total_squads": total_squads,
+
             "total_vaccinations": vaccinations,
 
             "total_entries": entries,
 
-            "vaccination_percentage": percentage
+            "target_population": target,
+
+            "vaccination_percentage": vaccination_percentage,
+
+            "pashudhan_percentage": pashudhan_percentage,
+
+            "recent_submissions": recent_submissions,
+
+            "pending_squads_list": pending_squads,
+
+            "panchayath_summary": panchayath_summary,
 
         }
-
-    @staticmethod
-    def recent(limit=10):
-
-        return (
-
-            Submission.query
-
-            .order_by(Submission.created_at.desc())
-
-            .limit(limit)
-
-            .all()
-
-        )

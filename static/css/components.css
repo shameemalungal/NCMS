@@ -381,3 +381,468 @@ font-size:.9rem;
     color:var(--primary);
 
 }
+/* ==========================================================
+   TOP NAVBAR
+========================================================== */
+
+.top-navbar{
+
+    position:sticky;
+
+    top:0;
+
+    z-index:1030;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    padding:18px 30px;
+
+    margin-bottom:30px;
+
+    background:rgba(255,255,255,.90);
+
+    backdrop-filter:blur(14px);
+
+    -webkit-backdrop-filter:blur(14px);
+
+    border:1px solid rgba(229,231,235,.9);
+
+    border-radius:22px;
+
+    box-shadow:0 10px 30px rgba(15,23,42,.06);
+
+}
+
+/* ====================================
+   Left
+==================================== */
+
+.navbar-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+}
+
+.page-heading{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.page-label{
+
+    font-size:.75rem;
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+    color:#16A34A;
+
+    font-weight:700;
+
+    margin-bottom:4px;
+
+}
+
+.page-title{
+
+    margin:0;
+
+    font-size:1.8rem;
+
+    font-weight:700;
+
+    color:#111827;
+
+}
+
+.page-subtitle{
+
+    margin-top:4px;
+
+    color:#6B7280;
+
+    font-size:.92rem;
+
+}
+
+/* ====================================
+   Right
+==================================== */
+
+.navbar-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+}
+
+/* ====================================
+   Icon Button
+==================================== */
+
+.icon-btn{
+
+    width:46px;
+
+    height:46px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#F8FAFC;
+
+    color:#374151;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:1.2rem;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    position:relative;
+
+}
+
+.icon-btn:hover{
+
+    background:#16A34A;
+
+    color:#fff;
+
+    transform:translateY(-2px);
+
+}
+
+/* ====================================
+   Notification Dot
+==================================== */
+
+.notification-dot{
+
+    position:absolute;
+
+    top:10px;
+
+    right:10px;
+
+    width:9px;
+
+    height:9px;
+
+    background:#EF4444;
+
+    border-radius:50%;
+
+    border:2px solid #fff;
+
+}
+
+/* ====================================
+   Campaign Badge
+==================================== */
+
+.campaign-status .badge{
+
+    border-radius:999px;
+
+    padding:.7rem 1rem;
+
+    font-size:.85rem;
+
+    font-weight:600;
+
+    display:flex;
+
+    align-items:center;
+
+}
+
+/* ====================================
+   User
+==================================== */
+
+.user-profile{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+}
+
+.user-avatar{
+
+    width:50px;
+
+    height:50px;
+
+    border-radius:50%;
+
+    background:linear-gradient(135deg,#16A34A,#15803D);
+
+    color:#fff;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:22px;
+
+    box-shadow:0 8px 20px rgba(22,163,74,.25);
+
+}
+
+.user-details{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.user-name{
+
+    font-weight:700;
+
+    color:#111827;
+
+}
+
+.user-details small{
+
+    color:#6B7280;
+
+}
+
+/* ====================================
+   Mobile
+==================================== */
+
+@media(max-width:992px){
+
+    .top-navbar{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        padding:20px;
+
+    }
+
+    .navbar-right{
+
+        width:100%;
+
+        justify-content:space-between;
+
+    }
+
+    .page-title{
+
+        font-size:1.5rem;
+
+    }
+
+}
+
+@media(max-width:576px){
+
+    .campaign-status{
+
+        display:none;
+
+    }
+
+    .user-details{
+
+        display:none;
+
+    }
+
+}
+/* =========================================================
+   NCMS SUBMISSION WIZARD
+   ========================================================= */
+
+.wizard-progress {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.wizard-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    min-width: 90px;
+    position: relative;
+}
+
+.wizard-circle {
+    width: 46px;
+    height: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+
+    color: #64748b;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.wizard-title {
+    margin-top: 9px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    color: #64748b;
+
+    text-align: center;
+    white-space: nowrap;
+}
+
+
+/* Connector */
+
+.wizard-line {
+    flex: 1;
+    height: 2px;
+
+    background: #cbd5e1;
+
+    margin-top: 22px;
+
+    min-width: 45px;
+    max-width: 160px;
+}
+
+
+/* Active step */
+
+.wizard-step.active .wizard-circle {
+    background: #16a34a;
+    border-color: #16a34a;
+    color: #ffffff;
+
+    box-shadow:
+        0 0 0 5px rgba(22, 163, 74, 0.12);
+}
+
+.wizard-step.active .wizard-title {
+    color: #15803d;
+}
+
+
+/* Completed step */
+
+.wizard-step.completed .wizard-circle {
+    background: #16a34a;
+    border-color: #16a34a;
+    color: #ffffff;
+}
+
+.wizard-step.completed .wizard-title {
+    color: #15803d;
+}
+
+
+/* =========================================================
+   WIZARD PAGE
+   ========================================================= */
+
+.wizard-page {
+    animation: ncmsWizardFade 0.2s ease;
+}
+
+@keyframes ncmsWizardFade {
+
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 576px) {
+
+    .wizard-progress {
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+
+    .wizard-step {
+        min-width: 72px;
+    }
+
+    .wizard-circle {
+        width: 40px;
+        height: 40px;
+
+        font-size: 14px;
+    }
+
+    .wizard-title {
+        font-size: 12px;
+        white-space: normal;
+    }
+
+    .wizard-line {
+        min-width: 20px;
+        margin-top: 19px;
+    }
+}

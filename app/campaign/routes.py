@@ -47,6 +47,10 @@ def add():
 
     if form.validate_on_submit():
 
+        # Allow only one active campaign
+        if form.is_active.data:
+            Campaign.query.update({"is_active": False})
+
         campaign = Campaign(
             name=form.name.data,
             code=form.code.data.upper(),
@@ -88,6 +92,10 @@ def edit(id):
 
     if form.validate_on_submit():
 
+        # Allow only one active campaign
+        if form.is_active.data:
+            Campaign.query.update({"is_active": False})
+
         form.populate_obj(campaign)
 
         campaign.code = campaign.code.upper()
@@ -119,7 +127,6 @@ def delete(id):
     campaign = Campaign.query.get_or_404(id)
 
     db.session.delete(campaign)
-
     db.session.commit()
 
     flash(

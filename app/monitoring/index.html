@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}
+District Monitoring
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+<div class="card shadow">
+
+<div class="card-header bg-primary text-white">
+
+<h4 class="mb-0">
+
+District Monitoring
+
+</h4>
+
+</div>
+
+<div class="card-body">
+
+<table class="table table-hover align-middle">
+
+<thead>
+
+<tr>
+
+<th>Panchayath</th>
+
+<th>Total Squads</th>
+
+<th>Submitted</th>
+
+<th>Pending</th>
+
+<th>Vaccinations</th>
+
+<th>Entries</th>
+
+<th>Achievement</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for row in monitoring %}
+
+<tr>
+
+<td>
+
+{{ row.panchayath.name }}
+
+</td>
+
+<td>
+
+{{ row.total }}
+
+</td>
+
+<td>
+
+{{ row.submitted }}
+
+</td>
+
+<td>
+
+{% if row.pending==0 %}
+
+<span class="badge bg-success">
+
+Completed
+
+</span>
+
+{% else %}
+
+<span class="badge bg-danger">
+
+{{ row.pending }}
+
+</span>
+
+{% endif %}
+
+</td>
+
+<td>
+
+{{ "{:,}".format(row.vaccinations) }}
+
+</td>
+
+<td>
+
+{{ "{:,}".format(row.entries) }}
+
+</td>
+
+<td>
+
+<div class="progress">
+
+<div
+class="progress-bar"
+
+style="width:{{ row.achievement }}%;">
+
+{{ row.achievement }}%
+
+</div>
+
+</div>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

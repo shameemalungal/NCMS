@@ -163,6 +163,14 @@ class SubmissionForm(FlaskForm):
         }
     )
 
+    vaccination_reason = TextAreaField(
+        "Reason for Low Vaccination Achievement"
+    )
+
+    pashudhan_reason = TextAreaField(
+        "Reason for Low Pashudhan Achievement"
+    )
+
     remarks = TextAreaField(
         "Remarks",
         validators=[Optional()],

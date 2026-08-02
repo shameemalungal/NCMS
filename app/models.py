@@ -1,10 +1,14 @@
-import secrets
 from datetime import datetime
 
 from app.extensions import db
-
+from app.constants import (
+    CampaignStatus,
+    SquadStatus,
+    SubmissionStatus,
+)
 
 class TimestampMixin:
+
     created_at = db.Column(
         db.DateTime,
         default=datetime.utcnow,
@@ -26,9 +30,6 @@ class TimestampMixin:
 class Campaign(TimestampMixin, db.Model):
     __tablename__ = "campaigns"
 
-    STATUS_DRAFT = "Draft"
-    STATUS_ACTIVE = "Active"
-    STATUS_CLOSED = "Closed"
 
     id = db.Column(db.Integer, primary_key=True)
 
@@ -57,11 +58,10 @@ class Campaign(TimestampMixin, db.Model):
     )
 
     status = db.Column(
-        db.String(20),
-        nullable=False,
-        default=STATUS_DRAFT,
-        index=True
-    )
+    db.String(20),
+    default=SquadStatus.PENDING,
+    index=True
+)
 
     is_active = db.Column(
         db.Boolean,
@@ -213,17 +213,10 @@ class Squad(TimestampMixin, db.Model):
         default=0,
     )
 
-    submission_token = db.Column(
-        db.String(100),
-        unique=True,
-        nullable=False,
-        index=True,
-        default=lambda: secrets.token_hex(16),
-    )
 
     status = db.Column(
         db.String(20),
-        default="Pending",
+        default=SquadStatus.PENDING,
         index=True
     )
 
@@ -344,21 +337,29 @@ class Submission(TimestampMixin, db.Model):
         db.Text
     )
 
-    submitted_from = db.Column(
+    source = db.Column(
         db.String(50)
     )
 
     status = db.Column(
         db.String(20),
-        default="Submitted",
+        default=SubmissionStatus.SUBMITTED,
         index=True
+    )
+    submission_token = db.Column(
+        db.String(30),
+        unique=True,
+        nullable=True,
+        index=True,
     )
 
     submitted_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow
+        default=datetime.utcnow,
+        nullable=False,
     )
 
+     
     squad = db.relationship(
         "Squad",
         back_populates="submission",

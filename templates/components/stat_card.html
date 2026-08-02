@@ -1,24 +1,25 @@
 <div class="stat-card">
 
-    <div class="stat-card-icon bg-{{ color|default('success') }}">
+    <div class="stat-card-icon {{ color }}">
         <i class="{{ icon }}"></i>
     </div>
 
-    <div class="stat-card-content">
+    <div class="stat-card-body">
 
         <div class="stat-card-title">
             {{ title }}
         </div>
 
-        <div class="stat-card-value">
+        <div class="stat-card-value"
+             {% if value_id %}
+             id="{{ value_id }}"
+             {% endif %}>
             {{ value }}
         </div>
 
-        {% if subtitle %}
         <div class="stat-card-subtitle">
             {{ subtitle }}
         </div>
-        {% endif %}
 
     </div>
 

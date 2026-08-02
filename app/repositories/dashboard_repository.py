@@ -1,25 +1,39 @@
-from sqlalchemy import func
-
-from app.extensions import db
-from app.models import Submission, Squad
+from app.models import (
+    Campaign,
+    Squad,
+    Submission,
+)
 
 
 class DashboardRepository:
 
     @staticmethod
-    def squad_count():
+    def get_active_campaign():
 
-        return db.session.query(
+        return Campaign.query.filter_by(
+            is_active=True
+        ).first()
 
-            func.count(Squad.id)
-
-        ).scalar() or 0
 
     @staticmethod
-    def submission_count():
+    def get_campaign_squads(campaign_id):
 
-        return db.session.query(
+        return Squad.query.filter_by(
+            campaign_id=campaign_id
+        ).all()
 
-            func.count(Submission.id)
 
-        ).scalar() or 0
+    @staticmethod
+    def get_campaign_submissions(campaign_id):
+
+        return (
+            Submission.query
+            .join(
+                Squad,
+                Submission.squad_id == Squad.id
+            )
+            .filter(
+                Squad.campaign_id == campaign_id
+            )
+            .all()
+        )

@@ -1,0 +1,81 @@
+<section class="dashboard-hero">
+
+    <div class="hero-left">
+
+        <span class="hero-badge">
+            <i class="bi bi-broadcast"></i>
+
+            {% if dashboard.active_campaign %}
+                Active Campaign
+            {% else %}
+                No Active Campaign
+            {% endif %}
+
+        </span>
+
+        <h1>
+
+            {% if dashboard.active_campaign %}
+                {{ dashboard.active_campaign.name }}
+            {% else %}
+                No Campaign Selected
+            {% endif %}
+
+        </h1>
+
+        <p class="hero-subtitle">
+
+            {% if dashboard.active_campaign %}
+
+                {{ dashboard.active_campaign.code }}
+
+                •
+
+                {{ dashboard.active_campaign.start_date.strftime('%d %b %Y') }}
+
+                -
+
+                {{ dashboard.active_campaign.end_date.strftime('%d %b %Y') }}
+
+            {% else %}
+
+                Activate a campaign from Campaign Management.
+
+            {% endif %}
+
+        </p>
+
+        <div class="hero-progress">
+
+            <div class="progress">
+
+                <div
+                    class="progress-bar bg-success"
+                    style="width: {{ dashboard.vaccination_percentage|default(0)|round }}%;">
+
+                </div>
+
+            </div>
+
+            <small>
+
+                {{ dashboard.vaccination_percentage|default(0)|round(1) }}%
+                Vaccination Achievement
+
+            </small>
+
+        </div>
+
+    </div>
+
+    <div class="hero-right">
+
+        <div class="hero-circle">
+
+            <i class="bi bi-shield-check"></i>
+
+        </div>
+
+    </div>
+
+</section>

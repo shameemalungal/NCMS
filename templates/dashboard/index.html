@@ -2,149 +2,228 @@
 
 {% block title %}Dashboard{% endblock %}
 
-{% block page_title %}
-Dashboard
-{% endblock %}
 
-{% block page_subtitle %}
-NADCP Campaign Overview
+{% block styles %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}">
 {% endblock %}
 
 {% block content %}
 
-<div class="container-fluid">
+<div class="container-fluid dashboard-page">
 
-    <!-- Statistics -->
-    <div class="row g-4 mb-4">
+    <!-- Hero Section -->
+    {% include "dashboard/partials/hero.html" %}
 
-        <div class="col-lg-3 col-md-6">
-            {% with
-                title="Submitted Squads",
-                value=dashboard.submitted_squads,
-                subtitle="Total submissions received",
-                icon="bi bi-check-circle-fill",
-                color="success"
-            %}
-                {% include "components/stat_card.html" %}
-            {% endwith %}
-        </div>
+    <!-- Statistics Cards -->
+    {% include "dashboard/partials/stats.html" %}
 
-        <div class="col-lg-3 col-md-6">
-            {% with
-                title="Pending Squads",
-                value=dashboard.pending_squads,
-                subtitle="Awaiting submission",
-                icon="bi bi-hourglass-split",
-                color="warning"
-            %}
-                {% include "components/stat_card.html" %}
-            {% endwith %}
-        </div>
-
-        <div class="col-lg-3 col-md-6">
-            {% with
-                title="Vaccinations",
-                value=dashboard.total_vaccinations,
-                subtitle="Animals vaccinated",
-                icon="bi bi-shield-check",
-                color="info"
-            %}
-                {% include "components/stat_card.html" %}
-            {% endwith %}
-        </div>
-
-        <div class="col-lg-3 col-md-6">
-            {% with
-                title="Pashudhan Entries",
-                value=dashboard.total_entries,
-                subtitle="Portal entries",
-                icon="bi bi-database-fill",
-                color="success"
-            %}
-                {% include "components/stat_card.html" %}
-            {% endwith %}
-        </div>
-
-    </div>
-
-    <!-- Progress -->
-    <div class="row mb-4">
+    <!-- Placeholder Row (Sprint 2) -->
+    <div class="row g-4">
 
         <div class="col-lg-8">
 
-            {% with
-                title="Campaign Progress",
-                percentage=dashboard.vaccination_percentage
-            %}
-                {% include "components/progress_card.html" %}
-            {% endwith %}
+            <div class="dashboard-card coming-soon">
+
+                <div class="card-header-custom">
+
+                    <h5>
+                        <i class="bi bi-bar-chart-line-fill"></i>
+                        Vaccination Progress
+                    </h5>
+
+                </div>
+
+                <div class="card-body-custom">
+
+                    <div class="placeholder-box">
+
+                        <i class="bi bi-graph-up-arrow"></i>
+
+                        <h4>Analytics Coming in Sprint 2</h4>
+
+                        <p>
+                            Vaccination charts, Panchayath progress,
+                            achievement trend and target analysis
+                            will appear here.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-4">
+
+            <div class="dashboard-card coming-soon">
+
+                <div class="card-header-custom">
+
+                    <h5>
+
+                        <i class="bi bi-award-fill"></i>
+
+                        Achievement
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body-custom">
+
+                    <div class="placeholder-box">
+
+                        <i class="bi bi-trophy-fill"></i>
+
+                        <h4>Achievement Panel</h4>
+
+                        <p>
+                            Campaign achievement,
+                            district ranking,
+                            progress circle
+                            and milestones
+                            will appear here.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
 
     </div>
 
-    <!-- Recent Submissions -->
-    <div class="row">
+    <!-- Bottom Row -->
+    <div class="row g-4">
 
-        <div class="col-lg-12">
+        <div class="col-lg-6">
 
-            <div class="ncms-card">
+            <div class="dashboard-card">
 
-                <h4 class="mb-4">
+                <div class="card-header-custom">
 
-                    Recent Submissions
+                    <h5>
 
-                </h4>
+                        <i class="bi bi-clock-history"></i>
 
-                {% if submissions %}
+                        Recent Submissions
 
-                <table class="table table-hover align-middle">
+                    </h5>
 
-                    <thead>
+                </div>
 
-                    <tr>
+                <div class="card-body-custom">
 
-                        <th>Squad</th>
-                        <th>Panchayath</th>
-                        <th>Vaccinations</th>
-                        <th>Pashudhan</th>
-                        <th>Date</th>
+                    {% if dashboard.recent_submissions %}
 
-                    </tr>
+                        <div class="list-group list-group-flush">
 
-                    </thead>
+                            {% for submission in dashboard.recent_submissions %}
 
-                    <tbody>
+                                <div class="list-group-item">
 
-                    {% for row in submissions %}
+                                    <strong>
 
-                    <tr>
+                                        {{ submission.squad.squad_number }}
 
-                        <td>{{ row.squad_number }}</td>
-                        <td>{{ row.panchayath_name }}</td>
-                        <td>{{ row.vaccinations_done }}</td>
-                        <td>{{ row.pashudhan_entries }}</td>
-                        <td>{{ row.created_at.strftime("%d-%m-%Y") }}</td>
+                                    </strong>
 
-                    </tr>
+                                    <br>
 
-                    {% endfor %}
+                                    <small class="text-muted">
 
-                    </tbody>
+                                        {{ submission.created_at.strftime('%d-%m-%Y %I:%M %p') }}
 
-                </table>
+                                    </small>
 
-                {% else %}
+                                </div>
 
-                    {% with
-                        icon="bi bi-inbox",
-                        title="No submissions yet",
-                        message="Submissions will appear here after squads submit their reports."
-                    %}
-                        {% include "components/empty_state.html" %}
-                    {% endwith %}
+                            {% endfor %}
 
-                {% endif %}
+                        </div>
+
+                    {% else %}
+
+                        <div class="placeholder-box small-placeholder">
+
+                            <i class="bi bi-inbox"></i>
+
+                            <p>No submissions available.</p>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-6">
+
+            <div class="dashboard-card">
+
+                <div class="card-header-custom">
+
+                    <h5>
+
+                        <i class="bi bi-lightning-charge-fill"></i>
+
+                        Quick Actions
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body-custom">
+
+                    <div class="quick-actions">
+
+                        <a href="{{ url_for('submission.index') }}"
+                           class="action-btn">
+
+                            <i class="bi bi-pencil-square"></i>
+
+                            <span>New Submission</span>
+
+                        </a>
+
+                        <a href="{{ url_for('masterdata.index') }}"
+                           class="action-btn">
+
+                            <i class="bi bi-upload"></i>
+
+                            <span>Master Data</span>
+
+                        </a>
+
+                        <a href="{{ url_for('campaign.index') }}"
+                           class="action-btn">
+
+                            <i class="bi bi-broadcast"></i>
+
+                            <span>Campaigns</span>
+
+                        </a>
+
+                        <a href="#"
+                           class="action-btn disabled">
+
+                            <i class="bi bi-file-earmark-bar-graph"></i>
+
+                            <span>Reports</span>
+
+                        </a>
+
+                    </div>
+
+                </div>
 
             </div>
 
@@ -153,5 +232,11 @@ NADCP Campaign Overview
     </div>
 
 </div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 
 {% endblock %}

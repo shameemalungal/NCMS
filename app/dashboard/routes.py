@@ -1,23 +1,19 @@
-from app.dashboard.services import DashboardService
+from flask import render_template
+
+from app.dashboard import dashboard_bp
+from app.services.dashboard_service import DashboardService
 
 
-@bp.route("/")
+@dashboard_bp.route("/")
 def index():
 
-    dashboard = DashboardService.summary()
-
-    submissions = DashboardService.recent()
+    dashboard = DashboardService.get_dashboard()
 
     return render_template(
-
         "dashboard/index.html",
-
         dashboard=dashboard,
-
-        submissions=submissions
-
+        submissions=dashboard["recent_submissions"],
+        page_label="NCMS Dashboard",
+        page_title="Dashboard",
+        page_subtitle="NADCP Campaign Management System",
     )
-@bp.get("/api/summary")
-def api_summary():
-
-    return DashboardService.summary()

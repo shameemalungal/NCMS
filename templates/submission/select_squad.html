@@ -1,0 +1,503 @@
+{% extends "base.html" %}
+
+{% block title %}Submit Report{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-primary text-white">
+
+                    <h3 class="mb-1">
+                        NADCP Campaign Report Submission
+                    </h3>
+
+                    <small>
+                        {{ campaign.name }}
+                        ({{ campaign.code }})
+                    </small>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="mb-4">
+
+                        <label class="form-label fw-bold">
+
+                            Panchayath
+
+                        </label>
+
+                        <select
+                            id="panchayath"
+                            class="form-select">
+
+                            <option value="">
+                                -- Select Panchayath --
+                            </option>
+
+                            {% for p in panchayaths %}
+
+                            <option value="{{ p.id }}">
+                                {{ p.name }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <label class="form-label fw-bold">
+
+                            Squad Number
+
+                        </label>
+
+                        <select
+                            id="squad"
+                            class="form-select"
+                            disabled>
+
+                            <option value="">
+                                Select Panchayath First
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div
+                        id="squadCard"
+                        class="card border-success d-none">
+
+                        <div class="card-header">
+
+                            <strong>
+                                Squad Details
+                            </strong>
+
+                        </div>
+
+                        <div class="card-body">
+
+                            <table class="table table-sm">
+
+                                <tr>
+                                    <th width="35%">Campaign</th>
+                                    <td id="campaignName"></td>
+                                </tr>
+
+                                <tr>
+                                    <th>Panchayath</th>
+                                    <td id="panchayathName"></td>
+                                </tr>
+
+                                <tr>
+                                    <th>Squad Number</th>
+                                    <td id="squadNo"></td>
+                                </tr>
+
+                                <tr>
+                                    <th>Target</th>
+                                    <td id="target"></td>
+                                </tr>
+
+                                <tr>
+                                    <th>Days Allotted</th>
+                                    <td id="days"></td>
+                                </tr>
+
+                            </table>
+
+                            <hr>
+
+                            <h6 class="fw-bold">
+
+                                Squad Members
+
+                            </h6>
+
+                            <div
+                                id="memberList"
+                                class="list-group mb-3">
+
+                            </div>
+
+                            <div
+                                id="submittedAlert"
+                                class="alert alert-warning d-none">
+
+                                <h5 class="mb-1">
+
+                                    Report Already Submitted
+
+                                </h5>
+
+                                This squad has already submitted the
+                                vaccination report.
+
+                            </div>
+
+                            <div class="text-end">
+
+                                <a
+                                    id="continueBtn"
+                                    href="#"
+                                    class="btn btn-success">
+
+                                    Continue to Submission Form
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const panchayath = document.getElementById("panchayath");
+    const squad = document.getElementById("squad");
+
+    const squadCard = document.getElementById("squadCard");
+
+    const campaignName = document.getElementById("campaignName");
+    const panchayathName = document.getElementById("panchayathName");
+    const squadNo = document.getElementById("squadNo");
+    const target = document.getElementById("target");
+    const days = document.getElementById("days");
+
+    const memberList = document.getElementById("memberList");
+
+    const submittedAlert = document.getElementById("submittedAlert");
+
+    const continueBtn = document.getElementById("continueBtn");
+
+
+    // =====================================================
+    // PANCHAYATH CHANGE
+    // =====================================================
+
+    panchayath.addEventListener("change", async function () {
+
+        const panchayathId = this.value;
+
+        // Reset everything
+        squad.innerHTML =
+            "<option value=''>Loading squads...</option>";
+
+        squad.disabled = true;
+
+        squadCard.classList.add("d-none");
+
+
+        // No Panchayath selected
+        if (!panchayathId) {
+
+            squad.innerHTML =
+                "<option value=''>Select Panchayath First</option>";
+
+            return;
+        }
+
+
+        try {
+
+            const response = await fetch(
+                `/submit/api/squads/${panchayathId}`
+            );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    `Server returned ${response.status}`
+                );
+
+            }
+
+
+            const data = await response.json();
+
+
+            squad.innerHTML =
+                "<option value=''>-- Select Squad --</option>";
+
+
+            if (data.length === 0) {
+
+                squad.innerHTML =
+                    "<option value=''>No squads found</option>";
+
+                squad.disabled = true;
+
+                return;
+            }
+
+
+            data.forEach(function (item) {
+
+                const option =
+                    document.createElement("option");
+
+                option.value = item.id;
+
+
+                if (item.submitted) {
+
+                    option.textContent =
+                        `Squad ${item.squad_no} - Submitted`;
+
+                } else {
+
+                    option.textContent =
+                        `Squad ${item.squad_no}`;
+
+                }
+
+
+                squad.appendChild(option);
+
+            });
+
+
+            // Enable Squad dropdown
+            squad.disabled = false;
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Unable to load squads:",
+                error
+            );
+
+
+            squad.innerHTML =
+                "<option value=''>Unable to load squads</option>";
+
+            squad.disabled = true;
+
+
+            alert(
+                "Unable to load squads. " +
+                "Please check the server console for the error."
+            );
+
+        }
+
+    });
+
+
+    // =====================================================
+    // SQUAD CHANGE
+    // =====================================================
+
+    squad.addEventListener("change", async function () {
+
+        const squadId = this.value;
+
+
+        if (!squadId) {
+
+            squadCard.classList.add("d-none");
+
+            return;
+
+        }
+
+
+        try {
+
+            const response = await fetch(
+                `/submit/api/squad/${squadId}`
+            );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    `Server returned ${response.status}`
+                );
+
+            }
+
+
+            const data = await response.json();
+
+
+            squadCard.classList.remove("d-none");
+
+
+            campaignName.textContent =
+                data.campaign || "";
+
+
+            panchayathName.textContent =
+                data.panchayath || "";
+
+
+            squadNo.textContent =
+                data.squad_no ?? "";
+
+
+            target.textContent =
+                data.target ?? 0;
+
+
+            days.textContent =
+                data.days ?? 0;
+
+
+            // ---------------------------------------------
+            // Squad members
+            // ---------------------------------------------
+
+            memberList.innerHTML = "";
+
+
+            if (
+                data.members &&
+                data.members.length > 0
+            ) {
+
+                data.members.forEach(function (member) {
+
+                    const item =
+                        document.createElement("div");
+
+                    item.className =
+                        "list-group-item";
+
+
+                    const name =
+                        document.createElement("strong");
+
+                    name.textContent =
+                        member.name || "";
+
+
+                    const lineBreak =
+                        document.createElement("br");
+
+
+                    const office =
+                        document.createElement("small");
+
+                    office.className =
+                        "text-muted";
+
+                    office.textContent =
+                        member.office || "";
+
+
+                    item.appendChild(name);
+
+                    item.appendChild(lineBreak);
+
+                    item.appendChild(office);
+
+
+                    memberList.appendChild(item);
+
+                });
+
+            }
+
+            else {
+
+                memberList.innerHTML =
+                    "<div class='list-group-item text-muted'>" +
+                    "No squad members found." +
+                    "</div>";
+
+            }
+
+
+            // ---------------------------------------------
+            // Submission status
+            // ---------------------------------------------
+
+            if (data.submitted) {
+
+                submittedAlert.classList.remove(
+                    "d-none"
+                );
+
+                continueBtn.classList.add(
+                    "d-none"
+                );
+
+                continueBtn.href = "#";
+
+            }
+
+            else {
+
+                submittedAlert.classList.add(
+                    "d-none"
+                );
+
+                continueBtn.classList.remove(
+                    "d-none"
+                );
+
+                continueBtn.href =
+                    `/submit/form/${squadId}`;
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Unable to load squad details:",
+                error
+            );
+
+
+            squadCard.classList.add("d-none");
+
+
+            alert(
+                "Unable to load squad details. " +
+                "Please check the server console for the error."
+            );
+
+        }
+
+    });
+
+});
+
+
+</script>
+
+{% endblock %}

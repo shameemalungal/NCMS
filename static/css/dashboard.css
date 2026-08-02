@@ -1,360 +1,441 @@
-/* ==========================================
-   NCMS Dashboard
-   ========================================== */
+.dashboard-page{
 
-.dashboard-hero {
-    border-radius: 22px;
-    overflow: hidden;
-    border: none;
-    background: linear-gradient(135deg, #0ea5a4 0%, #4f46e5 100%);
-    color: #fff;
-}
-
-.dashboard-hero .card-body {
-    padding: 2.5rem;
-}
-
-.dashboard-hero h2,
-.dashboard-hero h3,
-.dashboard-hero h4 {
-    color: #ffffff;
-}
-
-.dashboard-hero .text-muted {
-    color: rgba(255, 255, 255, 0.85) !important;
-}
-
-.dashboard-hero .small {
-    color: rgba(255, 255, 255, 0.75);
-}
-
-.dashboard-hero .badge {
-    font-size: 0.9rem;
-    font-weight: 600;
-    border-radius: 30px;
-}
-
-/* ==========================================
-   Achievement Circle
-   ========================================== */
-
-.achievement-circle {
-    width: 220px;
-    height: 220px;
-    margin: auto;
-    border-radius: 50%;
-    background: rgba(255,255,255,.15);
-    backdrop-filter: blur(10px);
-    border: 6px solid rgba(255,255,255,.25);
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    transition: .35s;
-}
-
-.achievement-circle:hover {
-
-    transform: scale(1.04);
+    display:flex;
+    flex-direction:column;
+    gap:30px;
 
 }
 
-.achievement-circle h1 {
+/* ---------------- HERO ---------------- */
 
-    margin-bottom: .3rem;
-    color: white;
+.dashboard-hero{
 
-}
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 
-.achievement-circle div {
+    padding:40px;
 
-    color: rgba(255,255,255,.85);
+    border-radius:24px;
 
-}
+    background:linear-gradient(135deg,#1fa463,#0b6d4b);
 
-/* ==========================================
-   KPI Cards
-   ========================================== */
+    color:white;
 
-.dashboard-card {
-
-    border-radius: 18px;
-    transition: .30s ease;
-    cursor: default;
+    overflow:hidden;
 
 }
 
-.dashboard-card .card-body {
+.hero-left{
 
-    padding: 1.7rem;
-
-}
-
-.dashboard-card:hover {
-
-    transform: translateY(-6px);
-
-    box-shadow: 0 18px 35px rgba(0,0,0,.12) !important;
+    width:70%;
 
 }
 
-.dashboard-card .small {
+.hero-right{
 
-    color: #6c757d;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: .5px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 
-}
-
-.dashboard-card h2 {
-
-    color: #222;
-    margin-top: 10px;
+    width:30%;
 
 }
 
-/* ==========================================
-   Card Styling
-   ========================================== */
+.hero-badge{
 
-.card {
+    display:inline-flex;
 
-    border-radius: 18px;
+    gap:8px;
 
-}
+    align-items:center;
 
-.card-header {
+    padding:8px 16px;
 
-    padding: 1rem 1.5rem;
+    border-radius:50px;
 
-    background: white;
+    background:rgba(255,255,255,.18);
 
-    border-bottom: 1px solid #f0f0f0;
+    font-size:.9rem;
 
 }
 
-.card-body {
+.dashboard-hero h1{
 
-    padding: 1.5rem;
+    margin-top:20px;
+
+    font-size:2.3rem;
+
+    font-weight:700;
 
 }
 
-/* ==========================================
+.hero-subtitle{
+
+    opacity:.9;
+
+    margin-top:10px;
+
+}
+
+.hero-progress{
+
+    margin-top:25px;
+
+}
+
+.hero-progress .progress{
+
+    height:12px;
+
+    border-radius:20px;
+
+}
+
+.hero-circle{
+
+    width:180px;
+
+    height:180px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.12);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+.hero-circle i{
+
+    font-size:5rem;
+
+}
+
+/* ---------------- CARDS ---------------- */
+
+.stats-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+
+    gap:25px;
+
+}
+
+.stat-card{
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:28px;
+
+    box-shadow:0 8px 24px rgba(0,0,0,.08);
+
+    display:flex;
+
+    gap:20px;
+
+    align-items:center;
+
+    transition:.25s;
+
+}
+
+.stat-card:hover{
+
+    transform:translateY(-6px);
+
+}
+
+.stat-icon{
+
+    width:65px;
+
+    height:65px;
+
+    border-radius:16px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:#fff;
+
+    font-size:1.6rem;
+
+}
+
+.green{
+
+    background:#22c55e;
+
+}
+
+.red{
+
+    background:#ef4444;
+
+}
+
+.blue{
+
+    background:#2563eb;
+
+}
+
+.orange{
+
+    background:#f59e0b;
+
+}
+
+.stat-card h2{
+
+    margin:0;
+
+    font-size:2rem;
+
+    font-weight:700;
+
+}
+
+.stat-card p{
+
+    margin:0;
+
+    color:#6b7280;
+
+}
+
+/* ---------------- MOBILE ---------------- */
+
+@media(max-width:992px){
+
+.dashboard-hero{
+
+    flex-direction:column;
+
+    text-align:center;
+
+    gap:30px;
+
+}
+
+.hero-left{
+
+    width:100%;
+
+}
+
+.hero-right{
+
+    width:100%;
+
+}
+
+}
+/* ==========================================================
+   Dashboard Content Cards
+   ========================================================== */
+
+.dashboard-card{
+
+    background:#fff;
+    border-radius:22px;
+    box-shadow:0 10px 28px rgba(15,23,42,.08);
+    border:1px solid #E5E7EB;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    transition:.25s;
+
+}
+
+.dashboard-card:hover{
+
+    transform:translateY(-4px);
+    box-shadow:0 18px 40px rgba(15,23,42,.12);
+
+}
+
+.card-header-custom{
+
+    padding:22px 24px;
+    border-bottom:1px solid #EEF2F7;
+    background:#fff;
+
+}
+
+.card-header-custom h5{
+
+    margin:0;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:700;
+    color:#1F2937;
+
+}
+
+.card-header-custom i{
+
+    color:#16A34A;
+    font-size:1.2rem;
+
+}
+
+.card-body-custom{
+
+    padding:24px;
+    flex:1;
+
+}
+
+/* ==========================================================
+   Placeholder
+   ========================================================== */
+
+.placeholder-box{
+
+    min-height:260px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:20px;
+
+}
+
+.placeholder-box i{
+
+    font-size:64px;
+    color:#16A34A;
+    margin-bottom:18px;
+
+}
+
+.placeholder-box h4{
+
+    margin-bottom:10px;
+    font-weight:700;
+
+}
+
+.placeholder-box p{
+
+    color:#6B7280;
+    max-width:420px;
+    margin:0 auto;
+
+}
+
+.small-placeholder{
+
+    min-height:180px;
+
+}
+
+/* ==========================================================
+   Recent Submission
+   ========================================================== */
+
+.list-group-item{
+
+    border:none;
+    border-bottom:1px solid #EEF2F7;
+    padding:16px 4px;
+
+}
+
+.list-group-item:last-child{
+
+    border-bottom:none;
+
+}
+
+/* ==========================================================
    Quick Actions
-   ========================================== */
+   ========================================================== */
 
-.list-group-item {
+.quick-actions{
 
-    border: none;
-
-    padding: 16px 22px;
-
-    font-weight: 500;
-
-    transition: .25s;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
 
 }
 
-.list-group-item:hover {
+.action-btn{
 
-    background: #eef8ff;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
 
-    color: #0ea5a4;
+    text-decoration:none;
 
-    padding-left: 30px;
+    padding:26px 18px;
 
-}
+    border-radius:18px;
 
-/* ==========================================
-   Recent Activity
-   ========================================== */
+    background:#F8FAFC;
 
-.table {
+    color:#374151;
 
-    margin-bottom: 0;
+    border:1px solid #E5E7EB;
 
-}
-
-.table thead th {
-
-    border-top: none;
-
-    font-weight: 600;
-
-    color: #555;
+    transition:.25s;
 
 }
 
-.table tbody td {
+.action-btn:hover{
 
-    vertical-align: middle;
-
-}
-
-/* ==========================================
-   Chart
-   ========================================== */
-
-#progressChart {
-
-    width: 100% !important;
-
-    max-height: 320px;
+    background:#16A34A;
+    color:#fff;
+    transform:translateY(-3px);
 
 }
 
-/* ==========================================
-   Achievement Card
-   ========================================== */
+.action-btn i{
 
-.card h5 {
-
-    font-weight: 600;
+    font-size:1.8rem;
 
 }
 
-.card p {
+.action-btn span{
 
-    line-height: 1.7;
-
-}
-
-/* ==========================================
-   Hover Animation
-   ========================================== */
-
-.card {
-
-    transition: .25s;
+    font-weight:600;
 
 }
 
-.card:hover {
+.action-btn.disabled{
 
-    box-shadow: 0 15px 40px rgba(0,0,0,.08);
-
-}
-
-/* ==========================================
-   Fade Animation
-   ========================================== */
-
-.dashboard-hero,
-.dashboard-card,
-.card {
-
-    animation: fadeUp .6s ease;
+    opacity:.55;
+    pointer-events:none;
 
 }
 
-@keyframes fadeUp {
-
-    from {
-
-        opacity: 0;
-
-        transform: translateY(20px);
-
-    }
-
-    to {
-
-        opacity: 1;
-
-        transform: translateY(0);
-
-    }
-
-}
-
-/* ==========================================
+/* ==========================================================
    Responsive
-   ========================================== */
+   ========================================================== */
 
-@media (max-width:992px) {
+@media(max-width:768px){
 
-    .dashboard-hero .card-body {
+    .quick-actions{
 
-        padding: 2rem;
-
-    }
-
-    .achievement-circle {
-
-        width: 180px;
-
-        height: 180px;
-
-        margin-top: 30px;
-
-    }
-
-}
-
-@media (max-width:768px) {
-
-    .dashboard-hero {
-
-        text-align: center;
-
-    }
-
-    .achievement-circle {
-
-        width: 160px;
-
-        height: 160px;
-
-    }
-
-    .dashboard-card {
-
-        margin-bottom: 10px;
-
-    }
-
-    .card-header {
-
-        text-align: center;
-
-    }
-
-}
-
-@media (max-width:576px) {
-
-    .dashboard-hero .card-body {
-
-        padding: 1.5rem;
-
-    }
-
-    .dashboard-hero h2 {
-
-        font-size: 1.7rem;
-
-    }
-
-    .achievement-circle {
-
-        width: 140px;
-
-        height: 140px;
-
-    }
-
-    .achievement-circle h1 {
-
-        font-size: 2rem;
-
-    }
-
-    .list-group-item {
-
-        font-size: .95rem;
+        grid-template-columns:1fr;
 
     }
 

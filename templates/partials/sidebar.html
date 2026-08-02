@@ -1,85 +1,172 @@
 <aside class="sidebar">
 
-    <!-- Brand -->
+    <!-- ==========================================
+         Brand
+    =========================================== -->
+
     <div class="sidebar-brand">
+
         <div class="brand-logo">
+
             <i class="bi bi-shield-check"></i>
+
         </div>
 
         <div class="brand-text">
+
             <h4>NCMS</h4>
-            <small>NADCP Campaign</small>
+
+            <small>
+                NADCP Campaign<br>
+                Management System
+            </small>
+
         </div>
+
     </div>
 
-    <!-- Navigation -->
-    <nav class="sidebar-nav">
 
-        <div class="nav-section">
-            <span class="nav-title">MAIN</span>
+    <!-- ==========================================
+         Navigation
+    =========================================== -->
 
-            <a href="{{ url_for('dashboard.index') }}"
-               class="nav-link {% if request.endpoint=='dashboard.index' %}active{% endif %}">
-                <i class="bi bi-speedometer2"></i>
-                <span>Dashboard</span>
-            </a>
+    <div class="sidebar-nav">
 
-            <a href="{{ url_for('submission.index') }}"
-               class="nav-link {% if request.blueprint=='submission' %}active{% endif %}">
-                <i class="bi bi-ui-checks-grid"></i>
-                <span>Submissions</span>
-            </a>
+        <div class="sidebar-heading">
 
-            <a href="{{ url_for('masterdata.index') }}"
-               class="nav-link {% if request.blueprint=='masterdata' %}active{% endif %}">
-                <i class="bi bi-database"></i>
-                <span>Master Data</span>
-            </a>
-
-            <a href="#"
-               class="nav-link">
-                <i class="bi bi-people"></i>
-                <span>Squads</span>
-            </a>
-
-            <a href="#"
-               class="nav-link">
-                <i class="bi bi-graph-up-arrow"></i>
-                <span>Reports</span>
-            </a>
+            Main Menu
 
         </div>
 
-        <div class="nav-section">
+        <a href="{{ url_for('dashboard.index') }}"
+           class="{% if request.endpoint=='dashboard.index' %}active{% endif %}">
 
-            <span class="nav-title">
-                ADMINISTRATION
-            </span>
+            <i class="bi bi-grid-fill"></i>
 
-            <a href="#"
-               class="nav-link">
-                <i class="bi bi-gear"></i>
-                <span>Settings</span>
-            </a>
+            <span>Dashboard</span>
+
+        </a>
+
+        <a href="{{ url_for('submission.index') }}"
+           class="{% if request.endpoint and request.endpoint.startswith('submission.') %}active{% endif %}">
+
+            <i class="bi bi-pencil-square"></i>
+
+            <span>New Submission</span>
+
+        </a>
+
+        <a href="{{ url_for('campaign.index') }}"
+           class="{% if request.endpoint and request.endpoint.startswith('campaign.') %}active{% endif %}">
+
+            <i class="bi bi-broadcast"></i>
+
+            <span>Campaigns</span>
+
+        </a>
+
+        <a href="{{ url_for('masterdata.index') }}"
+           class="{% if request.endpoint and request.endpoint.startswith('masterdata.') %}active{% endif %}">
+
+            <i class="bi bi-database-fill"></i>
+
+            <span>Master Data</span>
+
+        </a>
+
+        <a href="#">
+
+            <i class="bi bi-people-fill"></i>
+
+            <span>Squads</span>
+
+            <span class="sidebar-badge">Soon</span>
+
+        </a>
+
+        <a href="#">
+
+            <i class="bi bi-geo-alt-fill"></i>
+
+            <span>Panchayaths</span>
+
+            <span class="sidebar-badge">Soon</span>
+
+        </a>
+
+        <a href="#">
+
+            <i class="bi bi-file-earmark-bar-graph-fill"></i>
+
+            <span>Reports</span>
+
+            <span class="sidebar-badge">Soon</span>
+
+        </a>
+
+
+        <hr class="sidebar-divider">
+
+
+        <div class="sidebar-heading">
+
+            Administration
 
         </div>
 
-    </nav>
+        <a href="#">
 
-    <!-- Footer -->
+            <i class="bi bi-gear-fill"></i>
+
+            <span>Settings</span>
+
+            <span class="sidebar-badge">Soon</span>
+
+        </a>
+
+    </div>
+
+
+    <!-- ==========================================
+         Footer
+    =========================================== -->
+
     <div class="sidebar-footer">
+
+        {% if active_campaign %}
 
         <div class="campaign-card">
 
-            <small>Active Campaign</small>
+            <small>ACTIVE CAMPAIGN</small>
 
-            <h6>NADCP Phase IX</h6>
+            <h6>{{ active_campaign.name }}</h6>
 
-            <span class="badge bg-success">
-                Active
-            </span>
+            <p>
+
+                {{ active_campaign.code }}
+
+                {% if active_campaign.start_date %}
+                    <br>
+                    {{ active_campaign.start_date.strftime('%d %b %Y') }}
+                {% endif %}
+
+            </p>
 
         </div>
+
+        {% else %}
+
+        <div class="campaign-card">
+
+            <small>CAMPAIGN</small>
+
+            <h6>No Active Campaign</h6>
+
+            <p>Create or activate a campaign.</p>
+
+        </div>
+
+        {% endif %}
 
     </div>
 
