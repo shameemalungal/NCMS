@@ -1,0 +1,1073 @@
+{% extends "base.html" %}
+
+{% block title %}Pending Submissions - NCMS{% endblock %}
+
+
+{% block content %}
+
+<style>
+
+    /* =====================================================
+       PENDING SUBMISSION REPORT
+       ===================================================== */
+
+    .report-page {
+        width: 100%;
+        max-width: none;
+        padding-bottom: 40px;
+    }
+
+
+    /* =====================================================
+       HERO
+       ===================================================== */
+
+    .report-hero {
+        background: linear-gradient(
+            135deg,
+            #087f4f 0%,
+            #11995f 100%
+        );
+        color: #ffffff;
+        border-radius: 14px;
+        padding: 22px 26px;
+        margin-bottom: 20px;
+        box-shadow:
+            0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .report-hero-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 18px;
+        flex-wrap: wrap;
+    }
+
+    .report-hero h2 {
+        margin: 0 0 5px 0;
+        font-size: 1.45rem;
+        font-weight: 800;
+        color: #ffffff;
+    }
+
+    .report-hero p {
+        margin: 0;
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .campaign-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.16);
+        border: 1px solid rgba(255, 255, 255, 0.30);
+        color: #ffffff;
+        border-radius: 999px;
+        padding: 8px 13px;
+        font-size: 0.82rem;
+        font-weight: 700;
+    }
+
+
+    /* =====================================================
+       SUMMARY
+       ===================================================== */
+
+    .report-summary {
+        display: grid;
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .summary-card {
+        background: #ffffff;
+        border: 1px solid #e1e6eb;
+        border-radius: 11px;
+        padding: 16px;
+        box-shadow:
+            0 3px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .summary-label {
+        color: #667085;
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 6px;
+    }
+
+    .summary-value {
+        color: #172033;
+        font-size: 1.45rem;
+        font-weight: 800;
+    }
+
+    .summary-sub {
+        color: #667085;
+        font-size: 0.75rem;
+        margin-top: 5px;
+    }
+
+
+    /* =====================================================
+       REPORT PANEL
+       ===================================================== */
+
+    .report-panel {
+        width: 100%;
+        max-width: none;
+        background: #ffffff;
+        border: 1px solid #dfe4ea;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow:
+            0 4px 16px rgba(0, 0, 0, 0.05);
+    }
+
+    .report-panel-header {
+        width: 100%;
+        padding: 16px 18px;
+        border-bottom: 1px solid #e7ebef;
+        box-sizing: border-box;
+    }
+
+    .report-header-content {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .report-header-title-area {
+        min-width: 0;
+    }
+
+    .report-panel-title {
+        color: #172033;
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .report-panel-subtitle {
+        color: #667085;
+        font-size: 0.76rem;
+        margin-top: 2px;
+    }
+
+    .report-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+
+    /* =====================================================
+       ACTION BUTTONS
+       ===================================================== */
+
+    .report-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 0.76rem;
+        font-weight: 800;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .action-back {
+        border: 1px solid #d6dce3;
+        background: #ffffff;
+        color: #475467;
+    }
+
+    .action-back:hover {
+        background: #f4f7f9;
+        color: #344054;
+    }
+
+    .action-export-disabled {
+        border: 1px solid #dfe4ea;
+        background: #f4f6f8;
+        color: #98a2b3;
+        cursor: not-allowed;
+    }
+
+    .report-export-action {
+    border: 1px solid #087f4f;
+    background: #087f4f;
+    color: #ffffff;
+    }
+
+    .report-export-action:hover {
+        background: #066d43;
+        border-color: #066d43;
+        color: #ffffff;
+    }
+
+
+    /* =====================================================
+       SEARCH TOOLS
+       ===================================================== */
+
+    .report-tools {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding: 12px 18px;
+        box-sizing: border-box;
+        border-bottom: 1px solid #e7ebef;
+        background: #fafbfc;
+    }
+
+    .pending-description {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: #667085;
+        font-size: 0.76rem;
+        font-weight: 700;
+    }
+
+    .pending-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #9a6700;
+        flex-shrink: 0;
+    }
+
+    .report-search {
+        width: 330px;
+        max-width: 100%;
+        border: 1px solid #d6dce3;
+        border-radius: 8px;
+        padding: 8px 11px;
+        font-size: 0.78rem;
+        outline: none;
+    }
+
+    .report-search:focus {
+        border-color: #087f4f;
+        box-shadow:
+            0 0 0 3px rgba(8, 127, 79, 0.10);
+    }
+
+
+    /* =====================================================
+       TABLE
+       ===================================================== */
+
+    .table-wrap {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .pending-report-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1000px;
+    }
+
+    .pending-report-table th {
+        background: #f4f7f9;
+        color: #475467;
+        font-size: 0.68rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+        padding: 11px 10px;
+        border-bottom: 1px solid #dfe4ea;
+        white-space: nowrap;
+        text-align: center;
+    }
+
+    .pending-report-table th:nth-child(2),
+    .pending-report-table th:nth-child(4),
+    .pending-report-table th:nth-child(5),
+    .pending-report-table th:nth-child(6) {
+        text-align: left;
+    }
+
+    .pending-report-table td {
+        padding: 11px 10px;
+        border-bottom: 1px solid #edf0f3;
+        color: #344054;
+        font-size: 0.76rem;
+        text-align: center;
+        vertical-align: top;
+    }
+
+    .pending-report-table td:nth-child(2),
+    .pending-report-table td:nth-child(4),
+    .pending-report-table td:nth-child(5),
+    .pending-report-table td:nth-child(6) {
+        text-align: left;
+    }
+
+    .pending-report-table tbody tr:hover {
+        background: #fafcfd;
+    }
+
+    .serial-cell {
+        color: #667085;
+        font-weight: 800;
+    }
+
+    .panchayath-name {
+        color: #172033;
+        font-weight: 800;
+    }
+
+    .squad-number {
+        color: #172033;
+        font-weight: 800;
+    }
+
+
+    /* =====================================================
+       MEMBER DETAILS
+       ===================================================== */
+
+    .member-list {
+        min-width: 180px;
+    }
+
+    .member-item {
+        padding-bottom: 7px;
+        margin-bottom: 7px;
+        border-bottom: 1px dashed #e4e7ec;
+    }
+
+    .member-item:last-child {
+        padding-bottom: 0;
+        margin-bottom: 0;
+        border-bottom: 0;
+    }
+
+    .member-name {
+        display: block;
+        color: #172033;
+        font-weight: 800;
+        line-height: 1.35;
+    }
+
+    .member-value {
+        display: block;
+        color: #475467;
+        line-height: 1.4;
+    }
+
+    .empty-value {
+        color: #98a2b3;
+    }
+
+
+    /* =====================================================
+       STATUS
+       ===================================================== */
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-size: 0.66rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-pending {
+        background: #fff3d6;
+        color: #9a6700;
+    }
+
+
+    /* =====================================================
+       FOOTER
+       ===================================================== */
+
+    .report-footer {
+        padding: 14px 18px;
+        border-top: 1px solid #e7ebef;
+        background: #fafbfc;
+    }
+
+    .result-count {
+        color: #667085;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
+    .no-results {
+        display: none;
+        padding: 35px 20px;
+        text-align: center;
+        color: #667085;
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
+
+    @media (max-width: 1100px) {
+
+        .report-summary {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+    }
+
+    @media (max-width: 768px) {
+
+        .report-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .report-header-content {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .report-header-actions {
+            width: 100%;
+        }
+
+        .report-action {
+            flex: 1;
+        }
+
+        .report-tools {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .report-search {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+
+<div class="report-page">
+
+{% if campaign %}
+
+
+    <!-- ==================================================
+         HERO
+         ================================================== -->
+
+    <section class="report-hero">
+
+        <div class="report-hero-top">
+
+            <div>
+
+                <h2>
+                    Pending Submissions
+                </h2>
+
+                <p>
+                    Squads that have not yet submitted
+                    campaign data.
+                </p>
+
+            </div>
+
+            <div class="campaign-chip">
+                ● {{ campaign.name }}
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         SUMMARY
+         ================================================== -->
+
+    <section class="report-summary">
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Total Squads
+            </div>
+
+            <div class="summary-value">
+                {{ summary.total_squads }}
+            </div>
+
+            <div class="summary-sub">
+                Campaign squads
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Submitted
+            </div>
+
+            <div class="summary-value">
+                {{ summary.submitted_squads }}
+            </div>
+
+            <div class="summary-sub">
+                Submissions received
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Pending
+            </div>
+
+            <div class="summary-value">
+                {{ summary.pending_squads }}
+            </div>
+
+            <div class="summary-sub">
+                Squads yet to submit
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Submission Completion
+            </div>
+
+            <div class="summary-value">
+                {{ summary.submission_percentage }}%
+            </div>
+
+            <div class="summary-sub">
+                Overall submission progress
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         REPORT PANEL
+         ================================================== -->
+
+    <section class="report-panel">
+
+
+        <!-- ==============================================
+             REPORT HEADER / ACTION BANNER
+             ============================================== -->
+
+        <div class="report-panel-header">
+
+            <div class="report-header-content">
+
+                <div class="report-header-title-area">
+
+                    <div class="report-panel-title">
+                        Pending Submission Report
+                    </div>
+
+                    <div class="report-panel-subtitle">
+                        Squad-wise list of submissions
+                        still pending.
+                    </div>
+
+                </div>
+
+
+                <div class="report-header-actions">
+
+                    <a
+                        href="{{ url_for('reports.index') }}"
+                        class="report-action action-back"
+                    >
+                        ← Reports
+                    </a>
+
+                    <a
+                        href="{{ url_for(
+                            'reports.export_pending_submissions'
+                        ) }}"
+                        class="
+                            report-action
+                            report-export-action
+                        "
+                    >
+                        <i class="bi bi-file-earmark-excel-fill"></i>
+                        Export Excel
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==============================================
+             SEARCH
+             ============================================== -->
+
+        <div class="report-tools">
+
+            <div class="pending-description">
+
+                <span class="pending-dot"></span>
+
+                <span>
+                    Showing squads with no campaign
+                    submission
+                </span>
+
+            </div>
+
+
+            <input
+                type="text"
+                id="pendingReportSearch"
+                class="report-search"
+                placeholder="Search Panchayath, squad, member, office or Pashudhan ID..."
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <!-- ==============================================
+             TABLE
+             ============================================== -->
+
+        <div class="table-wrap">
+
+            <table class="pending-report-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Sl. No.</th>
+                        <th>Panchayath</th>
+                        <th>Squad No.</th>
+                        <th>Member Name</th>
+                        <th>Office</th>
+                        <th>Pashudhan ID</th>
+                        <th>Status</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                {% for row in monitoring %}
+
+                    {% for squad in row.pending_squads %}
+
+                        <tr
+                            class="pending-report-row"
+                            data-search="
+                                {{ row.panchayath.name | lower }}
+                                {{ squad.squad_no | string | lower }}
+                                pending
+                                {% for member in squad.members %}
+                                    {{ member.member_name | default('', true) | lower }}
+                                    {{ member.office | default('', true) | lower }}
+                                    {{ member.pashudhan_id | default('', true) | lower }}
+                                {% endfor %}
+                            "
+                        >
+
+                            <!-- Serial Number -->
+
+                            <td class="serial-cell">
+                            </td>
+
+
+                            <!-- Panchayath -->
+
+                            <td>
+
+                                <span class="panchayath-name">
+                                    {{ row.panchayath.name }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- Squad -->
+
+                            <td>
+
+                                <span class="squad-number">
+                                    {{ squad.squad_no }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- Member Name -->
+
+                            <td class="member-list">
+
+                                {% if squad.members %}
+
+                                    {% for member in squad.members %}
+
+                                        <div class="member-item">
+
+                                            <span class="member-name">
+                                                {{
+                                                    member.member_name
+                                                    or "-"
+                                                }}
+                                            </span>
+
+                                        </div>
+
+                                    {% endfor %}
+
+                                {% else %}
+
+                                    <span class="empty-value">
+                                        -
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- Office -->
+
+                            <td class="member-list">
+
+                                {% if squad.members %}
+
+                                    {% for member in squad.members %}
+
+                                        <div class="member-item">
+
+                                            <span class="member-value">
+                                                {{
+                                                    member.office
+                                                    or "-"
+                                                }}
+                                            </span>
+
+                                        </div>
+
+                                    {% endfor %}
+
+                                {% else %}
+
+                                    <span class="empty-value">
+                                        -
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- Pashudhan ID -->
+
+                            <td class="member-list">
+
+                                {% if squad.members %}
+
+                                    {% for member in squad.members %}
+
+                                        <div class="member-item">
+
+                                            <span class="member-value">
+                                                {{
+                                                    member.pashudhan_id
+                                                    or "-"
+                                                }}
+                                            </span>
+
+                                        </div>
+
+                                    {% endfor %}
+
+                                {% else %}
+
+                                    <span class="empty-value">
+                                        -
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- Status -->
+
+                            <td>
+
+                                <span
+                                    class="
+                                        status-badge
+                                        status-pending
+                                    "
+                                >
+                                    Pending
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- ==============================================
+             NO RESULTS
+             ============================================== -->
+
+        <div
+            class="no-results"
+            id="pendingReportNoResults"
+        >
+            No pending squad matches your search.
+        </div>
+
+
+        <!-- ==============================================
+             FOOTER
+             ============================================== -->
+
+        <div class="report-footer">
+
+            <div
+                class="result-count"
+                id="pendingResultCount"
+            >
+            </div>
+
+        </div>
+
+    </section>
+
+
+{% else %}
+
+
+    <!-- ==================================================
+         NO ACTIVE CAMPAIGN
+         ================================================== -->
+
+    <section class="report-panel">
+
+        <div
+            style="
+                padding: 45px 20px;
+                text-align: center;
+                color: #667085;
+            "
+        >
+
+            <h3
+                style="
+                    color: #172033;
+                    font-weight: 800;
+                "
+            >
+                No Active Campaign
+            </h3>
+
+            <p>
+                Activate a campaign before generating reports.
+            </p>
+
+        </div>
+
+    </section>
+
+
+{% endif %}
+
+</div>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const search =
+            document.getElementById(
+                "pendingReportSearch"
+            );
+
+        const rows =
+            document.querySelectorAll(
+                ".pending-report-row"
+            );
+
+        const resultCount =
+            document.getElementById(
+                "pendingResultCount"
+            );
+
+        const noResults =
+            document.getElementById(
+                "pendingReportNoResults"
+            );
+
+
+        // =================================================
+        // APPLY SEARCH
+        // =================================================
+
+        function applySearch() {
+
+            const searchValue =
+                search
+                    ? search.value
+                        .trim()
+                        .toLowerCase()
+                    : "";
+
+            let visibleCount = 0;
+
+
+            rows.forEach(
+                function (row) {
+
+                    const searchText =
+                        (
+                            row.dataset.search
+                            || ""
+                        )
+                        .toLowerCase();
+
+
+                    const visible =
+                        !searchValue
+                        || searchText.includes(
+                            searchValue
+                        );
+
+
+                    row.style.display =
+                        visible
+                            ? ""
+                            : "none";
+
+
+                    if (visible) {
+
+                        visibleCount += 1;
+
+                        const serialCell =
+                            row.querySelector(
+                                ".serial-cell"
+                            );
+
+                        if (serialCell) {
+
+                            serialCell.textContent =
+                                visibleCount;
+
+                        }
+
+                    }
+
+                }
+            );
+
+
+            if (resultCount) {
+
+                resultCount.textContent =
+                    visibleCount
+                    + (
+                        visibleCount === 1
+                            ? " Pending Squad"
+                            : " Pending Squads"
+                    );
+
+            }
+
+
+            if (noResults) {
+
+                noResults.style.display =
+                    visibleCount === 0
+                        ? "block"
+                        : "none";
+
+            }
+
+        }
+
+
+        // =================================================
+        // SEARCH EVENT
+        // =================================================
+
+        if (search) {
+
+            search.addEventListener(
+                "input",
+                applySearch
+            );
+
+        }
+
+
+        // =================================================
+        // INITIAL DISPLAY
+        // =================================================
+
+        applySearch();
+
+    }
+);
+
+</script>
+
+{% endblock %}

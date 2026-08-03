@@ -14,6 +14,7 @@ from app.masterdata import masterdata_bp
 from app.panchayath import panchayath_bp
 from app.reports import reports_bp
 from app.monitoring import monitoring_bp
+from app.settings import settings_bp
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -43,6 +44,7 @@ def create_app():
     app.register_blueprint(panchayath_bp)
     app.register_blueprint(reports_bp)
     app.register_blueprint(monitoring_bp)
+    app.register_blueprint(settings_bp)
 
     
 

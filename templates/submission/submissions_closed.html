@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Submissions Closed - NCMS{% endblock %}
+
+
+{% block content %}
+
+<style>
+
+    .closed-page {
+        min-height: 65vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 15px;
+    }
+
+    .closed-card {
+        width: 100%;
+        max-width: 620px;
+        background: #ffffff;
+        border: 1px solid #e4e7ec;
+        border-radius: 16px;
+        padding: 38px 30px;
+        text-align: center;
+        box-shadow:
+            0 8px 28px rgba(0, 0, 0, 0.07);
+    }
+
+    .closed-icon {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 18px auto;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff3e0;
+        color: #b26a00;
+        font-size: 1.7rem;
+    }
+
+    .closed-card h2 {
+        color: #172033;
+        font-size: 1.45rem;
+        font-weight: 800;
+        margin-bottom: 9px;
+    }
+
+    .closed-card p {
+        color: #667085;
+        font-size: 0.86rem;
+        line-height: 1.65;
+        margin-bottom: 0;
+    }
+
+    .campaign-box {
+        margin-top: 22px;
+        background: #f8fafb;
+        border: 1px solid #e4e7ec;
+        border-radius: 10px;
+        padding: 14px;
+    }
+
+    .campaign-label {
+        color: #98a2b3;
+        font-size: 0.68rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 4px;
+    }
+
+    .campaign-name {
+        color: #172033;
+        font-size: 0.92rem;
+        font-weight: 800;
+    }
+
+    .campaign-code {
+        color: #667085;
+        font-size: 0.76rem;
+        margin-top: 2px;
+    }
+
+</style>
+
+
+<div class="closed-page">
+
+    <div class="closed-card">
+
+        <div class="closed-icon">
+            <i class="bi bi-lock-fill"></i>
+        </div>
+
+        <h2>
+            Public Submissions Are Closed
+        </h2>
+
+        <p>
+            New submissions are not being accepted
+            for this campaign at the moment.
+            Please contact the campaign administrator
+            if you require assistance.
+        </p>
+
+
+        {% if campaign %}
+
+            <div class="campaign-box">
+
+                <div class="campaign-label">
+                    Campaign
+                </div>
+
+                <div class="campaign-name">
+                    {{ campaign.name }}
+                </div>
+
+                <div class="campaign-code">
+                    {{ campaign.code }}
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

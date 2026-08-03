@@ -1,0 +1,1501 @@
+{% extends "base.html" %}
+
+{% block title %}Squad Monitoring - NCMS{% endblock %}
+
+
+{% block styles %}
+
+<style>
+
+    /* =====================================================
+       PAGE
+       ===================================================== */
+
+    .squad-monitor-page {
+        width: 100%;
+        padding-bottom: 40px;
+    }
+
+
+    /* =====================================================
+       HERO
+       ===================================================== */
+
+    .squad-monitor-hero {
+        background: linear-gradient(
+            135deg,
+            #087f4f 0%,
+            #11995f 100%
+        );
+        color: #ffffff;
+        border-radius: 14px;
+        padding: 22px 24px;
+        margin-bottom: 18px;
+        box-shadow:
+            0 8px 24px rgba(0, 0, 0, 0.07);
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .squad-monitor-hero h2 {
+        margin: 0 0 5px 0;
+        color: #ffffff;
+        font-size: 1.35rem;
+        font-weight: 800;
+    }
+
+    .squad-monitor-hero p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 0.78rem;
+    }
+
+    .campaign-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.35);
+        background: rgba(255,255,255,0.12);
+        color: #ffffff;
+        font-size: 0.72rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+
+    /* =====================================================
+       SUMMARY
+       ===================================================== */
+
+    .monitor-summary {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .summary-card {
+        background: #ffffff;
+        border: 1px solid #e4e7ec;
+        border-radius: 11px;
+        padding: 15px 16px;
+        box-shadow:
+            0 3px 12px rgba(0,0,0,0.04);
+    }
+
+    .summary-label {
+        color: #667085;
+        font-size: 0.67rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        margin-bottom: 5px;
+    }
+
+    .summary-value {
+        color: #172033;
+        font-size: 1.25rem;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .summary-note {
+        color: #98a2b3;
+        font-size: 0.66rem;
+        margin-top: 4px;
+    }
+
+
+    /* =====================================================
+       MAIN CARD
+       ===================================================== */
+
+    .monitor-card {
+        background: #ffffff;
+        border: 1px solid #e4e7ec;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow:
+            0 4px 16px rgba(0,0,0,0.04);
+    }
+
+    .monitor-card-header {
+        padding: 15px 16px;
+        border-bottom: 1px solid #e7ebef;
+    }
+
+    .monitor-card-title {
+        color: #172033;
+        font-size: 0.92rem;
+        font-weight: 800;
+        margin-bottom: 2px;
+    }
+
+    .monitor-card-subtitle {
+        color: #667085;
+        font-size: 0.7rem;
+    }
+
+
+    /* =====================================================
+       FILTERS
+       ===================================================== */
+
+    .filter-area {
+        padding: 12px 16px;
+        border-bottom: 1px solid #e7ebef;
+        background: #ffffff;
+    }
+
+    .filter-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-bottom: 10px;
+    }
+
+    .filter-btn {
+        border: 1px solid #d8dee5;
+        background: #ffffff;
+        color: #475467;
+        border-radius: 999px;
+        padding: 6px 11px;
+        font-size: 0.68rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: 0.15s ease;
+    }
+
+    .filter-btn:hover {
+        background: #f8fafb;
+    }
+
+    .filter-btn.active {
+        background: #087f4f;
+        border-color: #087f4f;
+        color: #ffffff;
+    }
+
+    .filter-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 20px;
+        height: 20px;
+        margin-left: 4px;
+        padding: 0 5px;
+        border-radius: 999px;
+        background: #f2f4f7;
+        color: #475467;
+        font-size: 0.62rem;
+    }
+
+    .filter-btn.active .filter-count {
+        background: rgba(255,255,255,0.18);
+        color: #ffffff;
+    }
+
+    .search-row {
+        display: flex;
+        gap: 10px;
+    }
+
+    .monitor-search {
+        width: 100%;
+        max-width: 360px;
+        border: 1px solid #d8dee5;
+        border-radius: 8px;
+        padding: 8px 11px;
+        font-size: 0.74rem;
+        color: #344054;
+        outline: none;
+    }
+
+    .monitor-search:focus {
+        border-color: #087f4f;
+        box-shadow:
+            0 0 0 3px rgba(8,127,79,0.08);
+    }
+
+
+    /* =====================================================
+       TABLE
+       ===================================================== */
+
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .squad-table {
+        width: 100%;
+        min-width: 1350px;
+        border-collapse: collapse;
+    }
+
+    .squad-table thead th {
+        background: #f8fafb;
+        color: #475467;
+        font-size: 0.64rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        white-space: nowrap;
+        padding: 11px 10px;
+        border-bottom: 1px solid #e4e7ec;
+    }
+
+    .squad-table tbody td {
+        color: #344054;
+        font-size: 0.72rem;
+        padding: 11px 10px;
+        border-bottom: 1px solid #edf0f3;
+        vertical-align: middle;
+    }
+
+    .squad-table tbody tr:hover {
+        background: #fbfcfd;
+    }
+
+    .squad-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .squad-number {
+        color: #172033;
+        font-weight: 800;
+    }
+
+    .panchayath-name {
+        color: #172033;
+        font-weight: 700;
+    }
+
+
+    /* =====================================================
+       MEMBER DETAILS
+       ===================================================== */
+
+    .member-list {
+        min-width: 180px;
+    }
+
+    .member-item {
+        margin-bottom: 4px;
+        line-height: 1.35;
+    }
+
+    .member-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .member-name {
+        color: #344054;
+        font-weight: 700;
+    }
+
+    .member-office {
+        color: #98a2b3;
+        font-size: 0.63rem;
+    }
+
+
+    /* =====================================================
+       PERCENTAGES
+       ===================================================== */
+
+    .percent-good {
+        color: #087f4f;
+        font-weight: 800;
+    }
+
+    .percent-low {
+        color: #d92d20;
+        font-weight: 800;
+    }
+
+    .percent-zero {
+        color: #98a2b3;
+        font-weight: 800;
+    }
+
+
+    /* =====================================================
+       STATUS BADGES
+       ===================================================== */
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 5px 8px;
+        font-size: 0.61rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-submitted {
+        background: #e5f6ed;
+        color: #087f4f;
+    }
+
+    .status-pending {
+        background: #fff4db;
+        color: #a15c00;
+    }
+
+    .status-achieved {
+        background: #e5f6ed;
+        color: #087f4f;
+    }
+
+    .status-low {
+        background: #fde8ea;
+        color: #c92a3a;
+    }
+
+
+    /* =====================================================
+       REASONS
+       ===================================================== */
+
+    .reason-text {
+        max-width: 230px;
+        white-space: normal;
+        line-height: 1.4;
+        color: #667085;
+        font-size: 0.67rem;
+    }
+
+    .reason-none {
+        color: #b0b7c3;
+    }
+
+
+    /* =====================================================
+       EMPTY
+       ===================================================== */
+
+    .empty-monitor {
+        text-align: center;
+        padding: 45px 20px;
+        color: #667085;
+    }
+
+    .empty-monitor i {
+        display: block;
+        color: #98a2b3;
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .no-filter-results {
+        display: none;
+        text-align: center;
+        padding: 28px;
+        color: #667085;
+        font-size: 0.78rem;
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
+
+    @media (max-width: 1000px) {
+
+        .monitor-summary {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+    }
+
+    @media (max-width: 600px) {
+
+        .squad-monitor-hero {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .monitor-summary {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .search-row {
+            display: block;
+        }
+
+        .monitor-search {
+            max-width: none;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="squad-monitor-page">
+
+
+    <!-- ==================================================
+         HERO
+         ================================================== -->
+
+    <section class="squad-monitor-hero">
+
+        <div>
+
+            <h2>
+                Squad-wise Monitoring
+            </h2>
+
+            <p>
+                Live squad-wise campaign performance,
+                submission and achievement monitoring.
+            </p>
+
+        </div>
+
+
+        {% if campaign %}
+
+            <div class="campaign-badge">
+
+                <i class="bi bi-broadcast"></i>
+
+                {{ campaign.name }}
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- ==================================================
+         SUMMARY
+         ================================================== -->
+
+    {% set ns = namespace(
+        submitted=0,
+        pending=0,
+        vacc_achieved=0,
+        pash_achieved=0,
+        both_achieved=0,
+        low_vacc=0,
+        low_pash=0,
+        low_both=0
+    ) %}
+
+
+    {% for item in squad_rows %}
+
+        {% if item.submitted %}
+
+            {% set ns.submitted = ns.submitted + 1 %}
+
+            {% set vacc_pct =
+                item.squad.vaccination_percentage
+                |default(0, true)
+            %}
+
+            {% set pash_pct =
+                item.squad.pashudhan_percentage
+                |default(0, true)
+            %}
+
+            {% if vacc_pct >= 83 %}
+                {% set ns.vacc_achieved = ns.vacc_achieved + 1 %}
+            {% else %}
+                {% set ns.low_vacc = ns.low_vacc + 1 %}
+            {% endif %}
+
+            {% if pash_pct >= 97 %}
+                {% set ns.pash_achieved = ns.pash_achieved + 1 %}
+            {% else %}
+                {% set ns.low_pash = ns.low_pash + 1 %}
+            {% endif %}
+
+            {% if vacc_pct >= 83 and pash_pct >= 97 %}
+                {% set ns.both_achieved = ns.both_achieved + 1 %}
+            {% endif %}
+
+            {% if vacc_pct < 83 and pash_pct < 97 %}
+                {% set ns.low_both = ns.low_both + 1 %}
+            {% endif %}
+
+        {% else %}
+
+            {% set ns.pending = ns.pending + 1 %}
+
+        {% endif %}
+
+    {% endfor %}
+
+
+    <div class="monitor-summary">
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Total Squads
+            </div>
+
+            <div class="summary-value">
+                {{ squad_rows|length }}
+            </div>
+
+            <div class="summary-note">
+                Campaign squads
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Submitted
+            </div>
+
+            <div class="summary-value">
+                {{ ns.submitted }}
+            </div>
+
+            <div class="summary-note">
+                Completed submissions
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Pending
+            </div>
+
+            <div class="summary-value">
+                {{ ns.pending }}
+            </div>
+
+            <div class="summary-note">
+                Awaiting submission
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Both Targets Achieved
+            </div>
+
+            <div class="summary-value">
+                {{ ns.both_achieved }}
+            </div>
+
+            <div class="summary-note">
+                Vaccination ≥83% and Pashudhan ≥97%
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==================================================
+         MONITOR TABLE
+         ================================================== -->
+
+    <section class="monitor-card">
+
+        <div class="monitor-card-header">
+
+            <div class="monitor-card-title">
+                Squad Monitoring
+            </div>
+
+            <div class="monitor-card-subtitle">
+                Squad-wise submission and achievement status
+            </div>
+
+        </div>
+
+
+        <!-- ==============================================
+             FILTERS
+             ============================================== -->
+
+        <div class="filter-area">
+
+            <div class="filter-buttons">
+
+                <button
+                    type="button"
+                    class="filter-btn active"
+                    data-filter="all"
+                >
+                    All
+                    <span class="filter-count">
+                        {{ squad_rows|length }}
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="filter-btn"
+                    data-filter="submitted"
+                >
+                    Submitted
+                    <span class="filter-count">
+                        {{ ns.submitted }}
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="filter-btn"
+                    data-filter="pending"
+                >
+                    Pending
+                    <span class="filter-count">
+                        {{ ns.pending }}
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="filter-btn"
+                    data-filter="vaccination-achieved"
+                >
+                    Vaccination Target Achieved
+                    <span class="filter-count">
+                        {{ ns.vacc_achieved }}
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="filter-btn"
+                    data-filter="pashudhan-achieved"
+                >
+                    Pashudhan Target Achieved
+                    <span class="filter-count">
+                        {{ ns.pash_achieved }}
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="filter-btn"
+                    data-filter="both-achieved"
+                >
+                    Both Achieved
+                    <span class="filter-count">
+                        {{ ns.both_achieved }}
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="filter-btn"
+                    data-filter="low-vaccination"
+                >
+                    Low Vaccination
+                    <span class="filter-count">
+                        {{ ns.low_vacc }}
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="filter-btn"
+                    data-filter="low-pashudhan"
+                >
+                    Low Pashudhan
+                    <span class="filter-count">
+                        {{ ns.low_pash }}
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="filter-btn"
+                    data-filter="low-both"
+                >
+                    Low Both
+                    <span class="filter-count">
+                        {{ ns.low_both }}
+                    </span>
+                </button>
+
+            </div>
+
+
+            <div class="search-row">
+
+                <input
+                    type="text"
+                    id="squadSearch"
+                    class="monitor-search"
+                    placeholder="Search squad, Panchayath, member, office or Pashudhan ID..."
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- ==============================================
+             TABLE
+             ============================================== -->
+
+        {% if squad_rows %}
+
+            <div class="table-responsive">
+
+                <table class="squad-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Sl.</th>
+
+                            <th>Squad</th>
+
+                            <th>Panchayath</th>
+
+                            <th>Members</th>
+
+                            <th>Days Allotted</th>
+
+                            <th>Target</th>
+
+                            <th>Vaccinated</th>
+
+                            <th>Vacc. %</th>
+
+                            <th>Pashudhan</th>
+
+                            <th>Pash. %</th>
+
+                            <th>Days Worked</th>
+
+                            <th>Status</th>
+
+                            <th>Reference</th>
+
+                            <th>Low Vaccination Reason</th>
+
+                            <th>Low Pashudhan Reason</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="squadTableBody">
+
+                        {% for item in squad_rows %}
+
+                            {% set squad = item.squad %}
+
+                            {% if item.submitted %}
+
+                                {% set vacc_pct =
+                                    squad.vaccination_percentage
+                                    |default(0, true)
+                                %}
+
+                                {% set pash_pct =
+                                    squad.pashudhan_percentage
+                                    |default(0, true)
+                                %}
+
+                            {% else %}
+
+                                {% set vacc_pct = 0 %}
+                                {% set pash_pct = 0 %}
+
+                            {% endif %}
+
+
+                            <tr
+                                class="squad-monitor-row"
+
+                                data-submitted="{{
+                                    'true'
+                                    if item.submitted
+                                    else 'false'
+                                }}"
+
+                                data-vacc-achieved="{{
+                                    'true'
+                                    if item.submitted
+                                    and vacc_pct >= 83
+                                    else 'false'
+                                }}"
+
+                                data-pash-achieved="{{
+                                    'true'
+                                    if item.submitted
+                                    and pash_pct >= 97
+                                    else 'false'
+                                }}"
+
+                                data-low-vacc="{{
+                                    'true'
+                                    if item.submitted
+                                    and vacc_pct < 83
+                                    else 'false'
+                                }}"
+
+                                data-low-pash="{{
+                                    'true'
+                                    if item.submitted
+                                    and pash_pct < 97
+                                    else 'false'
+                                }}"
+                            >
+
+                                <td>
+                                    {{ loop.index }}
+                                </td>
+
+
+                                <td class="squad-number">
+
+                                    Squad
+                                    {{
+                                        squad.squad_no
+                                        |default('-', true)
+                                    }}
+
+                                </td>
+
+
+                                <td class="panchayath-name">
+
+                                    {{
+                                        item.panchayath.name
+                                    }}
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="member-list">
+
+                                        {% if squad.members %}
+
+                                            {% for member in squad.members %}
+
+                                                <div class="member-item">
+
+                                                    <div class="member-name">
+                                                        {{
+                                                            member.member_name
+                                                        }}
+                                                    </div>
+
+                                                    {% if member.office %}
+
+                                                        <div class="member-office">
+                                                            {{
+                                                                member.office
+                                                            }}
+                                                        </div>
+
+                                                    {% endif %}
+
+                                                    {% if member.pashudhan_id %}
+
+                                                        <div class="member-office">
+                                                            ID:
+                                                            {{
+                                                                member.pashudhan_id
+                                                            }}
+                                                        </div>
+
+                                                    {% endif %}
+
+                                                </div>
+
+                                            {% endfor %}
+
+                                        {% else %}
+
+                                            <span class="reason-none">
+                                                -
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    {{
+                                        squad.get(
+                                            "squad_days",
+                                            0
+                                        )
+                                    }}
+
+                                </td>
+
+
+                                <td>
+
+                                    {{
+                                        squad.target
+                                        |default(0, true)
+                                    }}
+
+                                </td>
+
+
+                                {% if item.submitted %}
+
+
+                                    <td>
+
+                                        {{
+                                            squad.vaccinations_done
+                                            |default(0, true)
+                                        }}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if vacc_pct >= 83 %}
+
+                                            <span class="percent-good">
+                                                {{
+                                                    vacc_pct
+                                                    |round(1)
+                                                }}%
+                                            </span>
+
+                                        {% elif vacc_pct > 0 %}
+
+                                            <span class="percent-low">
+                                                {{
+                                                    vacc_pct
+                                                    |round(1)
+                                                }}%
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="percent-zero">
+                                                0.0%
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{
+                                            squad.pashudhan_entries
+                                            |default(0, true)
+                                        }}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if pash_pct >= 97 %}
+
+                                            <span class="percent-good">
+                                                {{
+                                                    pash_pct
+                                                    |round(1)
+                                                }}%
+                                            </span>
+
+                                        {% elif pash_pct > 0 %}
+
+                                            <span class="percent-low">
+                                                {{
+                                                    pash_pct
+                                                    |round(1)
+                                                }}%
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="percent-zero">
+                                                0.0%
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{
+                                            squad.days_worked
+                                            |default(0, true)
+                                        }}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span
+                                            class="
+                                                status-badge
+                                                status-submitted
+                                            "
+                                        >
+                                            Submitted
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if squad.submission_token %}
+
+                                            {{
+                                                squad.submission_token
+                                            }}
+
+                                        {% else %}
+
+                                            <span class="reason-none">
+                                                -
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <div class="reason-text">
+
+                                            {% if vacc_pct < 83 %}
+
+                                                {{
+                                                    squad.vaccination_reason
+                                                    |default(
+                                                        '-',
+                                                        true
+                                                    )
+                                                }}
+
+                                            {% else %}
+
+                                                <span class="reason-none">
+                                                    -
+                                                </span>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <div class="reason-text">
+
+                                            {% if pash_pct < 97 %}
+
+                                                {{
+                                                    squad.pashudhan_reason
+                                                    |default(
+                                                        '-',
+                                                        true
+                                                    )
+                                                }}
+
+                                            {% else %}
+
+                                                <span class="reason-none">
+                                                    -
+                                                </span>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    </td>
+
+
+                                {% else %}
+
+
+                                    <td>
+                                        <span class="reason-none">
+                                            -
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        <span class="reason-none">
+                                            -
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        <span class="reason-none">
+                                            -
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        <span class="reason-none">
+                                            -
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        <span class="reason-none">
+                                            -
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+
+                                        <span
+                                            class="
+                                                status-badge
+                                                status-pending
+                                            "
+                                        >
+                                            Pending
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+                                        <span class="reason-none">
+                                            -
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        <span class="reason-none">
+                                            -
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        <span class="reason-none">
+                                            -
+                                        </span>
+                                    </td>
+
+
+                                {% endif %}
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <div
+                id="noFilterResults"
+                class="no-filter-results"
+            >
+
+                <i class="bi bi-search"></i>
+
+                No squads match the selected filter or search.
+
+            </div>
+
+
+        {% else %}
+
+
+            <div class="empty-monitor">
+
+                <i class="bi bi-people"></i>
+
+                <strong>
+                    No squads available
+                </strong>
+
+                <div>
+                    No squad monitoring data is available
+                    for the active campaign.
+                </div>
+
+            </div>
+
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const rows =
+            Array.from(
+                document.querySelectorAll(
+                    ".squad-monitor-row"
+                )
+            );
+
+        const filterButtons =
+            Array.from(
+                document.querySelectorAll(
+                    ".filter-btn"
+                )
+            );
+
+        const searchInput =
+            document.getElementById(
+                "squadSearch"
+            );
+
+        const noResults =
+            document.getElementById(
+                "noFilterResults"
+            );
+
+        let activeFilter = "all";
+
+
+        function rowMatchesFilter(
+            row,
+            filter
+        ) {
+
+            const submitted =
+                row.dataset.submitted === "true";
+
+            const vaccAchieved =
+                row.dataset.vaccAchieved === "true";
+
+            const pashAchieved =
+                row.dataset.pashAchieved === "true";
+
+            const lowVacc =
+                row.dataset.lowVacc === "true";
+
+            const lowPash =
+                row.dataset.lowPash === "true";
+
+
+            switch (filter) {
+
+                case "submitted":
+                    return submitted;
+
+                case "pending":
+                    return !submitted;
+
+                case "vaccination-achieved":
+                    return submitted && vaccAchieved;
+
+                case "pashudhan-achieved":
+                    return submitted && pashAchieved;
+
+                case "both-achieved":
+                    return (
+                        submitted
+                        && vaccAchieved
+                        && pashAchieved
+                    );
+
+                case "low-vaccination":
+                    return (
+                        submitted
+                        && lowVacc
+                    );
+
+                case "low-pashudhan":
+                    return (
+                        submitted
+                        && lowPash
+                    );
+
+                case "low-both":
+                    return (
+                        submitted
+                        && lowVacc
+                        && lowPash
+                    );
+
+                default:
+                    return true;
+
+            }
+
+        }
+
+
+        function applyFilters() {
+
+            const searchTerm =
+                (
+                    searchInput
+                    ? searchInput.value
+                    : ""
+                )
+                .trim()
+                .toLowerCase();
+
+            let visibleCount = 0;
+
+
+            rows.forEach(
+                function (row) {
+
+                    const matchesFilter =
+                        rowMatchesFilter(
+                            row,
+                            activeFilter
+                        );
+
+                    const rowText =
+                        row.textContent
+                        .toLowerCase();
+
+                    const matchesSearch =
+                        (
+                            !searchTerm
+                            || rowText.includes(
+                                searchTerm
+                            )
+                        );
+
+                    const visible =
+                        (
+                            matchesFilter
+                            && matchesSearch
+                        );
+
+                    row.style.display =
+                        visible
+                        ? ""
+                        : "none";
+
+                    if (visible) {
+                        visibleCount += 1;
+                    }
+
+                }
+            );
+
+
+            if (noResults) {
+
+                noResults.style.display =
+                    visibleCount === 0
+                    ? "block"
+                    : "none";
+
+            }
+
+        }
+
+
+        filterButtons.forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        filterButtons.forEach(
+                            function (item) {
+                                item.classList.remove(
+                                    "active"
+                                );
+                            }
+                        );
+
+                        button.classList.add(
+                            "active"
+                        );
+
+                        activeFilter =
+                            button.dataset.filter;
+
+                        applyFilters();
+
+                    }
+                );
+
+            }
+        );
+
+
+        if (searchInput) {
+
+            searchInput.addEventListener(
+                "input",
+                applyFilters
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+{% endblock %}

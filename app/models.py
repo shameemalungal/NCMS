@@ -69,6 +69,18 @@ class Campaign(TimestampMixin, db.Model):
         default=False
     )
 
+    # ------------------------------------------------------
+    # Public Submission Control
+    # ------------------------------------------------------
+
+    submissions_open = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=True,
+        server_default="1",
+    )
+
+    
     squads = db.relationship(
         "Squad",
         back_populates="campaign",
@@ -387,9 +399,18 @@ class SquadMember(TimestampMixin, db.Model):
         nullable=False
     )
 
-    office = db.Column(db.String(200))
+    designation = db.Column(
+        db.String(150)
+    )
 
-    pashudhan_id = db.Column(db.String(100), index=True)
+    office = db.Column(
+        db.String(200)
+    )
+
+    pashudhan_id = db.Column(
+        db.String(100),
+        index=True
+    )
 
     full_text = db.Column(db.Text)
 

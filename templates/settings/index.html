@@ -1,0 +1,1001 @@
+{% extends "base.html" %}
+
+{% block title %}Settings - NCMS{% endblock %}
+
+
+{% block content %}
+
+<style>
+
+    /* =====================================================
+       SETTINGS PAGE
+       ===================================================== */
+
+    .settings-page {
+        width: 100%;
+        padding-bottom: 40px;
+    }
+
+
+    /* =====================================================
+       HERO
+       ===================================================== */
+
+    .settings-hero {
+        background: linear-gradient(
+            135deg,
+            #087f4f 0%,
+            #11995f 100%
+        );
+        color: #ffffff;
+        border-radius: 14px;
+        padding: 24px 28px;
+        margin-bottom: 22px;
+        box-shadow:
+            0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .settings-hero h2 {
+        margin: 0 0 6px 0;
+        font-size: 1.55rem;
+        font-weight: 800;
+        color: #ffffff;
+    }
+
+    .settings-hero p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 0.9rem;
+    }
+
+
+    /* =====================================================
+       GRID
+       ===================================================== */
+
+    .settings-grid {
+        display: grid;
+        grid-template-columns:
+            minmax(0, 2fr)
+            minmax(300px, 1fr);
+        gap: 18px;
+        align-items: start;
+    }
+
+
+    /* =====================================================
+       CARD
+       ===================================================== */
+
+    .settings-card {
+        background: #ffffff;
+        border: 1px solid #e1e6eb;
+        border-radius: 13px;
+        overflow: hidden;
+        box-shadow:
+            0 4px 16px rgba(0, 0, 0, 0.05);
+        margin-bottom: 18px;
+    }
+
+    .settings-card-header {
+        padding: 17px 20px;
+        border-bottom: 1px solid #e7ebef;
+    }
+
+    .settings-card-title {
+        color: #172033;
+        font-size: 1rem;
+        font-weight: 800;
+        margin-bottom: 3px;
+    }
+
+    .settings-card-subtitle {
+        color: #667085;
+        font-size: 0.78rem;
+    }
+
+    .settings-card-body {
+        padding: 20px;
+    }
+
+
+    /* =====================================================
+       SUBMISSION STATUS
+       ===================================================== */
+
+    .submission-status-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 18px;
+        border: 1px solid #e4e7ec;
+        border-radius: 11px;
+        margin-bottom: 18px;
+    }
+
+    .submission-status-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 0;
+    }
+
+    .status-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1.2rem;
+    }
+
+    .status-icon-open {
+        background: #e4f7ed;
+        color: #087f4f;
+    }
+
+    .status-icon-closed {
+        background: #fde7e9;
+        color: #c92a3a;
+    }
+
+    .status-heading {
+        color: #172033;
+        font-weight: 800;
+        margin-bottom: 3px;
+    }
+
+    .status-description {
+        color: #667085;
+        font-size: 0.78rem;
+        line-height: 1.5;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 7px 12px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-badge-open {
+        background: #e4f7ed;
+        color: #087f4f;
+    }
+
+    .status-badge-closed {
+        background: #fde7e9;
+        color: #c92a3a;
+    }
+
+
+    /* =====================================================
+       CONTROL BUTTON
+       ===================================================== */
+
+    .submission-control {
+        padding-top: 4px;
+    }
+
+    .control-warning {
+        color: #667085;
+        font-size: 0.76rem;
+        line-height: 1.55;
+        margin-bottom: 14px;
+    }
+
+    .settings-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        border-radius: 8px;
+        padding: 9px 14px;
+        border: 1px solid transparent;
+        font-size: 0.78rem;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .button-open {
+        background: #087f4f;
+        border-color: #087f4f;
+        color: #ffffff;
+    }
+
+    .button-open:hover {
+        background: #066d43;
+        border-color: #066d43;
+    }
+
+    .button-close {
+        background: #ffffff;
+        border-color: #d92d20;
+        color: #b42318;
+    }
+
+    .button-close:hover {
+        background: #fff3f2;
+    }
+
+
+    /* =====================================================
+       INFORMATION ROWS
+       ===================================================== */
+
+    .settings-info-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 11px 0;
+        border-bottom: 1px solid #edf0f3;
+    }
+
+    .settings-info-row:last-child {
+        border-bottom: 0;
+    }
+
+    .settings-info-label {
+        color: #667085;
+        font-size: 0.76rem;
+        font-weight: 700;
+    }
+
+    .settings-info-value {
+        color: #172033;
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-align: right;
+    }
+
+
+    /* =====================================================
+       PUBLIC LINK
+       ===================================================== */
+
+    .public-link-box {
+        background: #f8fafb;
+        border: 1px solid #e4e7ec;
+        border-radius: 9px;
+        padding: 12px;
+    }
+
+    .public-link-label {
+        color: #667085;
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        margin-bottom: 7px;
+    }
+
+    .public-link-row {
+        display: flex;
+        gap: 8px;
+    }
+
+    .public-link-input {
+        flex: 1;
+        min-width: 0;
+        border: 1px solid #d6dce3;
+        border-radius: 7px;
+        padding: 8px 10px;
+        background: #ffffff;
+        color: #475467;
+        font-size: 0.76rem;
+    }
+
+    .copy-button {
+        border: 1px solid #d6dce3;
+        border-radius: 7px;
+        background: #ffffff;
+        color: #344054;
+        padding: 8px 11px;
+        font-size: 0.76rem;
+        font-weight: 800;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .copy-button:hover {
+        background: #f2f4f7;
+    }
+
+
+    /* =====================================================
+       NO CAMPAIGN
+       ===================================================== */
+
+    .settings-empty {
+        background: #fff8e6;
+        border: 1px solid #f4d78b;
+        border-radius: 10px;
+        padding: 16px;
+        color: #8a5a00;
+        font-size: 0.82rem;
+        line-height: 1.5;
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
+
+    @media (max-width: 900px) {
+
+        .settings-grid {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+    @media (max-width: 650px) {
+
+        .submission-status-box {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .public-link-row {
+            flex-direction: column;
+        }
+
+        .copy-button {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+
+<div class="settings-page">
+
+
+    <!-- ==================================================
+         HERO
+         ================================================== -->
+
+    <section class="settings-hero">
+
+        <h2>
+            NCMS Settings
+        </h2>
+
+        <p>
+            Application configuration and public
+            submission controls.
+        </p>
+
+    </section>
+
+
+    {% if campaign %}
+
+
+    <div class="settings-grid">
+
+
+        <!-- ==============================================
+             LEFT COLUMN
+             ============================================== -->
+
+        <div>
+
+
+            <!-- ==========================================
+                 PUBLIC SUBMISSION CONTROL
+                 ========================================== -->
+
+            <section class="settings-card">
+
+                <div class="settings-card-header">
+
+                    <div class="settings-card-title">
+                        Public Submission Control
+                    </div>
+
+                    <div class="settings-card-subtitle">
+                        Control whether squad members can
+                        submit campaign data.
+                    </div>
+
+                </div>
+
+
+                <div class="settings-card-body">
+
+
+                    <div class="submission-status-box">
+
+
+                        <div class="submission-status-left">
+
+                            {% if campaign.submissions_open %}
+
+                                <div
+                                    class="
+                                        status-icon
+                                        status-icon-open
+                                    "
+                                >
+                                    <i class="bi bi-unlock-fill"></i>
+                                </div>
+
+                            {% else %}
+
+                                <div
+                                    class="
+                                        status-icon
+                                        status-icon-closed
+                                    "
+                                >
+                                    <i class="bi bi-lock-fill"></i>
+                                </div>
+
+                            {% endif %}
+
+
+                            <div>
+
+                                <div class="status-heading">
+
+                                    {% if campaign.submissions_open %}
+                                        Public Submissions Open
+                                    {% else %}
+                                        Public Submissions Closed
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="status-description">
+
+                                    {% if campaign.submissions_open %}
+
+                                        Squad members can currently
+                                        access and submit the campaign
+                                        submission form.
+
+                                    {% else %}
+
+                                        New campaign submissions are
+                                        currently disabled.
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        {% if campaign.submissions_open %}
+
+                            <span
+                                class="
+                                    status-badge
+                                    status-badge-open
+                                "
+                            >
+                                OPEN
+                            </span>
+
+                        {% else %}
+
+                            <span
+                                class="
+                                    status-badge
+                                    status-badge-closed
+                                "
+                            >
+                                CLOSED
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="submission-control">
+
+                        {% if campaign.submissions_open %}
+
+                            <div class="control-warning">
+                                Closing submissions should prevent
+                                new squad submissions. Existing
+                                submissions and reports will remain
+                                unchanged.
+                            </div>
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'settings.submission_control'
+                                ) }}"
+                            >
+
+                                <input
+                                    type="hidden"
+                                    name="action"
+                                    value="close"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="
+                                        settings-button
+                                        button-close
+                                    "
+                                    onclick="
+                                        return confirm(
+                                            'Close public submissions for this campaign?'
+                                        );
+                                    "
+                                >
+                                    <i class="bi bi-lock-fill"></i>
+                                    Close Public Submissions
+                                </button>
+
+                            </form>
+
+                        {% else %}
+
+                            <div class="control-warning">
+                                Opening submissions will allow squad
+                                members to submit campaign data using
+                                the public submission page.
+                            </div>
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'settings.submission_control'
+                                ) }}"
+                            >
+
+                                <input
+                                    type="hidden"
+                                    name="action"
+                                    value="open"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="
+                                        settings-button
+                                        button-open
+                                    "
+                                >
+                                    <i class="bi bi-unlock-fill"></i>
+                                    Open Public Submissions
+                                </button>
+
+                            </form>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==========================================
+                 PUBLIC SUBMISSION LINK
+                 ========================================== -->
+
+            <section class="settings-card">
+
+                <div class="settings-card-header">
+
+                    <div class="settings-card-title">
+                        Public Submission Link
+                    </div>
+
+                    <div class="settings-card-subtitle">
+                        Share this link with squad members
+                        for campaign submission.
+                    </div>
+
+                </div>
+
+
+                <div class="settings-card-body">
+
+                    <div class="public-link-box">
+
+                        <div class="public-link-label">
+                            Submission URL
+                        </div>
+
+
+                        <div class="public-link-row">
+
+                            <input
+                                type="text"
+                                class="public-link-input"
+                                id="publicSubmissionUrl"
+                                value="{{ url_for(
+                                    'submission.index',
+                                    _external=True
+                                ) }}"
+                                readonly
+                            >
+
+                            <button
+                                type="button"
+                                class="copy-button"
+                                id="copySubmissionUrl"
+                            >
+                                <i class="bi bi-copy"></i>
+                                Copy
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- ==============================================
+             RIGHT COLUMN
+             ============================================== -->
+
+        <div>
+
+
+            <!-- ==========================================
+                 ACTIVE CAMPAIGN
+                 ========================================== -->
+
+            <section class="settings-card">
+
+                <div class="settings-card-header">
+
+                    <div class="settings-card-title">
+                        Active Campaign
+                    </div>
+
+                    <div class="settings-card-subtitle">
+                        Current campaign information.
+                    </div>
+
+                </div>
+
+
+                <div class="settings-card-body">
+
+
+                    <div class="settings-info-row">
+
+                        <div class="settings-info-label">
+                            Campaign
+                        </div>
+
+                        <div class="settings-info-value">
+                            {{ campaign.name }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="settings-info-row">
+
+                        <div class="settings-info-label">
+                            Code
+                        </div>
+
+                        <div class="settings-info-value">
+                            {{ campaign.code }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="settings-info-row">
+
+                        <div class="settings-info-label">
+                            Start Date
+                        </div>
+
+                        <div class="settings-info-value">
+
+                            {% if campaign.start_date %}
+                                {{
+                                    campaign.start_date.strftime(
+                                        '%d-%m-%Y'
+                                    )
+                                }}
+                            {% else %}
+                                -
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="settings-info-row">
+
+                        <div class="settings-info-label">
+                            End Date
+                        </div>
+
+                        <div class="settings-info-value">
+
+                            {% if campaign.end_date %}
+                                {{
+                                    campaign.end_date.strftime(
+                                        '%d-%m-%Y'
+                                    )
+                                }}
+                            {% else %}
+                                -
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="settings-info-row">
+
+                        <div class="settings-info-label">
+                            Submission Status
+                        </div>
+
+                        <div class="settings-info-value">
+
+                            {% if campaign.submissions_open %}
+                                OPEN
+                            {% else %}
+                                CLOSED
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- ==========================================
+                 SQUAD & MEMBER MANAGEMENT
+                 ========================================== -->
+
+            <section class="settings-card">
+
+                <div class="settings-card-header">
+
+                    <div class="settings-card-title">
+                        Squad & Member Management
+                    </div>
+
+                    <div class="settings-card-subtitle">
+                        Correct squad allocation and
+                        squad member master data.
+                    </div>
+
+                </div>
+
+
+                <div class="settings-card-body">
+
+                    <div class="settings-info-row">
+
+                        <div class="settings-info-label">
+                            Squad Details
+                        </div>
+
+                        <div class="settings-info-value">
+                            Squad number &amp; days allotted
+                        </div>
+
+                    </div>
+
+
+                    <div class="settings-info-row">
+
+                        <div class="settings-info-label">
+                            Member Details
+                        </div>
+
+                        <div class="settings-info-value">
+                            Name, designation, office
+                            &amp; Pashudhan ID
+                        </div>
+
+                    </div>
+
+
+                    <div style="padding-top: 16px;">
+
+                        <a
+                            href="{{ url_for('settings.squads') }}"
+                            class="settings-button button-open"
+                            style="text-decoration: none;"
+                        >
+
+                            <i class="bi bi-people-fill"></i>
+
+                            Manage Squads &amp; Members
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </section>
+            <!-- ==========================================
+                 SYSTEM INFORMATION
+                 ========================================== -->
+
+            <section class="settings-card">
+
+                <div class="settings-card-header">
+
+                    <div class="settings-card-title">
+                        System Information
+                    </div>
+
+                    <div class="settings-card-subtitle">
+                        NCMS application information.
+                    </div>
+
+                </div>
+
+
+                <div class="settings-card-body">
+
+                    <div class="settings-info-row">
+
+                        <div class="settings-info-label">
+                            Application
+                        </div>
+
+                        <div class="settings-info-value">
+                            NCMS
+                        </div>
+
+                    </div>
+
+
+                    <div class="settings-info-row">
+
+                        <div class="settings-info-label">
+                            Version
+                        </div>
+
+                        <div class="settings-info-value">
+                            1.0
+                        </div>
+
+                    </div>
+
+
+                    <div class="settings-info-row">
+
+                        <div class="settings-info-label">
+                            System
+                        </div>
+
+                        <div class="settings-info-value">
+                            NADCP Campaign Management System
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </div>
+
+
+    {% else %}
+
+
+        <div class="settings-empty">
+
+            <strong>No active campaign.</strong>
+
+            Activate a campaign before configuring
+            public submission controls.
+
+        </div>
+
+
+    {% endif %}
+
+</div>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const copyButton =
+            document.getElementById(
+                "copySubmissionUrl"
+            );
+
+        const urlInput =
+            document.getElementById(
+                "publicSubmissionUrl"
+            );
+
+
+        if (
+            copyButton
+            && urlInput
+        ) {
+
+            copyButton.addEventListener(
+                "click",
+                async function () {
+
+                    try {
+
+                        await navigator.clipboard.writeText(
+                            urlInput.value
+                        );
+
+                        const original =
+                            copyButton.innerHTML;
+
+                        copyButton.innerHTML =
+                            '<i class="bi bi-check-lg"></i> Copied';
+
+                        setTimeout(
+                            function () {
+
+                                copyButton.innerHTML =
+                                    original;
+
+                            },
+                            1600
+                        );
+
+                    }
+
+                    catch (error) {
+
+                        urlInput.select();
+
+                        document.execCommand(
+                            "copy"
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+{% endblock %}

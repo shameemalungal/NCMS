@@ -1,0 +1,1716 @@
+{% extends "base.html" %}
+
+{% block title %}Squad-wise Report - NCMS{% endblock %}
+
+
+{% block content %}
+
+<style>
+
+    /* =====================================================
+       SQUAD-WISE REPORT
+       ===================================================== */
+
+    .report-page {
+        padding-bottom: 40px;
+    }
+
+    .report-hero {
+        background: linear-gradient(
+            135deg,
+            #087f4f 0%,
+            #11995f 100%
+        );
+        color: #ffffff;
+        border-radius: 14px;
+        padding: 22px 26px;
+        margin-bottom: 20px;
+        box-shadow:
+            0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .report-hero-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 18px;
+        flex-wrap: wrap;
+    }
+
+    .report-hero h2 {
+        margin: 0 0 5px 0;
+        font-size: 1.45rem;
+        font-weight: 800;
+        color: #ffffff;
+    }
+
+    .report-hero p {
+        margin: 0;
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .campaign-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.16);
+        border: 1px solid rgba(255, 255, 255, 0.30);
+        color: #ffffff;
+        border-radius: 999px;
+        padding: 8px 13px;
+        font-size: 0.82rem;
+        font-weight: 700;
+    }
+
+
+    /* =====================================================
+       SUMMARY
+       ===================================================== */
+
+    .report-summary {
+        display: grid;
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .summary-card {
+        background: #ffffff;
+        border: 1px solid #e1e6eb;
+        border-radius: 11px;
+        padding: 16px;
+        box-shadow:
+            0 3px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .summary-label {
+        color: #667085;
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 6px;
+    }
+
+    .summary-value {
+        color: #172033;
+        font-size: 1.45rem;
+        font-weight: 800;
+    }
+
+    .summary-sub {
+        color: #667085;
+        font-size: 0.75rem;
+        margin-top: 5px;
+    }
+
+
+    /* =====================================================
+       PANEL
+       ===================================================== */
+
+    .report-panel {
+        background: #ffffff;
+        border: 1px solid #dfe4ea;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow:
+            0 4px 16px rgba(0, 0, 0, 0.05);
+    }
+
+    .report-panel-header {
+        padding: 16px 18px;
+        border-bottom: 1px solid #e7ebef;
+    }
+
+    .report-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    }
+
+    .report-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .report-panel-title {
+        color: #172033;
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .report-panel-subtitle {
+        color: #667085;
+        font-size: 0.76rem;
+        margin-top: 2px;
+    }
+
+
+    /* =====================================================
+       TOOLS
+       ===================================================== */
+
+    .report-tools {
+        padding: 14px 18px;
+        border-bottom: 1px solid #e7ebef;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        background: #fafbfc;
+    }
+
+    .report-filters {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .report-filter {
+        border: 1px solid #d6dce3;
+        background: #ffffff;
+        color: #475467;
+        border-radius: 999px;
+        padding: 7px 11px;
+        font-size: 0.70rem;
+        font-weight: 800;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .report-filter:hover {
+        background: #f4f7f9;
+    }
+
+    .report-filter.active {
+        background: #087f4f;
+        border-color: #087f4f;
+        color: #ffffff;
+    }
+
+    .filter-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 19px;
+        height: 19px;
+        padding: 0 5px;
+        margin-left: 3px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.07);
+        font-size: 0.64rem;
+    }
+
+    .report-filter.active .filter-count {
+        background: rgba(255, 255, 255, 0.20);
+    }
+
+    .report-search {
+        width: 285px;
+        max-width: 100%;
+        border: 1px solid #d6dce3;
+        border-radius: 8px;
+        padding: 8px 11px;
+        font-size: 0.78rem;
+        outline: none;
+    }
+
+    .report-search:focus {
+        border-color: #087f4f;
+        box-shadow:
+            0 0 0 3px rgba(8, 127, 79, 0.10);
+    }
+
+
+    /* =====================================================
+       TABLE
+       ===================================================== */
+
+    .table-wrap {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .squad-report-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1650px;
+    }
+
+    .squad-report-table th {
+        background: #f4f7f9;
+        color: #475467;
+        font-size: 0.67rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+        padding: 11px 8px;
+        border-bottom: 1px solid #dfe4ea;
+        white-space: nowrap;
+        text-align: center;
+    }
+
+    .squad-report-table th:nth-child(2),
+    .squad-report-table th:nth-child(4),
+    .squad-report-table th:nth-child(11),
+    .squad-report-table th:nth-child(12) {
+        text-align: left;
+    }
+
+    .squad-report-table td {
+        padding: 11px 8px;
+        border-bottom: 1px solid #edf0f3;
+        color: #344054;
+        font-size: 0.75rem;
+        text-align: center;
+        vertical-align: top;
+    }
+
+    .squad-report-table td:nth-child(2),
+    .squad-report-table td:nth-child(4),
+    .squad-report-table td:nth-child(11),
+    .squad-report-table td:nth-child(12) {
+        text-align: left;
+    }
+
+    .squad-report-table tbody tr:hover {
+        background: #fafcfd;
+    }
+
+    .serial-cell {
+        color: #667085;
+        font-weight: 800;
+    }
+
+    .panchayath-name,
+    .squad-number {
+        color: #172033;
+        font-weight: 800;
+    }
+
+    .number-cell {
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+
+    /* =====================================================
+       MEMBERS
+       ===================================================== */
+
+    .members-cell {
+        min-width: 235px;
+    }
+
+    .member-item {
+        padding-bottom: 7px;
+        margin-bottom: 7px;
+        border-bottom: 1px dashed #e4e7ec;
+    }
+
+    .member-item:last-child {
+        padding-bottom: 0;
+        margin-bottom: 0;
+        border-bottom: 0;
+    }
+
+    .member-name {
+        display: block;
+        color: #172033;
+        font-weight: 800;
+        line-height: 1.35;
+    }
+
+    .member-meta {
+        display: block;
+        color: #667085;
+        font-size: 0.69rem;
+        margin-top: 2px;
+        line-height: 1.4;
+    }
+
+
+    /* =====================================================
+       ACHIEVEMENT
+       ===================================================== */
+
+    .achievement-value {
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .achievement-met {
+        color: #087f4f;
+    }
+
+    .achievement-low {
+        color: #c92a3a;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 5px 9px;
+        font-size: 0.65rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-success {
+        background: #e4f7ed;
+        color: #087f4f;
+    }
+
+    .status-danger {
+        background: #fde7e9;
+        color: #c92a3a;
+    }
+
+    .status-warning {
+        background: #fff3d6;
+        color: #9a6700;
+    }
+
+    .reason-cell {
+        min-width: 220px;
+        max-width: 280px;
+        white-space: normal;
+        line-height: 1.45;
+    }
+
+    .reason-label {
+        display: block;
+        color: #667085;
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+
+    .reason-block + .reason-block {
+        margin-top: 8px;
+    }
+
+    .submission-ref {
+        color: #475467;
+        font-family: monospace;
+        font-size: 0.70rem;
+        overflow-wrap: anywhere;
+    }
+
+    .pending-value {
+        color: #98a2b3;
+    }
+
+
+    /* =====================================================
+       FOOTER
+       ===================================================== */
+
+    .report-footer {
+        padding: 14px 18px;
+        border-top: 1px solid #e7ebef;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        background: #fafbfc;
+    }
+
+    .result-count {
+        color: #667085;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
+    .report-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .report-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 0.76rem;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .action-back {
+        border: 1px solid #d6dce3;
+        background: #ffffff;
+        color: #475467;
+    }
+
+    .action-back:hover {
+        background: #f4f7f9;
+        color: #344054;
+    }
+
+    .action-export-disabled {
+        border: 1px solid #dfe4ea;
+        background: #f4f6f8;
+        color: #98a2b3;
+        cursor: not-allowed;
+    }
+
+    .report-export-action {
+    border: 1px solid #087f4f;
+    background: #087f4f;
+    color: #ffffff;
+    }
+
+    .report-export-action:hover {
+        background: #066d43;
+        border-color: #066d43;
+        color: #ffffff;
+    }
+
+    .no-results {
+        display: none;
+        padding: 35px 20px;
+        text-align: center;
+        color: #667085;
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
+
+    @media (max-width: 1100px) {
+
+        .report-summary {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+    }
+
+    @media (max-width: 768px) {
+
+        .report-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .report-tools,
+        .report-filters {
+            width: 100%;
+        }
+
+        .report-search {
+            width: 100%;
+        }
+
+        .report-filter {
+            flex: 1 1 auto;
+        }
+
+    }
+
+</style>
+
+
+<div class="report-page">
+
+{% if campaign %}
+
+
+    <!-- ==================================================
+         HERO
+         ================================================== -->
+
+    <section class="report-hero">
+
+        <div class="report-hero-top">
+
+            <div>
+
+                <h2>
+                    Squad-wise Report
+                </h2>
+
+                <p>
+                    Detailed squad performance,
+                    member information and submission status.
+                </p>
+
+            </div>
+
+            <div class="campaign-chip">
+                ● {{ campaign.name }}
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         SUMMARY
+         ================================================== -->
+
+    <section class="report-summary">
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Total Squads
+            </div>
+
+            <div class="summary-value">
+                {{ summary.total_squads }}
+            </div>
+
+            <div class="summary-sub">
+                Campaign squads
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Submitted
+            </div>
+
+            <div class="summary-value">
+                {{ summary.submitted_squads }}
+            </div>
+
+            <div class="summary-sub">
+                Squad submissions received
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Pending
+            </div>
+
+            <div class="summary-value">
+                {{ summary.pending_squads }}
+            </div>
+
+            <div class="summary-sub">
+                Submissions pending
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Submission Completion
+            </div>
+
+            <div class="summary-value">
+                {{ summary.submission_percentage }}%
+            </div>
+
+            <div class="summary-sub">
+                Overall submission progress
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         REPORT
+         ================================================== -->
+
+    <section class="report-panel">
+
+        <div class="report-panel-header">
+
+            <div class="report-header-content">
+
+                <div>
+
+                    <div class="report-panel-title">
+                        Squad-wise Campaign Report
+                    </div>
+
+                    <div class="report-panel-subtitle">
+                        Submitted and pending squads are included.
+                    </div>
+
+                </div>
+
+
+                <div class="report-header-actions">
+
+                    <a
+                        href="{{ url_for('reports.index') }}"
+                        class="report-action action-back"
+                    >
+                        ← Reports
+                    </a>
+
+                    <a
+                        href="{{ url_for(
+                            'reports.export_squad_wise',
+                            filter='all'
+                        ) }}"
+                        class="
+                            report-action
+                            report-export-action
+                        "
+                        id="squadExportExcelButton"
+                    >
+                        <i class="bi bi-file-earmark-excel-fill"></i>
+                        Export Excel
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================================
+             FILTERS / SEARCH
+             ================================================== -->
+
+        <div class="report-tools">
+
+            <div class="report-filters">
+
+                <button
+                    type="button"
+                    class="report-filter active"
+                    data-filter="all"
+                >
+                    All
+                    <span class="filter-count"></span>
+                </button>
+
+                <button
+                    type="button"
+                    class="report-filter"
+                    data-filter="submitted"
+                >
+                    Submitted
+                    <span class="filter-count"></span>
+                </button>
+
+                <button
+                    type="button"
+                    class="report-filter"
+                    data-filter="pending"
+                >
+                    Pending
+                    <span class="filter-count"></span>
+                </button>
+
+                <button
+                    type="button"
+                    class="report-filter"
+                    data-filter="vaccination-achieved"
+                >
+                    Vaccination Target Achieved
+                    <span class="filter-count"></span>
+                </button>
+
+                <button
+                    type="button"
+                    class="report-filter"
+                    data-filter="pashudhan-achieved"
+                >
+                    Pashudhan Target Achieved
+                    <span class="filter-count"></span>
+                </button>
+
+                <button
+                    type="button"
+                    class="report-filter"
+                    data-filter="both-achieved"
+                >
+                    Both Targets Achieved
+                    <span class="filter-count"></span>
+                </button>
+
+                <button
+                    type="button"
+                    class="report-filter"
+                    data-filter="low-vaccination"
+                >
+                    Low Vaccination
+                    <span class="filter-count"></span>
+                </button>
+
+                <button
+                    type="button"
+                    class="report-filter"
+                    data-filter="low-pashudhan"
+                >
+                    Low Pashudhan
+                    <span class="filter-count"></span>
+                </button>
+
+                <button
+                    type="button"
+                    class="report-filter"
+                    data-filter="low-both"
+                >
+                    Low Both
+                    <span class="filter-count"></span>
+                </button>
+
+            </div>
+
+
+            <input
+                type="text"
+                id="squadReportSearch"
+                class="report-search"
+                placeholder="Search Panchayath, squad, member, office, Pashudhan ID..."
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <!-- ==================================================
+             TABLE
+             ================================================== -->
+
+        <div class="table-wrap">
+
+            <table class="squad-report-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Sl. No.</th>
+                        <th>Panchayath</th>
+                        <th>Squad</th>
+                        <th>Members</th>
+                        <th>Target</th>
+                        <th>Vaccinated</th>
+                        <th>Vacc. %</th>
+                        <th>Pashudhan</th>
+                        <th>Pash. %</th>
+                        <th>Status</th>
+                        <th>Reasons</th>
+                        <th>Submission Ref.</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                {% for row in monitoring %}
+
+
+                    <!-- ======================================
+                         SUBMITTED SQUADS
+                         ====================================== -->
+
+                    {% for squad in row.submitted_squads %}
+
+                        <tr
+                            class="squad-report-row"
+                            data-submission-status="submitted"
+                            data-vaccination-met="{{
+                                'true'
+                                if squad.vaccination_target_met
+                                else 'false'
+                            }}"
+                            data-pashudhan-met="{{
+                                'true'
+                                if squad.pashudhan_target_met
+                                else 'false'
+                            }}"
+                            data-search="
+                                {{ row.panchayath.name | lower }}
+                                {{ squad.squad_no | string | lower }}
+                                {{ squad.submission_token | default('', true) | lower }}
+                                {% for member in squad.members %}
+                                    {{ member.member_name | default('', true) | lower }}
+                                    {{ member.office | default('', true) | lower }}
+                                    {{ member.pashudhan_id | default('', true) | lower }}
+                                {% endfor %}
+                            "
+                        >
+
+                            <td class="serial-cell">
+                            </td>
+
+
+                            <td>
+
+                                <span class="panchayath-name">
+                                    {{ row.panchayath.name }}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="squad-number">
+                                    {{ squad.squad_no }}
+                                </span>
+
+                            </td>
+
+
+                            <td class="members-cell">
+
+                                {% if squad.members %}
+
+                                    {% for member in squad.members %}
+
+                                        <div class="member-item">
+
+                                            <span class="member-name">
+                                                {{ member.member_name }}
+                                            </span>
+
+                                            {% if member.office %}
+
+                                                <span class="member-meta">
+                                                    {{ member.office }}
+                                                </span>
+
+                                            {% endif %}
+
+                                            {% if member.pashudhan_id %}
+
+                                                <span class="member-meta">
+                                                    Pashudhan ID:
+                                                    {{ member.pashudhan_id }}
+                                                </span>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    {% endfor %}
+
+                                {% else %}
+
+                                    <span class="pending-value">
+                                        -
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td class="number-cell">
+                                {{ squad.target }}
+                            </td>
+
+
+                            <td class="number-cell">
+                                {{ squad.vaccinations }}
+                            </td>
+
+
+                            <td>
+
+                                <span
+                                    class="
+                                        achievement-value
+                                        {% if squad.vaccination_target_met %}
+                                            achievement-met
+                                        {% else %}
+                                            achievement-low
+                                        {% endif %}
+                                    "
+                                >
+                                    {{ squad.vaccination_percentage }}%
+                                </span>
+
+                            </td>
+
+
+                            <td class="number-cell">
+                                {{ squad.entries }}
+                            </td>
+
+
+                            <td>
+
+                                <span
+                                    class="
+                                        achievement-value
+                                        {% if squad.pashudhan_target_met %}
+                                            achievement-met
+                                        {% else %}
+                                            achievement-low
+                                        {% endif %}
+                                    "
+                                >
+                                    {{ squad.pashudhan_percentage }}%
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                {% if
+                                    squad.vaccination_target_met
+                                    and squad.pashudhan_target_met
+                                %}
+
+                                    <span
+                                        class="
+                                            status-badge
+                                            status-success
+                                        "
+                                    >
+                                        Both Achieved
+                                    </span>
+
+                                {% elif
+                                    not squad.vaccination_target_met
+                                    and not squad.pashudhan_target_met
+                                %}
+
+                                    <span
+                                        class="
+                                            status-badge
+                                            status-danger
+                                        "
+                                    >
+                                        Low Both
+                                    </span>
+
+                                {% elif
+                                    not squad.vaccination_target_met
+                                %}
+
+                                    <span
+                                        class="
+                                            status-badge
+                                            status-danger
+                                        "
+                                    >
+                                        Low Vaccination
+                                    </span>
+
+                                {% else %}
+
+                                    <span
+                                        class="
+                                            status-badge
+                                            status-danger
+                                        "
+                                    >
+                                        Low Pashudhan
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td class="reason-cell">
+
+                                {% if squad.vaccination_reason %}
+
+                                    <div class="reason-block">
+
+                                        <span class="reason-label">
+                                            Vaccination
+                                        </span>
+
+                                        {{ squad.vaccination_reason }}
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                {% if squad.pashudhan_reason %}
+
+                                    <div class="reason-block">
+
+                                        <span class="reason-label">
+                                            Pashudhan
+                                        </span>
+
+                                        {{ squad.pashudhan_reason }}
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                {% if
+                                    not squad.vaccination_reason
+                                    and not squad.pashudhan_reason
+                                %}
+
+                                    <span class="pending-value">
+                                        -
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if squad.submission_token %}
+
+                                    <span class="submission-ref">
+                                        {{ squad.submission_token }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="pending-value">
+                                        -
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+
+
+                    <!-- ======================================
+                         PENDING SQUADS
+                         ====================================== -->
+
+                    {% for squad in row.pending_squads %}
+
+                        <tr
+                            class="squad-report-row"
+                            data-submission-status="pending"
+                            data-vaccination-met="false"
+                            data-pashudhan-met="false"
+                            data-search="
+                                {{ row.panchayath.name | lower }}
+                                {{ squad.squad_no | string | lower }}
+                                pending
+                                {% for member in squad.members %}
+                                    {{ member.member_name | default('', true) | lower }}
+                                    {{ member.office | default('', true) | lower }}
+                                    {{ member.pashudhan_id | default('', true) | lower }}
+                                {% endfor %}
+                            "
+                        >
+
+                            <td class="serial-cell">
+                            </td>
+
+
+                            <td>
+
+                                <span class="panchayath-name">
+                                    {{ row.panchayath.name }}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="squad-number">
+                                    {{ squad.squad_no }}
+                                </span>
+
+                            </td>
+
+
+                            <td class="members-cell">
+
+                                {% if squad.members %}
+
+                                    {% for member in squad.members %}
+
+                                        <div class="member-item">
+
+                                            <span class="member-name">
+                                                {{ member.member_name }}
+                                            </span>
+
+                                            {% if member.office %}
+
+                                                <span class="member-meta">
+                                                    {{ member.office }}
+                                                </span>
+
+                                            {% endif %}
+
+                                            {% if member.pashudhan_id %}
+
+                                                <span class="member-meta">
+                                                    Pashudhan ID:
+                                                    {{ member.pashudhan_id }}
+                                                </span>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    {% endfor %}
+
+                                {% else %}
+
+                                    <span class="pending-value">
+                                        -
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td class="pending-value">-</td>
+                            <td class="pending-value">-</td>
+                            <td class="pending-value">-</td>
+                            <td class="pending-value">-</td>
+                            <td class="pending-value">-</td>
+
+
+                            <td>
+
+                                <span
+                                    class="
+                                        status-badge
+                                        status-warning
+                                    "
+                                >
+                                    Pending
+                                </span>
+
+                            </td>
+
+
+                            <td class="pending-value">
+                                -
+                            </td>
+
+
+                            <td class="pending-value">
+                                -
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <div
+            class="no-results"
+            id="squadReportNoResults"
+        >
+            No squad matches the selected filter or search.
+        </div>
+
+
+        <!-- ==================================================
+             FOOTER
+             ================================================== -->
+
+        <div class="report-footer">
+
+            <div
+                class="result-count"
+                id="squadResultCount"
+            >
+            </div>
+
+        </div>
+
+    </section>
+
+
+{% else %}
+
+    <div class="report-panel">
+
+        <div
+            style="
+                padding: 45px 20px;
+                text-align: center;
+                color: #667085;
+            "
+        >
+
+            <h3
+                style="
+                    color: #172033;
+                    font-weight: 800;
+                "
+            >
+                No Active Campaign
+            </h3>
+
+            <p>
+                Activate a campaign before generating reports.
+            </p>
+
+        </div>
+
+    </div>
+
+{% endif %}
+
+</div>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const search =
+            document.getElementById(
+                "squadReportSearch"
+            );
+
+        const rows =
+            document.querySelectorAll(
+                ".squad-report-row"
+            );
+
+        const filters =
+            document.querySelectorAll(
+                ".report-filter"
+            );
+
+        const resultCount =
+            document.getElementById(
+                "squadResultCount"
+            );
+
+        const noResults =
+        document.getElementById(
+            "squadReportNoResults"
+        );
+
+        const exportButton =
+            document.getElementById(
+                "squadExportExcelButton"
+            );
+
+        const exportBaseUrl =
+            "{{ url_for(
+                'reports.export_squad_wise'
+            ) }}";
+
+        let activeFilter = "all";
+
+
+        // =================================================
+        // FILTER MATCHING
+        // =================================================
+
+        function matchesFilter(
+            row,
+            filterName
+        ) {
+
+            const submissionStatus =
+                row.dataset.submissionStatus
+                || "";
+
+            const vaccinationMet =
+                row.dataset.vaccinationMet
+                === "true";
+
+            const pashudhanMet =
+                row.dataset.pashudhanMet
+                === "true";
+
+
+            if (filterName === "all") {
+                return true;
+            }
+
+
+            if (filterName === "submitted") {
+
+                return (
+                    submissionStatus
+                    === "submitted"
+                );
+            }
+
+
+            if (filterName === "pending") {
+
+                return (
+                    submissionStatus
+                    === "pending"
+                );
+            }
+
+
+            /*
+             * Achievement filters apply only to
+             * submitted squads.
+             *
+             * Pending squads must NOT be counted as
+             * low achievers simply because they have
+             * no achievement data.
+             */
+
+            if (
+                submissionStatus
+                !== "submitted"
+            ) {
+                return false;
+            }
+
+
+            if (
+                filterName
+                === "vaccination-achieved"
+            ) {
+
+                return vaccinationMet;
+            }
+
+
+            if (
+                filterName
+                === "pashudhan-achieved"
+            ) {
+
+                return pashudhanMet;
+            }
+
+
+            if (
+                filterName
+                === "both-achieved"
+            ) {
+
+                return (
+                    vaccinationMet
+                    && pashudhanMet
+                );
+            }
+
+
+            if (
+                filterName
+                === "low-vaccination"
+            ) {
+
+                return !vaccinationMet;
+            }
+
+
+            if (
+                filterName
+                === "low-pashudhan"
+            ) {
+
+                return !pashudhanMet;
+            }
+
+
+            if (
+                filterName
+                === "low-both"
+            ) {
+
+                return (
+                    !vaccinationMet
+                    && !pashudhanMet
+                );
+            }
+
+
+            return true;
+        }
+
+
+        // =================================================
+        // FILTER COUNTS
+        // =================================================
+
+        function updateFilterCounts(
+            searchValue
+        ) {
+
+            filters.forEach(
+                function (button) {
+
+                    const filterName =
+                        button.dataset.filter
+                        || "all";
+
+                    let count = 0;
+
+
+                    rows.forEach(
+                        function (row) {
+
+                            const searchText =
+                                (
+                                    row.dataset.search
+                                    || ""
+                                )
+                                .toLowerCase();
+
+                            const searchMatch =
+                                !searchValue
+                                || searchText.includes(
+                                    searchValue
+                                );
+
+
+                            if (
+                                searchMatch
+                                && matchesFilter(
+                                    row,
+                                    filterName
+                                )
+                            ) {
+                                count += 1;
+                            }
+
+                        }
+                    );
+
+
+                    const countElement =
+                        button.querySelector(
+                            ".filter-count"
+                        );
+
+                    if (countElement) {
+                        countElement.textContent =
+                            count;
+                    }
+
+                }
+            );
+        }
+
+
+        // =================================================
+        // APPLY SEARCH + FILTER
+        // =================================================
+
+        function applyFilters() {
+
+            const searchValue =
+                search
+                    ? search.value
+                        .trim()
+                        .toLowerCase()
+                    : "";
+
+            let visibleCount = 0;
+
+
+            rows.forEach(
+                function (row) {
+
+                    const searchText =
+                        (
+                            row.dataset.search
+                            || ""
+                        )
+                        .toLowerCase();
+
+                    const searchMatch =
+                        !searchValue
+                        || searchText.includes(
+                            searchValue
+                        );
+
+                    const filterMatch =
+                        matchesFilter(
+                            row,
+                            activeFilter
+                        );
+
+                    const visible =
+                        searchMatch
+                        && filterMatch;
+
+
+                    row.style.display =
+                        visible
+                            ? ""
+                            : "none";
+
+
+                    if (visible) {
+
+                        visibleCount += 1;
+
+                        const serialCell =
+                            row.querySelector(
+                                ".serial-cell"
+                            );
+
+                        if (serialCell) {
+                            serialCell.textContent =
+                                visibleCount;
+                        }
+
+                    }
+
+                }
+            );
+
+
+            if (resultCount) {
+
+                resultCount.textContent =
+                    visibleCount
+                    + (
+                        visibleCount === 1
+                            ? " Squad"
+                            : " Squads"
+                    );
+            }
+
+
+            if (noResults) {
+
+                noResults.style.display =
+                    visibleCount === 0
+                        ? "block"
+                        : "none";
+            }
+
+
+            updateFilterCounts(
+                searchValue
+            );
+        }
+
+
+        // =================================================
+        // FILTER BUTTON EVENTS
+        // =================================================
+
+        filters.forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        activeFilter =
+                            button.dataset.filter
+                            || "all";
+
+
+                        filters.forEach(
+                            function (item) {
+
+                                item.classList.remove(
+                                    "active"
+                                );
+
+                            }
+                        );
+
+
+                        button.classList.add(
+                            "active"
+                        );
+
+
+                        if (exportButton) {
+
+                            exportButton.href =
+                                exportBaseUrl
+                                + "?filter="
+                                + encodeURIComponent(
+                                    activeFilter
+                                );
+                        }
+
+
+                        applyFilters();
+
+                    }
+                );
+
+            }
+        );
+
+
+        // =================================================
+        // SEARCH EVENT
+        // =================================================
+
+        if (search) {
+
+            search.addEventListener(
+                "input",
+                applyFilters
+            );
+
+        }
+
+
+        // =================================================
+        // INITIAL DISPLAY
+        // =================================================
+
+        if (exportButton) {
+
+            exportButton.href =
+                exportBaseUrl
+                + "?filter=all";
+        }
+
+
+        applyFilters();
+
+    }
+);
+
+</script>
+
+{% endblock %}

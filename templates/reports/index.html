@@ -1,28 +1,816 @@
 {% extends "base.html" %}
 
-{% block title %}Reports{% endblock %}
+{% block title %}Reports - NCMS{% endblock %}
 
-{% block page_label %}
-NCMS Reports
-{% endblock %}
-
-{% block page_title %}
-Reports
-{% endblock %}
-
-{% block page_subtitle %}
-Campaign Reports & Analytics
-{% endblock %}
 
 {% block content %}
 
-<div class="container py-4">
+<style>
 
-    <h2>Reports</h2>
+    /* =====================================================
+       NCMS REPORTS DASHBOARD
+       ===================================================== */
 
-    <div class="alert alert-info">
-        Reports module connected successfully.
+    .reports-page {
+        padding-bottom: 40px;
+    }
+
+
+    /* =====================================================
+       HERO
+       ===================================================== */
+
+    .reports-hero {
+        background: linear-gradient(
+            135deg,
+            #087f4f 0%,
+            #11995f 100%
+        );
+        color: #ffffff;
+        border-radius: 14px;
+        padding: 24px 28px;
+        margin-bottom: 22px;
+        box-shadow:
+            0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .reports-hero-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .reports-hero h2 {
+        margin: 0 0 6px 0;
+        font-size: 1.55rem;
+        font-weight: 800;
+        color: #ffffff;
+    }
+
+    .reports-hero p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 0.95rem;
+    }
+
+    .reports-campaign-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background:
+            rgba(255, 255, 255, 0.16);
+        border:
+            1px solid
+            rgba(255, 255, 255, 0.30);
+        color: #ffffff;
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
+
+
+    /* =====================================================
+       SUMMARY
+       ===================================================== */
+
+    .reports-summary {
+        display: grid;
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+
+    .reports-summary-card {
+        background: #ffffff;
+        border: 1px solid #e4e9ef;
+        border-radius: 12px;
+        padding: 18px;
+        min-height: 110px;
+        box-shadow:
+            0 3px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .reports-summary-label {
+        color: #667085;
+        font-size: 0.76rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 7px;
+    }
+
+    .reports-summary-value {
+        color: #172033;
+        font-size: 1.65rem;
+        line-height: 1.1;
+        font-weight: 800;
+    }
+
+    .reports-summary-sub {
+        color: #667085;
+        font-size: 0.8rem;
+        margin-top: 7px;
+    }
+
+
+    /* =====================================================
+       SECTION HEADER
+       ===================================================== */
+
+    .reports-section-header {
+        margin-bottom: 14px;
+    }
+
+    .reports-section-title {
+        color: #172033;
+        font-size: 1.1rem;
+        font-weight: 800;
+        margin-bottom: 3px;
+    }
+
+    .reports-section-subtitle {
+        color: #667085;
+        font-size: 0.84rem;
+    }
+
+
+    /* =====================================================
+       REPORT CARDS
+       ===================================================== */
+
+    .reports-grid {
+        display: grid;
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .report-card {
+        background: #ffffff;
+        border: 1px solid #e1e6eb;
+        border-radius: 13px;
+        padding: 20px;
+        min-height: 235px;
+        display: flex;
+        flex-direction: column;
+        box-shadow:
+            0 4px 16px rgba(0, 0, 0, 0.05);
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .report-card:hover {
+        transform: translateY(-2px);
+        box-shadow:
+            0 8px 22px rgba(0, 0, 0, 0.08);
+    }
+
+    .report-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        margin-bottom: 16px;
+    }
+
+    .report-icon-green {
+        background: #e4f7ed;
+        color: #087f4f;
+    }
+
+    .report-icon-blue {
+        background: #e7f0ff;
+        color: #2563eb;
+    }
+
+    .report-icon-purple {
+        background: #f0eaff;
+        color: #6941c6;
+    }
+
+    .report-icon-warning {
+        background: #fff3d6;
+        color: #b76e00;
+    }
+
+    .report-icon-danger {
+        background: #fde7e9;
+        color: #c92a3a;
+    }
+
+    .report-icon-neutral {
+        background: #edf1f5;
+        color: #475467;
+    }
+
+    .report-card-title {
+        color: #172033;
+        font-size: 1rem;
+        font-weight: 800;
+        margin-bottom: 7px;
+    }
+
+    .report-card-description {
+        color: #667085;
+        font-size: 0.82rem;
+        line-height: 1.55;
+        margin-bottom: 16px;
+        flex-grow: 1;
+    }
+
+    .report-card-stat {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        margin-bottom: 16px;
+    }
+
+    .report-card-number {
+        color: #172033;
+        font-size: 1.35rem;
+        font-weight: 800;
+    }
+
+    .report-card-unit {
+        color: #667085;
+        font-size: 0.76rem;
+    }
+
+    .report-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .report-button {
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-decoration: none;
+        border: 1px solid transparent;
+        cursor: pointer;
+    }
+
+    .report-button-primary {
+        background: #087f4f;
+        border-color: #087f4f;
+        color: #ffffff;
+    }
+
+    .report-button-primary:hover {
+        background: #066d43;
+        border-color: #066d43;
+        color: #ffffff;
+    }
+
+    .report-button-disabled {
+        background: #f4f6f8;
+        border-color: #e1e6eb;
+        color: #98a2b3;
+        cursor: not-allowed;
+    }
+
+
+    /* =====================================================
+       NO CAMPAIGN
+       ===================================================== */
+
+    .reports-empty {
+        background: #ffffff;
+        border: 1px solid #e1e6eb;
+        border-radius: 13px;
+        padding: 50px 20px;
+        text-align: center;
+        color: #667085;
+        box-shadow:
+            0 4px 16px rgba(0, 0, 0, 0.05);
+    }
+
+    .reports-empty h3 {
+        color: #172033;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
+
+    @media (max-width: 1200px) {
+
+        .reports-summary {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+        .reports-grid {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+    }
+
+
+    @media (max-width: 768px) {
+
+        .reports-summary,
+        .reports-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .reports-hero {
+            padding: 20px;
+        }
+
+    }
+
+</style>
+
+
+<div class="reports-page">
+
+    {% if campaign %}
+
+    <!-- ==================================================
+         HERO
+         ================================================== -->
+
+    <section class="reports-hero">
+
+        <div class="reports-hero-top">
+
+            <div>
+
+                <h2>
+                    Campaign Reports
+                </h2>
+
+                <p>
+                    Generate campaign performance,
+                    achievement and submission reports.
+                </p>
+
+            </div>
+
+
+            <div class="reports-campaign-chip">
+                ● {{ campaign.name }}
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         DISTRICT SUMMARY
+         ================================================== -->
+
+    <section class="reports-summary">
+
+        <div class="reports-summary-card">
+
+            <div class="reports-summary-label">
+                Population Target
+            </div>
+
+            <div class="reports-summary-value">
+                {{ "{:,}".format(summary.target) }}
+            </div>
+
+            <div class="reports-summary-sub">
+                District campaign target
+            </div>
+
+        </div>
+
+
+        <div class="reports-summary-card">
+
+            <div class="reports-summary-label">
+                Vaccination
+            </div>
+
+            <div class="reports-summary-value">
+                {{ summary.vaccination_percentage }}%
+            </div>
+
+            <div class="reports-summary-sub">
+                {{ "{:,}".format(summary.vaccinations) }}
+                vaccinations completed
+            </div>
+
+        </div>
+
+
+        <div class="reports-summary-card">
+
+            <div class="reports-summary-label">
+                Pashudhan Entry
+            </div>
+
+            <div class="reports-summary-value">
+                {{ summary.pashudhan_percentage }}%
+            </div>
+
+            <div class="reports-summary-sub">
+                {{ "{:,}".format(summary.entries) }}
+                entries completed
+            </div>
+
+        </div>
+
+
+        <div class="reports-summary-card">
+
+            <div class="reports-summary-label">
+                Squad Submissions
+            </div>
+
+            <div class="reports-summary-value">
+                {{ summary.submitted_squads }}
+                /
+                {{ summary.total_squads }}
+            </div>
+
+            <div class="reports-summary-sub">
+                {{ summary.pending_squads }}
+                pending
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         AVAILABLE REPORTS
+         ================================================== -->
+
+    <div class="reports-section-header">
+
+        <div class="reports-section-title">
+            Available Reports
+        </div>
+
+        <div class="reports-section-subtitle">
+            Select a report to view detailed campaign information.
+        </div>
+
     </div>
+
+
+    <section class="reports-grid">
+
+
+        <!-- =================================================
+             DISTRICT SUMMARY
+             ================================================= -->
+
+        <article class="report-card">
+
+            <div class="report-icon report-icon-green">
+                <i class="bi bi-bar-chart-fill"></i>
+            </div>
+
+            <div class="report-card-title">
+                District Summary
+            </div>
+
+            <div class="report-card-description">
+                Overall district campaign performance including
+                population target, vaccination achievement,
+                Pashudhan entry achievement and squad submissions.
+            </div>
+
+            <div class="report-card-stat">
+
+                <span class="report-card-number">
+                    {{ summary.vaccination_percentage }}%
+                </span>
+
+                <span class="report-card-unit">
+                    vaccination achievement
+                </span>
+
+            </div>
+
+            <div class="report-actions">
+
+                <button
+                    type="button"
+                    class="
+                        report-button
+                        report-button-disabled
+                    "
+                    disabled
+                >
+                    View Report
+                </button>
+
+            </div>
+
+        </article>
+
+
+        <!-- =================================================
+             PANCHAYATH ACHIEVEMENT
+             ================================================= -->
+
+        <article class="report-card">
+
+            <div class="report-icon report-icon-blue">
+                <i class="bi bi-buildings-fill"></i>
+            </div>
+
+            <div class="report-card-title">
+                Panchayath Achievement
+            </div>
+
+            <div class="report-card-description">
+                Panchayath-wise target, vaccination,
+                Pashudhan entry, achievement percentages
+                and campaign status.
+            </div>
+
+            <div class="report-card-stat">
+
+                <span class="report-card-number">
+                    {{ summary.panchayaths }}
+                </span>
+
+                <span class="report-card-unit">
+                    Panchayaths
+                </span>
+
+            </div>
+
+            <div class="report-actions">
+
+                <a
+                    href="{{ url_for('reports.panchayath_achievement') }}"
+                    class="
+                        report-button
+                        report-button-primary
+                    "
+                >
+                    View Report
+                </a>
+
+            </div>
+
+        </article>
+
+
+        <!-- =================================================
+             SQUAD REPORT
+             ================================================= -->
+
+        <article class="report-card">
+
+            <div class="report-icon report-icon-purple">
+                <i class="bi bi-people-fill"></i>
+            </div>
+
+            <div class="report-card-title">
+                Squad-wise Report
+            </div>
+
+            <div class="report-card-description">
+                Detailed squad performance including members,
+                targets, vaccinations, Pashudhan entries,
+                achievement and submission references.
+            </div>
+
+            <div class="report-card-stat">
+
+                <span class="report-card-number">
+                    {{ summary.total_squads }}
+                </span>
+
+                <span class="report-card-unit">
+                    total squads
+                </span>
+
+            </div>
+
+            <<div class="report-actions">
+
+                <a
+                    href="{{ url_for('reports.squad_wise') }}"
+                    class="
+                        report-button
+                        report-button-primary
+                    "
+                >
+                    View Report
+                </a>
+
+            </div>
+
+        </article>
+
+
+        <!-- =================================================
+             PENDING SUBMISSIONS
+             ================================================= -->
+
+        <article class="report-card">
+
+            <div class="report-icon report-icon-warning">
+                <i class="bi bi-hourglass-split"></i>
+            </div>
+
+            <div class="report-card-title">
+                Pending Submissions
+            </div>
+
+            <div class="report-card-description">
+                List of squads yet to submit their campaign
+                report, including Panchayath and squad-member
+                information for follow-up.
+            </div>
+
+            <div class="report-card-stat">
+
+                <span class="report-card-number">
+                    {{ summary.pending_squads }}
+                </span>
+
+                <span class="report-card-unit">
+                    pending squads
+                </span>
+
+            </div>
+
+            <div class="report-actions">
+
+                <a
+                    href="{{ url_for('reports.pending_submissions') }}"
+                    class="
+                        report-button
+                        report-button-primary
+                    "
+                >
+                    View Report
+                </a>
+
+            </div>
+
+        </article>
+
+
+        <!-- =================================================
+             LOW ACHIEVEMENT
+             ================================================= -->
+
+        <article class="report-card">
+
+            <div class="report-icon report-icon-danger">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+
+            <div class="report-card-title">
+                Low Achievement
+            </div>
+
+            <div class="report-card-description">
+                Identify Panchayaths and squads below the
+                vaccination or Pashudhan targets, together
+                with recorded reasons for low achievement.
+            </div>
+
+
+            {% set low_count = namespace(value=0) %}
+
+            {% for row in monitoring %}
+
+                {% if
+                    not row.vaccination_target_met
+                    or not row.pashudhan_target_met
+                %}
+
+                    {% set low_count.value =
+                        low_count.value + 1
+                    %}
+
+                {% endif %}
+
+            {% endfor %}
+
+
+            <div class="report-card-stat">
+
+                <span class="report-card-number">
+                    {{ low_count.value }}
+                </span>
+
+                <span class="report-card-unit">
+                    Panchayaths below one or more targets
+                </span>
+
+            </div>
+
+            <div class="report-actions">
+
+                <button
+                    type="button"
+                    class="
+                        report-button
+                        report-button-disabled
+                    "
+                    disabled
+                >
+                    View Report
+                </button>
+
+            </div>
+
+        </article>
+
+
+        <!-- =================================================
+             COMPLETE DATASET
+             ================================================= -->
+
+        <article class="report-card">
+
+            <div class="report-icon report-icon-neutral">
+                <i class="bi bi-database-fill"></i>
+            </div>
+
+            <div class="report-card-title">
+                Complete Dataset
+            </div>
+
+            <div class="report-card-description">
+                Complete campaign dataset containing
+                Panchayath, squad, submission and achievement
+                information for administrative analysis.
+            </div>
+
+            <div class="report-card-stat">
+
+                <span class="report-card-number">
+                    {{ summary.submitted_squads }}
+                </span>
+
+                <span class="report-card-unit">
+                    submitted records
+                </span>
+
+            </div>
+
+            <div class="report-actions">
+
+                <button
+                    type="button"
+                    class="
+                        report-button
+                        report-button-disabled
+                    "
+                    disabled
+                >
+                    Export Excel
+                </button>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    {% else %}
+
+    <!-- ==================================================
+         NO ACTIVE CAMPAIGN
+         ================================================== -->
+
+    <div class="reports-empty">
+
+        <h3>
+            No Active Campaign
+        </h3>
+
+        <p>
+            Activate a campaign before generating
+            campaign reports.
+        </p>
+
+    </div>
+
+    {% endif %}
 
 </div>
 

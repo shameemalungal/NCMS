@@ -1,0 +1,1313 @@
+{% extends "base.html" %}
+
+{% block title %}Panchayath Achievement - NCMS{% endblock %}
+
+
+{% block content %}
+
+<style>
+
+    /* =====================================================
+       PANCHAYATH ACHIEVEMENT REPORT
+       ===================================================== */
+
+    .report-page {
+        padding-bottom: 40px;
+        width: 100%;
+        max-width: none;
+    }
+
+    .report-hero {
+        background: linear-gradient(
+            135deg,
+            #087f4f 0%,
+            #11995f 100%
+        );
+        color: #ffffff;
+        border-radius: 14px;
+        padding: 22px 26px;
+        margin-bottom: 20px;
+        box-shadow:
+            0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .report-hero-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 18px;
+        flex-wrap: wrap;
+    }
+
+    .report-hero h2 {
+        margin: 0 0 5px 0;
+        font-size: 1.45rem;
+        font-weight: 800;
+        color: #ffffff;
+    }
+
+    .report-hero p {
+        margin: 0;
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .campaign-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.16);
+        border: 1px solid rgba(255, 255, 255, 0.30);
+        color: #ffffff;
+        border-radius: 999px;
+        padding: 8px 13px;
+        font-size: 0.82rem;
+        font-weight: 700;
+    }
+
+
+    /* =====================================================
+       SUMMARY
+       ===================================================== */
+
+    .report-summary {
+        display: grid;
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .summary-card {
+        background: #ffffff;
+        border: 1px solid #e1e6eb;
+        border-radius: 11px;
+        padding: 16px;
+        box-shadow:
+            0 3px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .summary-label {
+        color: #667085;
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 6px;
+    }
+
+    .summary-value {
+        color: #172033;
+        font-size: 1.45rem;
+        font-weight: 800;
+    }
+
+    .summary-sub {
+        color: #667085;
+        font-size: 0.75rem;
+        margin-top: 5px;
+    }
+
+
+    /* =====================================================
+       REPORT PANEL
+       ===================================================== */
+
+    .report-panel-header {
+    width: 100%;
+    padding: 16px 18px;
+    border-bottom: 1px solid #e7ebef;
+    box-sizing: border-box;
+    }
+
+    .report-header-content {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .report-header-title-area {
+        min-width: 0;
+    }
+
+    .report-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .report-tools {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 12px 18px;
+        box-sizing: border-box;
+        border-bottom: 1px solid #e7ebef;
+    }
+
+    .report-panel {
+        background: #ffffff;
+        border: 1px solid #dfe4ea;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow:
+            0 4px 16px rgba(0, 0, 0, 0.05);
+        width: 100%;
+        max-width: none;
+    }
+
+
+    /* =====================================================
+       FILTERS
+       ===================================================== */
+
+    .report-tools {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 0 0 14px 0;
+    }
+
+    .report-filters {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .report-filter {
+        border: 1px solid #d6dce3;
+        background: #ffffff;
+        color: #475467;
+        border-radius: 999px;
+        padding: 7px 11px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .report-filter:hover {
+        background: #f4f7f9;
+    }
+
+    .report-filter.active {
+        background: #087f4f;
+        border-color: #087f4f;
+        color: #ffffff;
+    }
+
+    .filter-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 19px;
+        height: 19px;
+        padding: 0 5px;
+        margin-left: 3px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.07);
+        font-size: 0.65rem;
+    }
+
+    .report-filter.active .filter-count {
+        background: rgba(255, 255, 255, 0.20);
+    }
+
+    .report-search {
+        width: 230px;
+        max-width: 100%;
+        border: 1px solid #d6dce3;
+        border-radius: 8px;
+        padding: 8px 11px;
+        font-size: 0.78rem;
+        outline: none;
+    }
+
+    .report-search:focus {
+        border-color: #087f4f;
+        box-shadow:
+            0 0 0 3px rgba(8, 127, 79, 0.10);
+    }
+
+
+    /* =====================================================
+       TABLE
+       ===================================================== */
+
+    .table-wrap {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .achievement-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1250px;
+    }
+
+    .achievement-table th {
+        background: #f4f7f9;
+        color: #475467;
+        font-size: 0.69rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+        padding: 11px 9px;
+        border-bottom: 1px solid #dfe4ea;
+        white-space: nowrap;
+        text-align: center;
+    }
+
+    .achievement-table th:nth-child(2) {
+        text-align: left;
+    }
+
+    .achievement-table td {
+        padding: 11px 9px;
+        border-bottom: 1px solid #edf0f3;
+        color: #344054;
+        font-size: 0.77rem;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .achievement-table td:nth-child(2) {
+        text-align: left;
+    }
+
+    .achievement-table tbody tr:hover {
+        background: #fafcfd;
+    }
+
+    .serial-cell {
+        color: #667085;
+        font-weight: 800;
+    }
+
+    .panchayath-name {
+        color: #172033;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .number-cell {
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+
+    /* =====================================================
+       ACHIEVEMENT
+       ===================================================== */
+
+    .achievement-value {
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .achievement-met {
+        color: #087f4f;
+    }
+
+    .achievement-low {
+        color: #c92a3a;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 5px 9px;
+        font-size: 0.66rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-success {
+        background: #e4f7ed;
+        color: #087f4f;
+    }
+
+    .status-warning {
+        background: #fff3d6;
+        color: #9a6700;
+    }
+
+    .status-danger {
+        background: #fde7e9;
+        color: #c92a3a;
+    }
+
+    .status-neutral {
+        background: #edf1f5;
+        color: #475467;
+    }
+
+
+    /* =====================================================
+       FOOTER / ACTIONS
+       ===================================================== */
+
+    .report-footer {
+        padding: 14px 18px;
+        border-top: 1px solid #e7ebef;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        background: #fafbfc;
+    }
+
+    .result-count {
+        color: #667085;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
+    .report-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .report-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 0.76rem;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .action-back {
+        border: 1px solid #d6dce3;
+        background: #ffffff;
+        color: #475467;
+    }
+
+    .action-back:hover {
+        background: #f4f7f9;
+        color: #344054;
+    }
+
+    .action-export-disabled {
+        border: 1px solid #dfe4ea;
+        background: #f4f6f8;
+        color: #98a2b3;
+        cursor: not-allowed;
+    }
+
+    .report-export-action {
+        border: 1px solid #087f4f;
+        background: #087f4f;
+        color: #ffffff;
+    }
+
+    .report-export-action:hover {
+        background: #066d43;
+        border-color: #066d43;
+        color: #ffffff;
+    }
+
+    .no-results {
+        display: none;
+        padding: 35px 20px;
+        text-align: center;
+        color: #667085;
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
+
+    @media (max-width: 1100px) {
+
+        .report-summary {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+    }
+
+    @media (max-width: 768px) {
+
+        .report-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .report-tools,
+        .report-filters {
+            width: 100%;
+        }
+
+        .report-search {
+            width: 100%;
+        }
+
+        .report-filter {
+            flex: 1 1 auto;
+        }
+
+    }
+
+</style>
+
+
+<div class="report-page">
+
+{% if campaign %}
+
+
+    <!-- ==================================================
+         HERO
+         ================================================== -->
+
+    <section class="report-hero">
+
+        <div class="report-hero-top">
+
+            <div>
+
+                <h2>
+                    Panchayath Achievement Report
+                </h2>
+
+                <p>
+                    Panchayath-wise vaccination and
+                    Pashudhan achievement analysis.
+                </p>
+
+            </div>
+
+            <div class="campaign-chip">
+                ● {{ campaign.name }}
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         SUMMARY
+         ================================================== -->
+
+    <section class="report-summary">
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Panchayaths
+            </div>
+
+            <div class="summary-value">
+                {{ summary.panchayaths }}
+            </div>
+
+            <div class="summary-sub">
+                Campaign Panchayaths
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Population Target
+            </div>
+
+            <div class="summary-value">
+                {{ "{:,}".format(summary.target) }}
+            </div>
+
+            <div class="summary-sub">
+                District target population
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Vaccination Achievement
+            </div>
+
+            <div class="summary-value">
+                {{ summary.vaccination_percentage }}%
+            </div>
+
+            <div class="summary-sub">
+                Target: {{ summary.vaccination_target }}%
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Pashudhan Achievement
+            </div>
+
+            <div class="summary-value">
+                {{ summary.pashudhan_percentage }}%
+            </div>
+
+            <div class="summary-sub">
+                Target: {{ summary.pashudhan_target }}%
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         REPORT TABLE
+         ================================================== -->
+
+        <section class="report-panel">
+
+            <!-- ==============================================
+                REPORT HEADER
+                ============================================== -->
+
+            <div class="report-panel-header">
+
+                <div class="report-header-content">
+
+                    <div class="report-header-title-area">
+
+                        <div class="report-panel-title">
+                            Panchayath Achievement Report
+                        </div>
+
+                        <div class="report-panel-subtitle">
+                            Panchayath-wise vaccination and
+                            Pashudhan achievement.
+                        </div>
+
+                    </div>
+
+
+                    <div class="report-header-actions">
+
+                        <a
+                            href="{{ url_for('reports.index') }}"
+                            class="report-action action-back"
+                        >
+                            ← Reports
+                        </a>
+
+                        <a
+                            href="{{ url_for(
+                                'reports.export_panchayath_achievement',
+                                filter='all'
+                            ) }}"
+                            class="
+                                report-action
+                                report-export-action
+                            "
+                            id="exportExcelButton"
+                        >
+                            <i class="bi bi-file-earmark-excel-fill"></i>
+                            Export Excel
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==============================================
+                FILTERS AND SEARCH
+                ============================================== -->
+
+            <div class="report-tools">
+
+                <div
+                    class="report-filters"
+                    id="achievementFilters"
+                >
+
+                    <button
+                        type="button"
+                        class="report-filter active"
+                        data-filter="all"
+                    >
+                        All
+                        <span class="filter-count"></span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="report-filter"
+                        data-filter="vaccination-achieved"
+                    >
+                        Vaccination Target Achieved
+                        <span class="filter-count"></span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="report-filter"
+                        data-filter="pashudhan-achieved"
+                    >
+                        Pashudhan Target Achieved
+                        <span class="filter-count"></span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="report-filter"
+                        data-filter="both-achieved"
+                    >
+                        Both Targets Achieved
+                        <span class="filter-count"></span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="report-filter"
+                        data-filter="low-vaccination"
+                    >
+                        Low Vaccination
+                        <span class="filter-count"></span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="report-filter"
+                        data-filter="low-pashudhan"
+                    >
+                        Low Pashudhan
+                        <span class="filter-count"></span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="report-filter"
+                        data-filter="low-both"
+                    >
+                        Low Both
+                        <span class="filter-count"></span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="report-filter"
+                        data-filter="pending"
+                    >
+                        Pending
+                        <span class="filter-count"></span>
+                    </button>
+
+                </div>
+
+
+                <input
+                    type="text"
+                    id="reportSearch"
+                    class="report-search"
+                    placeholder="Search Panchayath..."
+                    autocomplete="off"
+                >
+
+            </div>
+        <div class="table-wrap">
+
+            <table
+                class="achievement-table"
+                id="achievementTable"
+            >
+
+                <thead>
+
+                    <tr>
+
+                        <th>Sl. No.</th>
+
+                        <th>Panchayath</th>
+
+                        <th>Total Squads</th>
+
+                        <th>Submitted</th>
+
+                        <th>Pending</th>
+
+                        <th>Population</th>
+
+                        <th>Vaccinated</th>
+
+                        <th>Vacc. %</th>
+
+                        <th>Pashudhan Entries</th>
+
+                        <th>Pash. %</th>
+
+                        <th>Status</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for row in monitoring %}
+
+                    <tr
+                        class="achievement-row"
+                        data-search="{{ row.panchayath.name | lower }}"
+                        data-status="{{ row.status | lower }}"
+                        data-vaccination-met="{{
+                            'true'
+                            if row.vaccination_target_met
+                            else 'false'
+                        }}"
+                        data-pashudhan-met="{{
+                            'true'
+                            if row.pashudhan_target_met
+                            else 'false'
+                        }}"
+                    >
+
+                        <td class="serial-cell">
+                            {{ loop.index }}
+                        </td>
+
+
+                        <td>
+                            <span class="panchayath-name">
+                                {{ row.panchayath.name }}
+                            </span>
+                        </td>
+
+
+                        <td class="number-cell">
+                            {{ row.total }}
+                        </td>
+
+
+                        <td class="number-cell">
+                            {{ row.submitted }}
+                        </td>
+
+
+                        <td class="number-cell">
+                            {{ row.pending }}
+                        </td>
+
+
+                        <td class="number-cell">
+                            {{ "{:,}".format(row.target) }}
+                        </td>
+
+
+                        <td class="number-cell">
+                            {{ "{:,}".format(row.vaccinations) }}
+                        </td>
+
+
+                        <td>
+
+                            <span
+                                class="
+                                    achievement-value
+                                    {% if row.vaccination_target_met %}
+                                        achievement-met
+                                    {% else %}
+                                        achievement-low
+                                    {% endif %}
+                                "
+                            >
+                                {{ row.vaccination_percentage }}%
+                            </span>
+
+                        </td>
+
+
+                        <td class="number-cell">
+                            {{ "{:,}".format(row.entries) }}
+                        </td>
+
+
+                        <td>
+
+                            <span
+                                class="
+                                    achievement-value
+                                    {% if row.pashudhan_target_met %}
+                                        achievement-met
+                                    {% else %}
+                                        achievement-low
+                                    {% endif %}
+                                "
+                            >
+                                {{ row.pashudhan_percentage }}%
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            {% if row.status == "Target Achieved" %}
+
+                                <span
+                                    class="
+                                        status-badge
+                                        status-success
+                                    "
+                                >
+                                    Target Achieved
+                                </span>
+
+                            {% elif row.status == "Pending" %}
+
+                                <span
+                                    class="
+                                        status-badge
+                                        status-warning
+                                    "
+                                >
+                                    Pending
+                                </span>
+
+                            {% elif row.status == "Not Started" %}
+
+                                <span
+                                    class="
+                                        status-badge
+                                        status-neutral
+                                    "
+                                >
+                                    Not Started
+                                </span>
+
+                            {% else %}
+
+                                <span
+                                    class="
+                                        status-badge
+                                        status-danger
+                                    "
+                                >
+                                    {{ row.status }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <div
+            class="no-results"
+            id="reportNoResults"
+        >
+            No Panchayath matches the selected report filter.
+        </div>
+
+
+        <div class="report-footer">
+
+            <div
+                class="result-count"
+                id="resultCount"
+            >
+            </div>
+           
+        </div>
+
+    </section>
+
+
+{% else %}
+
+    <div class="reports-empty">
+
+        <h3>
+            No Active Campaign
+        </h3>
+
+        <p>
+            Activate a campaign before generating reports.
+        </p>
+
+    </div>
+
+{% endif %}
+
+</div>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const search =
+            document.getElementById(
+                "reportSearch"
+            );
+
+        const rows =
+            document.querySelectorAll(
+                ".achievement-row"
+            );
+
+        const filters =
+            document.querySelectorAll(
+                ".report-filter"
+            );
+
+        const resultCount =
+            document.getElementById(
+                "resultCount"
+            );
+
+        const noResults =
+            document.getElementById(
+                "reportNoResults"
+            );
+
+        const exportButton =
+            document.getElementById(
+                "exportExcelButton"
+            );
+
+        let activeFilter = "all";
+
+
+        function matchesFilter(
+            row,
+            filterName
+        ) {
+
+            const status =
+                row.dataset.status || "";
+
+            const vaccinationMet =
+                row.dataset.vaccinationMet
+                === "true";
+
+            const pashudhanMet =
+                row.dataset.pashudhanMet
+                === "true";
+
+
+            if (filterName === "all") {
+                return true;
+            }
+
+            if (
+                filterName
+                === "vaccination-achieved"
+            ) {
+                return vaccinationMet;
+            }
+
+            if (
+                filterName
+                === "pashudhan-achieved"
+            ) {
+                return pashudhanMet;
+            }
+
+            if (
+                filterName
+                === "both-achieved"
+            ) {
+                return (
+                    vaccinationMet
+                    && pashudhanMet
+                );
+            }
+
+            if (
+                filterName
+                === "low-vaccination"
+            ) {
+                return !vaccinationMet;
+            }
+
+            if (
+                filterName
+                === "low-pashudhan"
+            ) {
+                return !pashudhanMet;
+            }
+
+            if (
+                filterName
+                === "low-both"
+            ) {
+                return (
+                    !vaccinationMet
+                    && !pashudhanMet
+                );
+            }
+
+            if (
+                filterName
+                === "pending"
+            ) {
+                return (
+                    status === "pending"
+                    || status === "not started"
+                );
+            }
+
+            return true;
+        }
+
+
+        function updateFilterCounts(
+            searchValue
+        ) {
+
+            filters.forEach(
+                function (button) {
+
+                    const filterName =
+                        button.dataset.filter;
+
+                    let count = 0;
+
+                    rows.forEach(
+                        function (row) {
+
+                            const searchText =
+                                row.dataset.search
+                                || "";
+
+                            const searchMatch =
+                                !searchValue
+                                || searchText.includes(
+                                    searchValue
+                                );
+
+                            if (
+                                searchMatch
+                                && matchesFilter(
+                                    row,
+                                    filterName
+                                )
+                            ) {
+                                count += 1;
+                            }
+                        }
+                    );
+
+
+                    const countElement =
+                        button.querySelector(
+                            ".filter-count"
+                        );
+
+                    if (countElement) {
+                        countElement.textContent =
+                            count;
+                    }
+
+                }
+            );
+        }
+
+
+        function applyFilters() {
+
+            const searchValue =
+                search
+                    ? search.value
+                        .trim()
+                        .toLowerCase()
+                    : "";
+
+            let visibleCount = 0;
+
+
+            rows.forEach(
+                function (row) {
+
+                    const searchText =
+                        row.dataset.search
+                        || "";
+
+                    const searchMatch =
+                        !searchValue
+                        || searchText.includes(
+                            searchValue
+                        );
+
+                    const filterMatch =
+                        matchesFilter(
+                            row,
+                            activeFilter
+                        );
+
+                    const visible =
+                        searchMatch
+                        && filterMatch;
+
+
+                    row.style.display =
+                        visible
+                            ? ""
+                            : "none";
+
+
+                    if (visible) {
+
+                        visibleCount += 1;
+
+                        const serial =
+                            row.querySelector(
+                                ".serial-cell"
+                            );
+
+                        if (serial) {
+                            serial.textContent =
+                                visibleCount;
+                        }
+                    }
+
+                }
+            );
+
+
+            if (resultCount) {
+
+                resultCount.textContent =
+                    visibleCount
+                    + (
+                        visibleCount === 1
+                            ? " Panchayath"
+                            : " Panchayaths"
+                    );
+            }
+
+
+            if (noResults) {
+
+                noResults.style.display =
+                    visibleCount === 0
+                        ? "block"
+                        : "none";
+            }
+
+
+            updateFilterCounts(
+                searchValue
+            );
+        }
+
+
+        filters.forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        activeFilter =
+                            button.dataset.filter
+                            || "all";
+
+                        filters.forEach(
+                            function (item) {
+                                item.classList.remove(
+                                    "active"
+                                );
+                            }
+                        );
+
+                        button.classList.add(
+                            "active"
+                        );
+
+
+                        // Keep Excel export synchronized
+                        // with the selected report category.
+
+                        if (exportButton) {
+
+                            const exportUrl =
+                                "{{ url_for(
+                                    'reports.export_panchayath_achievement'
+                                ) }}";
+
+                            exportButton.href =
+                                exportUrl
+                                + "?filter="
+                                + encodeURIComponent(
+                                    activeFilter
+                                );
+                        }
+
+
+                        applyFilters();
+                    }
+                );
+
+            }
+        );
+
+
+        if (search) {
+
+            search.addEventListener(
+                "input",
+                applyFilters
+            );
+        }
+
+
+        if (exportButton) {
+
+            const exportUrl =
+                "{{ url_for(
+                    'reports.export_panchayath_achievement'
+                ) }}";
+
+            exportButton.href =
+                exportUrl
+                + "?filter=all";
+        }
+
+
+        applyFilters();
+
+    }
+);
+
+</script>
+
+{% endblock %}

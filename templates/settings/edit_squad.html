@@ -1,0 +1,703 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Squad & Members - NCMS
+{% endblock %}
+
+
+{% block styles %}
+
+<style>
+
+    .edit-squad-page {
+        width: 100%;
+        padding-bottom: 40px;
+    }
+
+    .editor-hero {
+        background: linear-gradient(
+            135deg,
+            #172033 0%,
+            #26364f 100%
+        );
+        color: #ffffff;
+        border-radius: 14px;
+        padding: 22px 24px;
+        margin-bottom: 18px;
+        box-shadow:
+            0 8px 24px rgba(0,0,0,0.07);
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+    }
+
+    .editor-hero h2 {
+        margin: 0 0 5px 0;
+        color: #ffffff;
+        font-size: 1.3rem;
+        font-weight: 800;
+    }
+
+    .editor-hero p {
+        margin: 0;
+        opacity: 0.85;
+        font-size: 0.76rem;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.3);
+        background: rgba(255,255,255,0.1);
+        color: #ffffff;
+        font-size: 0.7rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .editor-card {
+        background: #ffffff;
+        border: 1px solid #e4e7ec;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 18px;
+        box-shadow:
+            0 4px 16px rgba(0,0,0,0.04);
+    }
+
+    .editor-card-header {
+        padding: 16px 18px;
+        border-bottom: 1px solid #e7ebef;
+    }
+
+    .editor-card-title {
+        color: #172033;
+        font-size: 0.92rem;
+        font-weight: 800;
+        margin-bottom: 3px;
+    }
+
+    .editor-card-subtitle {
+        color: #667085;
+        font-size: 0.69rem;
+    }
+
+    .editor-card-body {
+        padding: 18px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        color: #475467;
+        font-size: 0.68rem;
+        font-weight: 800;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+        padding: 9px 10px;
+        background: #ffffff;
+        color: #344054;
+        font-size: 0.75rem;
+        outline: none;
+    }
+
+    .form-control-custom:focus {
+        border-color: #087f4f;
+        box-shadow:
+            0 0 0 3px rgba(8,127,79,0.08);
+    }
+
+    .readonly-field {
+        background: #f8fafb;
+        color: #667085;
+    }
+
+    .member-card {
+        border: 1px solid #e4e7ec;
+        border-radius: 10px;
+        margin-bottom: 14px;
+        overflow: hidden;
+    }
+
+    .member-card:last-child {
+        margin-bottom: 0;
+    }
+
+    .member-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 13px;
+        background: #f8fafb;
+        border-bottom: 1px solid #e7ebef;
+    }
+
+    .member-title {
+        color: #172033;
+        font-size: 0.75rem;
+        font-weight: 800;
+    }
+
+    .member-id {
+        color: #98a2b3;
+        font-size: 0.62rem;
+    }
+
+    .member-body {
+        padding: 14px;
+    }
+
+    .member-grid {
+        display: grid;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+        gap: 13px;
+    }
+
+    .submission-warning {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px 14px;
+        margin-bottom: 18px;
+        border: 1px solid #f4d78b;
+        border-radius: 9px;
+        background: #fff8e6;
+        color: #7a5200;
+        font-size: 0.72rem;
+        line-height: 1.5;
+    }
+
+    .submission-warning i {
+        margin-top: 1px;
+    }
+
+    .action-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-top: 18px;
+    }
+
+    .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 9px 14px;
+        border-radius: 8px;
+        font-size: 0.73rem;
+        font-weight: 800;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .button-secondary {
+        border: 1px solid #d0d5dd;
+        background: #ffffff;
+        color: #344054;
+    }
+
+    .button-secondary:hover {
+        color: #172033;
+        background: #f8fafb;
+    }
+
+    .button-save {
+        border: 1px solid #087f4f;
+        background: #087f4f;
+        color: #ffffff;
+    }
+
+    .button-save:hover {
+        background: #066d43;
+        border-color: #066d43;
+    }
+
+    .empty-members {
+        padding: 22px;
+        border: 1px dashed #d0d5dd;
+        border-radius: 9px;
+        text-align: center;
+        color: #667085;
+        font-size: 0.74rem;
+    }
+
+    @media (max-width: 850px) {
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .member-grid {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+    @media (max-width: 600px) {
+
+        .editor-hero {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .action-row {
+            flex-direction: column-reverse;
+            align-items: stretch;
+        }
+
+        .button {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="edit-squad-page">
+
+
+    <!-- ==============================================
+         HERO
+         ============================================== -->
+
+    <section class="editor-hero">
+
+        <div>
+
+            <h2>
+                Edit Squad & Members
+            </h2>
+
+            <p>
+                Correct master data for the selected squad.
+            </p>
+
+        </div>
+
+
+        <div class="hero-badge">
+
+            <i class="bi bi-people-fill"></i>
+
+            Squad {{ squad.squad_no }}
+
+        </div>
+
+    </section>
+
+
+    {% if squad.submission %}
+
+        <div class="submission-warning">
+
+            <i class="bi bi-exclamation-triangle-fill"></i>
+
+            <div>
+
+                <strong>
+                    This squad has already submitted its report.
+                </strong>
+
+                Changing the squad number, Panchayath or member
+                details will update how this squad is identified
+                throughout NCMS. The existing submission itself
+                will not be deleted.
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    <form method="POST" action="{{ url_for('settings.edit_squad', squad_id=squad.id) }}">
+
+
+        <!-- ==========================================
+             SQUAD DETAILS
+             ========================================== -->
+
+        <section class="editor-card">
+
+            <div class="editor-card-header">
+
+                <div class="editor-card-title">
+                    Squad Details
+                </div>
+
+                <div class="editor-card-subtitle">
+                    Change squad allocation and allotted days.
+                </div>
+
+            </div>
+
+
+            <div class="editor-card-body">
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+                        <label for="squad_no">
+                            Squad Number
+                        </label>
+
+                        <input
+                            type="number"
+                            id="squad_no"
+                            name="squad_no"
+                            class="form-control-custom"
+                            min="1"
+                            required
+                            value="{{ squad.squad_no }}"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="panchayath_id">
+                            Panchayath
+                        </label>
+
+                        <select
+                            id="panchayath_id"
+                            name="panchayath_id"
+                            class="form-control-custom"
+                            required
+                        >
+
+                            {% for panchayath in panchayaths %}
+
+                                <option
+                                    value="{{ panchayath.id }}"
+                                    {% if panchayath.id == squad.panchayath_id %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ panchayath.name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="squad_days">
+                            Squad Days Allotted
+                        </label>
+
+                        <input
+                            type="number"
+                            id="squad_days"
+                            name="squad_days"
+                            class="form-control-custom"
+                            min="0"
+                            required
+                            value="{{ squad.squad_days or 0 }}"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="form-grid"
+                    style="margin-top: 14px;"
+                >
+
+                    <div class="form-group">
+
+                        <label>
+                            Campaign
+                        </label>
+
+                        <input
+                            type="text"
+                            class="
+                                form-control-custom
+                                readonly-field
+                            "
+                            value="{{ campaign.name }}"
+                            readonly
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Target
+                        </label>
+
+                        <input
+                            type="text"
+                            class="
+                                form-control-custom
+                                readonly-field
+                            "
+                            value="{{ squad.target or 0 }}"
+                            readonly
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Submission Status
+                        </label>
+
+                        <input
+                            type="text"
+                            class="
+                                form-control-custom
+                                readonly-field
+                            "
+                            value="{% if squad.submission %}Submitted{% else %}Pending{% endif %}"
+                            readonly
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==========================================
+             MEMBERS
+             ========================================== -->
+
+        <section class="editor-card">
+
+            <div class="editor-card-header">
+
+                <div class="editor-card-title">
+                    Squad Members
+                </div>
+
+                <div class="editor-card-subtitle">
+                    Edit name, designation, office and
+                    Pashudhan ID.
+                </div>
+
+            </div>
+
+
+            <div class="editor-card-body">
+
+                {% if squad.members %}
+
+                    {% for member in squad.members %}
+
+                        <div class="member-card">
+
+                            <div class="member-header">
+
+                                <div class="member-title">
+                                    Member {{ loop.index }}
+                                </div>
+
+                                <div class="member-id">
+                                    Record ID:
+                                    {{ member.id }}
+                                </div>
+
+                            </div>
+
+
+                            <div class="member-body">
+
+                                <div class="member-grid">
+
+
+                                    <div class="form-group">
+
+                                        <label
+                                            for="member_{{ member.id }}_name"
+                                        >
+                                            Member Name
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            id="member_{{ member.id }}_name"
+                                            name="member_{{ member.id }}_name"
+                                            class="form-control-custom"
+                                            maxlength="200"
+                                            required
+                                            value="{{ member.member_name }}"
+                                        >
+
+                                    </div>
+
+
+                                    <div class="form-group">
+
+                                        <label
+                                            for="member_{{ member.id }}_designation"
+                                        >
+                                            Designation
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            id="member_{{ member.id }}_designation"
+                                            name="member_{{ member.id }}_designation"
+                                            class="form-control-custom"
+                                            maxlength="150"
+                                            value="{{ member.designation or '' }}"
+                                            placeholder="Enter designation"
+                                        >
+
+                                    </div>
+
+
+                                    <div class="form-group">
+
+                                        <label
+                                            for="member_{{ member.id }}_office"
+                                        >
+                                            Office
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            id="member_{{ member.id }}_office"
+                                            name="member_{{ member.id }}_office"
+                                            class="form-control-custom"
+                                            maxlength="200"
+                                            value="{{ member.office or '' }}"
+                                            placeholder="Enter office"
+                                        >
+
+                                    </div>
+
+
+                                    <div class="form-group">
+
+                                        <label
+                                            for="member_{{ member.id }}_pashudhan_id"
+                                        >
+                                            Pashudhan ID
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            id="member_{{ member.id }}_pashudhan_id"
+                                            name="member_{{ member.id }}_pashudhan_id"
+                                            class="form-control-custom"
+                                            maxlength="100"
+                                            value="{{ member.pashudhan_id or '' }}"
+                                            placeholder="Enter Pashudhan ID"
+                                        >
+
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+
+                {% else %}
+
+                    <div class="empty-members">
+
+                        <i class="bi bi-person-x"></i>
+
+                        No members are currently attached
+                        to this squad.
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+        <!-- ==========================================
+             ACTIONS
+             ========================================== -->
+
+        <div class="action-row">
+
+            <a
+                href="{{ url_for('settings.squads') }}"
+                class="button button-secondary"
+            >
+
+                <i class="bi bi-arrow-left"></i>
+
+                Back to Squad Management
+
+            </a>
+
+
+            <button
+                type="submit"
+                class="button button-save"
+                onclick="
+                    return confirm(
+                        'Save these changes to the squad and member master data?'
+                    );
+                "
+            >
+
+                <i class="bi bi-check-circle-fill"></i>
+
+                Save Changes
+
+            </button>
+
+        </div>
+
+
+    </form>
+
+</div>
+
+{% endblock %}

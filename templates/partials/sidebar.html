@@ -7,9 +7,7 @@
     <div class="sidebar-brand">
 
         <div class="brand-logo">
-
             <i class="bi bi-shield-check"></i>
-
         </div>
 
         <div class="brand-text">
@@ -33,19 +31,23 @@
     <div class="sidebar-nav">
 
         <div class="sidebar-heading">
-
             Main Menu
-
         </div>
 
+
+        <!-- Dashboard -->
+
         <a href="{{ url_for('dashboard.index') }}"
-           class="{% if request.endpoint=='dashboard.index' %}active{% endif %}">
+           class="{% if request.endpoint == 'dashboard.index' %}active{% endif %}">
 
             <i class="bi bi-grid-fill"></i>
 
             <span>Dashboard</span>
 
         </a>
+
+
+        <!-- New Submission -->
 
         <a href="{{ url_for('submission.index') }}"
            class="{% if request.endpoint and request.endpoint.startswith('submission.') %}active{% endif %}">
@@ -56,6 +58,9 @@
 
         </a>
 
+
+        <!-- Campaigns -->
+
         <a href="{{ url_for('campaign.index') }}"
            class="{% if request.endpoint and request.endpoint.startswith('campaign.') %}active{% endif %}">
 
@@ -64,6 +69,9 @@
             <span>Campaigns</span>
 
         </a>
+
+
+        <!-- Master Data -->
 
         <a href="{{ url_for('masterdata.index') }}"
            class="{% if request.endpoint and request.endpoint.startswith('masterdata.') %}active{% endif %}">
@@ -74,53 +82,75 @@
 
         </a>
 
-        <a href="#">
 
-            <i class="bi bi-people-fill"></i>
+        <!-- District Monitoring -->
 
-            <span>Squads</span>
+        <a href="{{ url_for('monitoring.index') }}"
+           class="{% if request.endpoint == 'monitoring.index' %}active{% endif %}">
 
-            <span class="sidebar-badge">Soon</span>
+            <i class="bi bi-speedometer2"></i>
+
+            <span>District Monitoring</span>
 
         </a>
 
-        <a href="#">
+
+        <!-- Panchayath Monitoring -->
+
+        <a href="{{ url_for('reports.panchayath_achievement') }}"
+           class="{% if request.endpoint == 'reports.panchayath_achievement' %}active{% endif %}">
 
             <i class="bi bi-geo-alt-fill"></i>
 
-            <span>Panchayaths</span>
-
-            <span class="sidebar-badge">Soon</span>
+            <span>Panchayath Monitoring</span>
 
         </a>
 
-        <a href="#">
+
+        <!-- Squad Monitoring -->
+
+        <a href="{{ url_for('monitoring.squads') }}"
+           class="{% if request.endpoint == 'monitoring.squads' %}active{% endif %}">
+
+            <i class="bi bi-people-fill"></i>
+
+            <span>Squad Monitoring</span>
+
+        </a>
+
+
+        <!-- Reports -->
+
+        <a href="{{ url_for('reports.index') }}"
+           class="{% if request.endpoint and request.endpoint.startswith('reports.') and request.endpoint != 'reports.panchayath_achievement' %}active{% endif %}">
 
             <i class="bi bi-file-earmark-bar-graph-fill"></i>
 
             <span>Reports</span>
 
-            <span class="sidebar-badge">Soon</span>
-
         </a>
 
+
+        <!-- ======================================
+             Administration
+        ======================================= -->
 
         <hr class="sidebar-divider">
 
 
         <div class="sidebar-heading">
-
             Administration
-
         </div>
 
-        <a href="#">
+
+        <!-- Settings -->
+
+        <a href="{{ url_for('settings.index') }}"
+           class="{% if request.endpoint and request.endpoint.startswith('settings.') %}active{% endif %}">
 
             <i class="bi bi-gear-fill"></i>
 
             <span>Settings</span>
-
-            <span class="sidebar-badge">Soon</span>
 
         </a>
 
@@ -128,43 +158,60 @@
 
 
     <!-- ==========================================
-         Footer
+         Active Campaign
     =========================================== -->
 
     <div class="sidebar-footer">
 
         {% if active_campaign %}
 
-        <div class="campaign-card">
+            <div class="campaign-card">
 
-            <small>ACTIVE CAMPAIGN</small>
+                <small>
+                    ACTIVE CAMPAIGN
+                </small>
 
-            <h6>{{ active_campaign.name }}</h6>
+                <h6>
+                    {{ active_campaign.name }}
+                </h6>
 
-            <p>
+                <p>
 
-                {{ active_campaign.code }}
+                    {{ active_campaign.code }}
 
-                {% if active_campaign.start_date %}
-                    <br>
-                    {{ active_campaign.start_date.strftime('%d %b %Y') }}
-                {% endif %}
+                    {% if active_campaign.start_date %}
 
-            </p>
+                        <br>
 
-        </div>
+                        {{
+                            active_campaign.start_date.strftime(
+                                '%d %b %Y'
+                            )
+                        }}
+
+                    {% endif %}
+
+                </p>
+
+            </div>
 
         {% else %}
 
-        <div class="campaign-card">
+            <div class="campaign-card">
 
-            <small>CAMPAIGN</small>
+                <small>
+                    CAMPAIGN
+                </small>
 
-            <h6>No Active Campaign</h6>
+                <h6>
+                    No Active Campaign
+                </h6>
 
-            <p>Create or activate a campaign.</p>
+                <p>
+                    Create or activate a campaign.
+                </p>
 
-        </div>
+            </div>
 
         {% endif %}
 

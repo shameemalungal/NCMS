@@ -1,6 +1,8 @@
 from datetime import datetime
 
-from app.repositories.dashboard_repository import DashboardRepository
+from app.repositories.dashboard_repository import (
+    DashboardRepository,
+)
 
 
 class DashboardService:
@@ -16,20 +18,26 @@ class DashboardService:
         # Active Campaign
         # --------------------------------------------------
 
-        campaign = DashboardRepository.get_active_campaign()
+        campaign = (
+            DashboardRepository
+            .get_active_campaign()
+        )
 
         if campaign is None:
+
             return {
-                "campaign": None,
-                "submitted": 0,
-                "pending": 0,
+                "active_campaign": None,
+                "submitted_squads": 0,
+                "pending_squads": 0,
                 "total_squads": 0,
-                "vaccinations": 0,
-                "entries": 0,
+                "total_vaccinations": 0,
+                "total_entries": 0,
+                "total_leftover": 0,
                 "target": 0,
-                "vaccination_percent": 0,
-                "entry_percent": 0,
-                "today": 0,
+                "vaccination_percentage": 0,
+                "vaccine_coverage_percentage": 0,
+                "pashudhan_percentage": 0,
+                "today_submissions": 0,
                 "recent_submissions": [],
             }
 
@@ -37,14 +45,17 @@ class DashboardService:
         # Campaign Squads
         # --------------------------------------------------
 
-        squads = DashboardRepository.get_campaign_squads(
-            campaign.id
+        squads = (
+            DashboardRepository
+            .get_campaign_squads(
+                campaign.id
+            )
         )
 
         total_squads = len(squads)
 
         # --------------------------------------------------
-        # Target
+        # Campaign Target
         # --------------------------------------------------
 
         target = sum(
@@ -57,66 +68,115 @@ class DashboardService:
         # --------------------------------------------------
 
         submissions = (
-            DashboardRepository.get_campaign_submissions(
+            DashboardRepository
+            .get_campaign_submissions(
                 campaign.id
             )
         )
 
-        submitted = len(submissions)
+        submitted_squads = len(
+            submissions
+        )
 
-        pending = max(
-            total_squads - submitted,
-            0
+        pending_squads = max(
+            total_squads
+            - submitted_squads,
+            0,
         )
 
         # --------------------------------------------------
-        # Vaccination / Pashudhan totals
+        # Vaccination Total
         # --------------------------------------------------
 
-        vaccinations = sum(
+        total_vaccinations = sum(
             submission.vaccinations_done or 0
             for submission in submissions
         )
 
-        entries = sum(
+        # --------------------------------------------------
+        # Pashudhan Entry Total
+        # --------------------------------------------------
+
+        total_entries = sum(
             submission.pashudhan_entries or 0
             for submission in submissions
         )
 
         # --------------------------------------------------
-        # Percentages
+        # Total Leftover
         # --------------------------------------------------
 
-        vaccination_percent = 0
-        entry_percent = 0
+        total_leftover = sum(
+            (
+                (submission.diseased or 0)
+                + (submission.below_4_months or 0)
+                + (submission.pregnant or 0)
+                + (submission.unwilling or 0)
+                + (submission.other_count or 0)
+            )
+            for submission in submissions
+        )
+
+        # --------------------------------------------------
+        # Achievement Percentages
+        # --------------------------------------------------
+
+        vaccination_percentage = 0
+        pashudhan_percentage = 0
+        vaccine_coverage_percentage = 0
 
         if target > 0:
 
-            vaccination_percent = round(
-                (vaccinations / target) * 100,
-                2
+            vaccination_percentage = round(
+                (
+                    total_vaccinations
+                    / target
+                )
+                * 100,
+                2,
             )
 
-            entry_percent = round(
-                (entries / target) * 100,
-                2
+            pashudhan_percentage = round(
+                (
+                    total_entries
+                    / target
+                )
+                * 100,
+                2,
+            )
+
+            vaccine_coverage_percentage = round(
+                (
+                    (
+                        total_vaccinations
+                        + total_leftover
+                    )
+                    / target
+                )
+                * 100,
+                2,
             )
 
         # --------------------------------------------------
-        # Today's submissions
+        # Today's Submissions
         # --------------------------------------------------
 
         today = datetime.now().date()
 
-        today_count = sum(
+        today_submissions = sum(
             1
             for submission in submissions
             if submission.submitted_at
-            and submission.submitted_at.date() == today
+            and (
+                submission
+                .submitted_at
+                .date()
+                == today
+            )
         )
 
         # --------------------------------------------------
-        # Recent submissions
+        # Recent Submissions
         # --------------------------------------------------
 
         recent_submissions = sorted(
@@ -129,21 +189,45 @@ class DashboardService:
         )[:10]
 
         # --------------------------------------------------
-        # Dashboard result
+        # Dashboard Result
         # --------------------------------------------------
 
         return {
-            "campaign": campaign,
-            "submitted": submitted,
-            "pending": pending,
-            "total_squads": total_squads,
-            "vaccinations": vaccinations,
-            "entries": entries,
-            "target": target,
-            "vaccination_percent": vaccination_percent,
-            "entry_percent": entry_percent,
-            "today": today_count,
-            "recent_submissions": recent_submissions,
+            "active_campaign": campaign,
+            "submitted_squads": (
+                submitted_squads
+            ),
+            "pending_squads": (
+                pending_squads
+            ),
+            "total_squads": (
+                total_squads
+            ),
+            "total_vaccinations": (
+                total_vaccinations
+            ),
+            "total_entries": (
+                total_entries
+            ),
+            "target": (
+                target
+            ),
+            "vaccination_percentage": (
+                vaccination_percentage
+            ),
+            "pashudhan_percentage": (
+                pashudhan_percentage
+            ),
+            "today_submissions": (
+                today_submissions
+            ),
+            "recent_submissions": (
+                recent_submissions
+            ),
+            "total_leftover": total_leftover,
+            "vaccine_coverage_percentage": (
+                vaccine_coverage_percentage
+            ),
         }
 
 
@@ -154,31 +238,36 @@ class DashboardService:
     @staticmethod
     def get_summary():
 
-        dashboard = DashboardService.get_dashboard()
+        dashboard = (
+            DashboardService
+            .get_dashboard()
+        )
 
-        campaign = dashboard["campaign"]
+        campaign = dashboard[
+            "active_campaign"
+        ]
 
         # --------------------------------------------------
-        # No active campaign
+        # No Active Campaign
         # --------------------------------------------------
 
         if campaign is None:
 
             return {
                 "active_campaign": None,
-                "submitted": 0,
-                "pending": 0,
+                "submitted_squads": 0,
+                "pending_squads": 0,
                 "total_squads": 0,
-                "vaccinations": 0,
-                "entries": 0,
+                "total_vaccinations": 0,
+                "total_entries": 0,
                 "target": 0,
-                "vaccination_percent": 0,
-                "entry_percent": 0,
-                "today": 0,
+                "vaccination_percentage": 0,
+                "pashudhan_percentage": 0,
+                "today_submissions": 0,
             }
 
         # --------------------------------------------------
-        # JSON-safe campaign data
+        # JSON-safe Campaign
         # --------------------------------------------------
 
         campaign_data = {
@@ -189,22 +278,56 @@ class DashboardService:
         }
 
         # --------------------------------------------------
-        # JSON-safe API result
+        # JSON-safe API Result
         # --------------------------------------------------
 
         return {
-            "active_campaign": campaign_data,
-            "submitted": dashboard["submitted"],
-            "pending": dashboard["pending"],
-            "total_squads": dashboard["total_squads"],
-            "vaccinations": dashboard["vaccinations"],
-            "entries": dashboard["entries"],
-            "target": dashboard["target"],
-            "vaccination_percent": (
-                dashboard["vaccination_percent"]
+            "active_campaign": (
+                campaign_data
             ),
-            "entry_percent": (
-                dashboard["entry_percent"]
+            "submitted_squads": (
+                dashboard[
+                    "submitted_squads"
+                ]
             ),
-            "today": dashboard["today"],
+            "pending_squads": (
+                dashboard[
+                    "pending_squads"
+                ]
+            ),
+            "total_squads": (
+                dashboard[
+                    "total_squads"
+                ]
+            ),
+            "total_vaccinations": (
+                dashboard[
+                    "total_vaccinations"
+                ]
+            ),
+            "total_entries": (
+                dashboard[
+                    "total_entries"
+                ]
+            ),
+            "target": (
+                dashboard[
+                    "target"
+                ]
+            ),
+            "vaccination_percentage": (
+                dashboard[
+                    "vaccination_percentage"
+                ]
+            ),
+            "pashudhan_percentage": (
+                dashboard[
+                    "pashudhan_percentage"
+                ]
+            ),
+            "today_submissions": (
+                dashboard[
+                    "today_submissions"
+                ]
+            ),
         }

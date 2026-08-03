@@ -1,0 +1,699 @@
+{% extends "base.html" %}
+
+{% block title %}
+Squad & Member Management - NCMS
+{% endblock %}
+
+
+{% block styles %}
+
+<style>
+
+    .squad-settings-page {
+        width: 100%;
+        padding-bottom: 40px;
+    }
+
+    .settings-hero {
+        background: linear-gradient(
+            135deg,
+            #172033 0%,
+            #26364f 100%
+        );
+        color: #ffffff;
+        border-radius: 14px;
+        padding: 22px 24px;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        box-shadow:
+            0 8px 24px rgba(0, 0, 0, 0.07);
+    }
+
+    .settings-hero h2 {
+        margin: 0 0 5px 0;
+        color: #ffffff;
+        font-size: 1.3rem;
+        font-weight: 800;
+    }
+
+    .settings-hero p {
+        margin: 0;
+        opacity: 0.85;
+        font-size: 0.76rem;
+    }
+
+    .campaign-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.3);
+        background: rgba(255,255,255,0.1);
+        color: #ffffff;
+        font-size: 0.7rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .management-card {
+        background: #ffffff;
+        border: 1px solid #e4e7ec;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow:
+            0 4px 16px rgba(0,0,0,0.04);
+    }
+
+    .management-header {
+        padding: 16px 18px;
+        border-bottom: 1px solid #e7ebef;
+    }
+
+    .management-header h5 {
+        margin: 0 0 3px 0;
+        color: #172033;
+        font-size: 0.92rem;
+        font-weight: 800;
+    }
+
+    .management-header p {
+        margin: 0;
+        color: #667085;
+        font-size: 0.69rem;
+    }
+
+    .filter-section {
+        padding: 14px 18px;
+        background: #f8fafb;
+        border-bottom: 1px solid #e7ebef;
+    }
+
+    .filter-label {
+        display: block;
+        margin-bottom: 6px;
+        color: #475467;
+        font-size: 0.68rem;
+        font-weight: 800;
+    }
+
+    .filter-row {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        flex-wrap: wrap;
+    }
+
+    .search-input {
+        width: 100%;
+        max-width: 320px;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+        padding: 8px 10px;
+        background: #ffffff;
+        color: #344054;
+        font-size: 0.74rem;
+    }
+
+    .search-input:focus,
+    .panchayath-select:focus {
+        outline: none;
+        border-color: #087f4f;
+        box-shadow:
+            0 0 0 3px rgba(8,127,79,0.08);
+    }
+
+    .panchayath-select {
+        width: 100%;
+        max-width: 340px;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+        padding: 8px 10px;
+        background: #ffffff;
+        color: #344054;
+        font-size: 0.74rem;
+    }
+
+    .filter-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 0;
+        border-radius: 8px;
+        padding: 8px 13px;
+        background: #087f4f;
+        color: #ffffff;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .clear-button {
+        background: #ffffff;
+        color: #475467;
+        border: 1px solid #d0d5dd;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .management-table {
+        width: 100%;
+        min-width: 950px;
+        border-collapse: collapse;
+    }
+
+    .management-table th {
+        padding: 11px 12px;
+        background: #f8fafb;
+        border-bottom: 1px solid #e4e7ec;
+        color: #475467;
+        font-size: 0.64rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .management-table td {
+        padding: 12px;
+        border-bottom: 1px solid #edf0f3;
+        color: #344054;
+        font-size: 0.72rem;
+        vertical-align: top;
+    }
+
+    .management-table tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .management-table tbody tr:hover {
+        background: #fbfcfd;
+    }
+
+    .squad-number {
+        color: #172033;
+        font-weight: 800;
+    }
+
+    .panchayath-name {
+        color: #172033;
+        font-weight: 700;
+    }
+
+    .member-item {
+        margin-bottom: 7px;
+    }
+
+    .member-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .member-name {
+        color: #344054;
+        font-weight: 700;
+    }
+
+    .member-detail {
+        color: #98a2b3;
+        font-size: 0.63rem;
+        line-height: 1.4;
+    }
+
+    .submission-badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 5px 8px;
+        font-size: 0.61rem;
+        font-weight: 800;
+    }
+
+    .submitted {
+        background: #e5f6ed;
+        color: #087f4f;
+    }
+
+    .pending {
+        background: #fff4db;
+        color: #a15c00;
+    }
+
+    .edit-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 7px 10px;
+        border-radius: 7px;
+        border: 1px solid #d0d5dd;
+        background: #ffffff;
+        color: #344054;
+        text-decoration: none;
+        font-size: 0.67rem;
+        font-weight: 800;
+    }
+
+    .edit-button:hover {
+        border-color: #087f4f;
+        color: #087f4f;
+    }
+
+    .empty-state {
+        padding: 45px 20px;
+        text-align: center;
+        color: #667085;
+    }
+
+    .empty-state i {
+        display: block;
+        margin-bottom: 10px;
+        color: #98a2b3;
+        font-size: 2rem;
+    }
+
+    @media (max-width: 650px) {
+
+        .settings-hero {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .filter-row {
+            display: block;
+        }
+
+        .search-input,
+        .panchayath-select {
+            max-width: none;
+            margin-bottom: 8px;
+        }
+
+        .filter-button {
+            margin-right: 5px;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="squad-settings-page">
+
+
+    <!-- ==============================================
+         HERO
+         ============================================== -->
+
+    <section class="settings-hero">
+
+        <div>
+
+            <h2>
+                Squad & Member Management
+            </h2>
+
+            <p>
+                Review and correct squad allocation
+                and squad member master data.
+            </p>
+
+        </div>
+
+        {% if campaign %}
+
+            <div class="campaign-badge">
+
+                <i class="bi bi-broadcast"></i>
+
+                {{ campaign.name }}
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- ==============================================
+         NO ACTIVE CAMPAIGN
+         ============================================== -->
+
+    {% if not campaign %}
+
+        <div class="management-card">
+
+            <div class="empty-state">
+
+                <i class="bi bi-exclamation-circle"></i>
+
+                <strong>
+                    No Active Campaign
+                </strong>
+
+                <div>
+                    Activate a campaign before managing squads.
+                </div>
+
+            </div>
+
+        </div>
+
+
+    {% else %}
+
+
+        <!-- ==========================================
+             MANAGEMENT CARD
+             ========================================== -->
+
+        <section class="management-card">
+
+            <div class="management-header">
+
+                <h5>
+                    Campaign Squads
+                </h5>
+
+                <p>
+                    Select a Panchayath or review all
+                    squads in the active campaign.
+                </p>
+
+            </div>
+
+
+            <!-- ======================================
+                FILTER & SEARCH
+                ====================================== -->
+
+            <div class="filter-section">
+
+                <form
+                    method="GET"
+                    action="{{ url_for('settings.squads') }}"
+                >
+
+                    <label class="filter-label">
+                        Find Squad or Member
+                    </label>
+
+                    <div class="filter-row">
+
+                        <input
+                            type="search"
+                            name="search"
+                            class="search-input"
+                            value="{{ search_query or '' }}"
+                            placeholder="Squad, member, office, designation or Pashudhan ID"
+                            autocomplete="off"
+                        >
+
+
+                        <select
+                            name="panchayath_id"
+                            class="panchayath-select"
+                        >
+
+                            <option value="">
+                                All Panchayaths
+                            </option>
+
+                            {% for panchayath in panchayaths %}
+
+                                <option
+                                    value="{{ panchayath.id }}"
+                                    {% if selected_panchayath_id == panchayath.id %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ panchayath.name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+
+                        <button
+                            type="submit"
+                            class="filter-button"
+                        >
+
+                            <i class="bi bi-search"></i>
+
+                            Search
+
+                        </button>
+
+
+                        {% if selected_panchayath_id or search_query %}
+
+                            <a
+                                href="{{ url_for('settings.squads') }}"
+                                class="filter-button clear-button"
+                            >
+
+                                <i class="bi bi-x-circle"></i>
+
+                                Clear
+
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- ======================================
+                 SQUAD TABLE
+                 ====================================== -->
+
+            {% if squads %}
+
+                <div class="table-responsive">
+
+                    <table class="management-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Squad</th>
+
+                                <th>Panchayath</th>
+
+                                <th>Days Allotted</th>
+
+                                <th>Target</th>
+
+                                <th>Members</th>
+
+                                <th>Submission</th>
+
+                                <th>Action</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for squad in squads %}
+
+                                <tr>
+
+                                    <td class="squad-number">
+
+                                        Squad
+                                        {{ squad.squad_no }}
+
+                                    </td>
+
+
+                                    <td class="panchayath-name">
+
+                                        {{ squad.panchayath.name }}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{ squad.squad_days or 0 }}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{ squad.target or 0 }}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if squad.members %}
+
+                                            {% for member in squad.members %}
+
+                                                <div class="member-item">
+
+                                                    <div class="member-name">
+
+                                                        {{
+                                                            member.member_name
+                                                        }}
+
+                                                    </div>
+
+
+                                                    {% if member.designation %}
+
+                                                        <div class="member-detail">
+
+                                                            {{
+                                                                member.designation
+                                                            }}
+
+                                                        </div>
+
+                                                    {% endif %}
+
+
+                                                    {% if member.office %}
+
+                                                        <div class="member-detail">
+
+                                                            {{
+                                                                member.office
+                                                            }}
+
+                                                        </div>
+
+                                                    {% endif %}
+
+
+                                                    {% if member.pashudhan_id %}
+
+                                                        <div class="member-detail">
+
+                                                            Pashudhan ID:
+                                                            {{
+                                                                member.pashudhan_id
+                                                            }}
+
+                                                        </div>
+
+                                                    {% endif %}
+
+                                                </div>
+
+                                            {% endfor %}
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+                                                No members
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if squad.submission %}
+
+                                            <span
+                                                class="
+                                                    submission-badge
+                                                    submitted
+                                                "
+                                            >
+                                                Submitted
+                                            </span>
+
+                                        {% else %}
+
+                                            <span
+                                                class="
+                                                    submission-badge
+                                                    pending
+                                                "
+                                            >
+                                                Pending
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <a
+                                            href="{{ url_for(
+                                                'settings.edit_squad',
+                                                squad_id=squad.id
+                                            ) }}"
+                                            class="edit-button"
+                                        >
+
+                                            <i class="bi bi-pencil-square"></i>
+
+                                            Edit
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+            {% else %}
+
+                <div class="empty-state">
+
+                    <i class="bi bi-people"></i>
+
+                    <strong>
+                        No squads found
+                    </strong>
+
+                    <div>
+                        No squads or members match the current search criteria.
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -4,51 +4,509 @@
 
 
 {% block styles %}
+
 <link rel="stylesheet"
       href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+<style>
+
+    /* =====================================================
+       LIVE PROGRESS PANELS
+       ===================================================== */
+
+    .live-progress-row {
+        margin-top: 0;
+        margin-bottom: 24px;
+    }
+
+    .progress-metric {
+        margin-bottom: 22px;
+    }
+
+    .progress-metric:last-child {
+        margin-bottom: 0;
+    }
+
+    .progress-metric-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 8px;
+    }
+
+    .progress-metric-title {
+        color: #344054;
+        font-size: 0.84rem;
+        font-weight: 700;
+    }
+
+    .progress-metric-value {
+        color: #172033;
+        font-size: 0.84rem;
+        font-weight: 800;
+    }
+
+    .dashboard-progress-track {
+        width: 100%;
+        height: 10px;
+        background: #edf1f4;
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .dashboard-progress-bar {
+        height: 100%;
+        border-radius: 999px;
+        transition: width 0.4s ease;
+    }
+
+    .vaccination-bar {
+        background: #0b8f55;
+    }
+
+    .pashudhan-bar {
+        background: #2878d0;
+    }
+
+    .submission-bar {
+        background: #e58b20;
+    }
+
+    .progress-detail {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 7px;
+        color: #667085;
+        font-size: 0.73rem;
+    }
+
+
+    /* =====================================================
+       ACHIEVEMENT PANEL
+       ===================================================== */
+
+    .achievement-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .achievement-box {
+        background: #f8fafb;
+        border: 1px solid #e4e7ec;
+        border-radius: 11px;
+        padding: 16px 12px;
+        text-align: center;
+    }
+
+    .achievement-icon {
+        width: 38px;
+        height: 38px;
+        margin: 0 auto 8px auto;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+
+    .achievement-icon.vaccination {
+        background: #e5f6ed;
+        color: #087f4f;
+    }
+
+    .achievement-icon.pashudhan {
+        background: #e8f1fc;
+        color: #2468ad;
+    }
+
+    .achievement-number {
+        color: #172033;
+        font-size: 1.35rem;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .achievement-label {
+        margin-top: 4px;
+        color: #667085;
+        font-size: 0.68rem;
+        font-weight: 600;
+    }
+
+    .achievement-summary {
+        border-top: 1px solid #edf0f3;
+        padding-top: 14px;
+    }
+
+    .achievement-summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        padding: 6px 0;
+    }
+
+    .achievement-summary-label {
+        color: #667085;
+        font-size: 0.74rem;
+    }
+
+    .achievement-summary-value {
+        color: #172033;
+        font-size: 0.76rem;
+        font-weight: 800;
+        text-align: right;
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
+
+    @media (max-width: 575px) {
+
+        .achievement-grid {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+</style>
+
 {% endblock %}
+
 
 {% block content %}
 
 <div class="container-fluid dashboard-page">
 
-    <!-- Hero Section -->
+
+    <!-- ==================================================
+         HERO SECTION
+         ================================================== -->
+
     {% include "dashboard/partials/hero.html" %}
 
-    <!-- Statistics Cards -->
+
+    <!-- ==================================================
+         STATISTICS CARDS
+         ================================================== -->
+
     {% include "dashboard/partials/stats.html" %}
 
-    <!-- Placeholder Row (Sprint 2) -->
-    <div class="row g-4">
+
+    <!-- ==================================================
+         LIVE CAMPAIGN PROGRESS
+         ================================================== -->
+
+    <div class="row g-4 live-progress-row">
+
+
+        <!-- ==============================================
+             VACCINATION PROGRESS
+             ============================================== -->
 
         <div class="col-lg-8">
 
-            <div class="dashboard-card coming-soon">
+            <div class="dashboard-card">
 
                 <div class="card-header-custom">
 
                     <h5>
                         <i class="bi bi-bar-chart-line-fill"></i>
-                        Vaccination Progress
+                        Campaign Progress
                     </h5>
 
                 </div>
 
+
                 <div class="card-body-custom">
 
-                    <div class="placeholder-box">
 
-                        <i class="bi bi-graph-up-arrow"></i>
+                    <!-- Vaccination Achievement -->
 
-                        <h4>Analytics Coming in Sprint 2</h4>
+                    <div class="progress-metric">
 
-                        <p>
-                            Vaccination charts, Panchayath progress,
-                            achievement trend and target analysis
-                            will appear here.
-                        </p>
+                        <div class="progress-metric-header">
+
+                            <div class="progress-metric-title">
+                                Vaccination Achievement
+                            </div>
+
+                            <div class="progress-metric-value">
+                                {{
+                                    dashboard.vaccination_percentage
+                                    |default(0)
+                                    |round(1)
+                                }}%
+                            </div>
+
+                        </div>
+
+
+                        <div class="dashboard-progress-track">
+
+                            <div
+                                class="
+                                    dashboard-progress-bar
+                                    vaccination-bar
+                                "
+                                style="
+                                    width:
+                                    {{
+                                        [
+                                            dashboard.vaccination_percentage
+                                            |default(0),
+                                            100
+                                        ] | min
+                                    }}%;
+                                "
+                            >
+                            </div>
+
+                        </div>
+
+
+                        <div class="progress-detail">
+
+                            <span>
+                                {{
+                                    dashboard.total_vaccinations
+                                    |default(0)
+                                }}
+                                vaccinated
+                            </span>
+
+                            <span>
+                                Target:
+                                {{
+                                    dashboard.target
+                                    |default(0)
+                                }}
+                            </span>
+
+                        </div>
 
                     </div>
+
+
+                    <!-- Pashudhan Achievement -->
+
+                    <div class="progress-metric">
+
+                        <div class="progress-metric-header">
+
+                            <div class="progress-metric-title">
+                                Pashudhan Entry Achievement
+                            </div>
+
+                            <div class="progress-metric-value">
+                                {{
+                                    dashboard.pashudhan_percentage
+                                    |default(0)
+                                    |round(1)
+                                }}%
+                            </div>
+
+                        </div>
+
+
+                        <div class="dashboard-progress-track">
+
+                            <div
+                                class="
+                                    dashboard-progress-bar
+                                    pashudhan-bar
+                                "
+                                style="
+                                    width:
+                                    {{
+                                        [
+                                            dashboard.pashudhan_percentage
+                                            |default(0),
+                                            100
+                                        ] | min
+                                    }}%;
+                                "
+                            >
+                            </div>
+
+                        </div>
+
+
+                        <div class="progress-detail">
+
+                            <span>
+                                {{
+                                    dashboard.total_entries
+                                    |default(0)
+                                }}
+                                entries
+                            </span>
+
+                            <span>
+                                Target:
+                                {{
+                                    dashboard.target
+                                    |default(0)
+                                }}
+                            </span>
+
+                        </div>
+
+                    </div>
+                    <!-- Vaccine Coverage -->
+
+                    <div class="progress-metric">
+
+                        <div class="progress-metric-header">
+
+                            <div class="progress-metric-title">
+                                Vaccine Coverage
+                            </div>
+
+                            <div class="progress-metric-value">
+                                {{
+                                    dashboard.vaccine_coverage_percentage
+                                    |default(0)
+                                    |round(1)
+                                }}%
+                            </div>
+
+                        </div>
+
+
+                        <div class="dashboard-progress-track">
+
+                            <div
+                                class="
+                                    dashboard-progress-bar
+                                    vaccination-bar
+                                "
+                                style="
+                                    width:
+                                    {{
+                                        [
+                                            dashboard.vaccine_coverage_percentage
+                                            |default(0),
+                                            100
+                                        ] | min
+                                    }}%;
+                                "
+                            >
+                            </div>
+
+                        </div>
+
+
+                        <div class="progress-detail">
+
+                            <span>
+                                {{
+                                    dashboard.total_vaccinations
+                                    |default(0)
+                                }}
+                                vaccinated
+                                +
+                                {{
+                                    dashboard.total_leftover
+                                    |default(0)
+                                }}
+                                leftover
+                            </span>
+
+                            <span>
+                                Target:
+                                {{
+                                    dashboard.target
+                                    |default(0)
+                                }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Submission Completion -->
+
+                    {% set submission_percentage =
+                        (
+                            (
+                                dashboard.submitted_squads
+                                / dashboard.total_squads
+                            ) * 100
+                        )
+                        if dashboard.total_squads
+                        else 0
+                    %}
+
+
+                    <div class="progress-metric">
+
+                        <div class="progress-metric-header">
+
+                            <div class="progress-metric-title">
+                                Squad Submission Completion
+                            </div>
+
+                            <div class="progress-metric-value">
+                                {{
+                                    submission_percentage
+                                    |round(1)
+                                }}%
+                            </div>
+
+                        </div>
+
+
+                        <div class="dashboard-progress-track">
+
+                            <div
+                                class="
+                                    dashboard-progress-bar
+                                    submission-bar
+                                "
+                                style="
+                                    width:
+                                    {{
+                                        [
+                                            submission_percentage,
+                                            100
+                                        ] | min
+                                    }}%;
+                                "
+                            >
+                            </div>
+
+                        </div>
+
+
+                        <div class="progress-detail">
+
+                            <span>
+                                {{
+                                    dashboard.submitted_squads
+                                    |default(0)
+                                }}
+                                submitted
+                            </span>
+
+                            <span>
+                                {{
+                                    dashboard.pending_squads
+                                    |default(0)
+                                }}
+                                pending
+                            </span>
+
+                        </div>
+
+                    </div>
+
 
                 </div>
 
@@ -56,37 +514,175 @@
 
         </div>
 
+
+        <!-- ==============================================
+             ACHIEVEMENT PANEL
+             ============================================== -->
+
         <div class="col-lg-4">
 
-            <div class="dashboard-card coming-soon">
+            <div class="dashboard-card">
 
                 <div class="card-header-custom">
 
                     <h5>
-
                         <i class="bi bi-award-fill"></i>
-
                         Achievement
-
                     </h5>
 
                 </div>
 
+
                 <div class="card-body-custom">
 
-                    <div class="placeholder-box">
 
-                        <i class="bi bi-trophy-fill"></i>
+                    <div class="achievement-grid">
 
-                        <h4>Achievement Panel</h4>
 
-                        <p>
-                            Campaign achievement,
-                            district ranking,
-                            progress circle
-                            and milestones
-                            will appear here.
-                        </p>
+                        <!-- Vaccination -->
+
+                        <div class="achievement-box">
+
+                            <div
+                                class="
+                                    achievement-icon
+                                    vaccination
+                                "
+                            >
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+
+                            <div class="achievement-number">
+
+                                {{
+                                    dashboard.vaccination_percentage
+                                    |default(0)
+                                    |round(1)
+                                }}%
+
+                            </div>
+
+                            <div class="achievement-label">
+                                Vaccination
+                            </div>
+
+                        </div>
+
+
+                        <!-- Pashudhan -->
+
+                        <div class="achievement-box">
+
+                            <div
+                                class="
+                                    achievement-icon
+                                    pashudhan
+                                "
+                            >
+                                <i class="bi bi-database-check"></i>
+                            </div>
+
+                            <div class="achievement-number">
+
+                                {{
+                                    dashboard.pashudhan_percentage
+                                    |default(0)
+                                    |round(1)
+                                }}%
+
+                            </div>
+
+                            <div class="achievement-label">
+                                Pashudhan Entry
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="achievement-summary">
+
+
+                        <div class="achievement-summary-row">
+
+                            <span class="achievement-summary-label">
+                                Campaign Target
+                            </span>
+
+                            <span class="achievement-summary-value">
+                                {{
+                                    dashboard.target
+                                    |default(0)
+                                }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="achievement-summary-row">
+
+                            <span class="achievement-summary-label">
+                                Total Squads
+                            </span>
+
+                            <span class="achievement-summary-value">
+                                {{
+                                    dashboard.total_squads
+                                    |default(0)
+                                }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="achievement-summary-row">
+
+                            <span class="achievement-summary-label">
+                                Submitted
+                            </span>
+
+                            <span class="achievement-summary-value">
+                                {{
+                                    dashboard.submitted_squads
+                                    |default(0)
+                                }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="achievement-summary-row">
+
+                            <span class="achievement-summary-label">
+                                Pending
+                            </span>
+
+                            <span class="achievement-summary-value">
+                                {{
+                                    dashboard.pending_squads
+                                    |default(0)
+                                }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="achievement-summary-row">
+
+                            <span class="achievement-summary-label">
+                                Submitted Today
+                            </span>
+
+                            <span class="achievement-summary-value">
+                                {{
+                                    dashboard.today_submissions
+                                    |default(0)
+                                }}
+                            </span>
+
+                        </div>
+
 
                     </div>
 
@@ -98,8 +694,17 @@
 
     </div>
 
-    <!-- Bottom Row -->
+
+    <!-- ==================================================
+         BOTTOM ROW
+         ================================================== -->
+
     <div class="row g-4">
+
+
+        <!-- ==============================================
+             RECENT SUBMISSIONS
+             ============================================== -->
 
         <div class="col-lg-6">
 
@@ -108,14 +713,12 @@
                 <div class="card-header-custom">
 
                     <h5>
-
                         <i class="bi bi-clock-history"></i>
-
                         Recent Submissions
-
                     </h5>
 
                 </div>
+
 
                 <div class="card-body-custom">
 
@@ -128,16 +731,49 @@
                                 <div class="list-group-item">
 
                                     <strong>
-
-                                        {{ submission.squad.squad_number }}
-
+                                        Squad
+                                        {{ submission.squad.squad_no }}
                                     </strong>
+
+                                    {% if submission.squad.panchayath %}
+
+                                        <span class="text-muted">
+                                            -
+                                            {{
+                                                submission
+                                                .squad
+                                                .panchayath
+                                                .name
+                                            }}
+                                        </span>
+
+                                    {% endif %}
 
                                     <br>
 
                                     <small class="text-muted">
 
-                                        {{ submission.created_at.strftime('%d-%m-%Y %I:%M %p') }}
+                                        {% if submission.submitted_at %}
+
+                                            {{
+                                                submission
+                                                .submitted_at
+                                                .strftime(
+                                                    '%d-%m-%Y %I:%M %p'
+                                                )
+                                            }}
+
+                                        {% else %}
+
+                                            {{
+                                                submission
+                                                .created_at
+                                                .strftime(
+                                                    '%d-%m-%Y %I:%M %p'
+                                                )
+                                            }}
+
+                                        {% endif %}
 
                                     </small>
 
@@ -149,11 +785,18 @@
 
                     {% else %}
 
-                        <div class="placeholder-box small-placeholder">
+                        <div
+                            class="
+                                placeholder-box
+                                small-placeholder
+                            "
+                        >
 
                             <i class="bi bi-inbox"></i>
 
-                            <p>No submissions available.</p>
+                            <p>
+                                No submissions available.
+                            </p>
 
                         </div>
 
@@ -165,6 +808,11 @@
 
         </div>
 
+
+        <!-- ==============================================
+             QUICK ACTIONS
+             ============================================== -->
+
         <div class="col-lg-6">
 
             <div class="dashboard-card">
@@ -172,54 +820,73 @@
                 <div class="card-header-custom">
 
                     <h5>
-
                         <i class="bi bi-lightning-charge-fill"></i>
-
                         Quick Actions
-
                     </h5>
 
                 </div>
+
 
                 <div class="card-body-custom">
 
                     <div class="quick-actions">
 
-                        <a href="{{ url_for('submission.index') }}"
-                           class="action-btn">
+
+                        <a
+                            href="{{ url_for('submission.index') }}"
+                            class="action-btn"
+                        >
 
                             <i class="bi bi-pencil-square"></i>
 
-                            <span>New Submission</span>
+                            <span>
+                                New Submission
+                            </span>
 
                         </a>
 
-                        <a href="{{ url_for('masterdata.index') }}"
-                           class="action-btn">
+
+                        <a
+                            href="{{ url_for('masterdata.index') }}"
+                            class="action-btn"
+                        >
 
                             <i class="bi bi-upload"></i>
 
-                            <span>Master Data</span>
+                            <span>
+                                Master Data
+                            </span>
 
                         </a>
 
-                        <a href="{{ url_for('campaign.index') }}"
-                           class="action-btn">
+
+                        <a
+                            href="{{ url_for('campaign.index') }}"
+                            class="action-btn"
+                        >
 
                             <i class="bi bi-broadcast"></i>
 
-                            <span>Campaigns</span>
+                            <span>
+                                Campaigns
+                            </span>
 
                         </a>
 
-                        <a href="#"
-                           class="action-btn disabled">
+
+                        <a
+                            href="{{ url_for('reports.index') }}"
+                            class="action-btn"
+                        >
 
                             <i class="bi bi-file-earmark-bar-graph"></i>
 
-                            <span>Reports</span>
+                            <span>
+                                Reports
+                            </span>
 
                         </a>
+
 
                     </div>
 
@@ -235,8 +902,11 @@
 
 {% endblock %}
 
+
 {% block scripts %}
 
-<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script
+    src="{{ url_for('static', filename='js/dashboard.js') }}">
+</script>
 
 {% endblock %}
