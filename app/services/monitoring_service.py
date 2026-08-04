@@ -326,31 +326,32 @@ class MonitoringService:
                 # ==============================================
                 # PENDING SQUAD
                 # ==============================================
-
                 if not submission:
-
+                
                     pending_squad_details.append(
                         {
                             "id":
                                 squad.id,
-
+                
                             "squad_no":
                                 squad.squad_no,
-
+                
                             "squad_days":
                                 squad.squad_days or 0,
-
+                
                             "target":
                                 squad.target or 0,
-
+                
                             "status":
                                 "Pending",
-
+                
                             "members":
                                 members,
                         }
                     )
-                continue
+                
+                    continue
+                                
 
 
                 # ==============================================
