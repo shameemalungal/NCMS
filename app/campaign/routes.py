@@ -6,9 +6,10 @@ from flask import (
     url_for,
 )
 
+from app.auth.decorators import admin_required
+from app.campaign.forms import CampaignForm
 from app.extensions import db
 from app.models import Campaign
-from app.campaign.forms import CampaignForm
 
 
 campaign_bp = Blueprint(
@@ -23,6 +24,7 @@ campaign_bp = Blueprint(
 # ==========================================================
 
 @campaign_bp.route("/")
+@admin_required
 def index():
 
     campaigns = Campaign.query.order_by(
@@ -40,16 +42,32 @@ def index():
 # Add Campaign
 # ==========================================================
 
-@campaign_bp.route("/add", methods=["GET", "POST"])
+@campaign_bp.route(
+    "/add",
+    methods=["GET", "POST"],
+)
+@admin_required
 def add():
 
     form = CampaignForm()
 
     if form.validate_on_submit():
 
+        # --------------------------------------------------
         # Allow only one active campaign
+        # --------------------------------------------------
+
         if form.is_active.data:
-            Campaign.query.update({"is_active": False})
+
+            Campaign.query.update(
+                {
+                    "is_active": False
+                }
+            )
+
+        # --------------------------------------------------
+        # Create Campaign
+        # --------------------------------------------------
 
         campaign = Campaign(
             name=form.name.data,
@@ -69,7 +87,9 @@ def add():
             "success",
         )
 
-        return redirect(url_for("campaign.index"))
+        return redirect(
+            url_for("campaign.index")
+        )
 
     return render_template(
         "campaign/form.html",
@@ -83,22 +103,44 @@ def add():
 # Edit Campaign
 # ==========================================================
 
-@campaign_bp.route("/edit/<int:id>", methods=["GET", "POST"])
+@campaign_bp.route(
+    "/edit/<int:id>",
+    methods=["GET", "POST"],
+)
+@admin_required
 def edit(id):
 
     campaign = Campaign.query.get_or_404(id)
 
-    form = CampaignForm(obj=campaign)
+    form = CampaignForm(
+        obj=campaign
+    )
 
     if form.validate_on_submit():
 
+        # --------------------------------------------------
         # Allow only one active campaign
+        # --------------------------------------------------
+
         if form.is_active.data:
-            Campaign.query.update({"is_active": False})
 
-        form.populate_obj(campaign)
+            Campaign.query.update(
+                {
+                    "is_active": False
+                }
+            )
 
-        campaign.code = campaign.code.upper()
+        # --------------------------------------------------
+        # Update Campaign
+        # --------------------------------------------------
+
+        form.populate_obj(
+            campaign
+        )
+
+        campaign.code = (
+            campaign.code.upper()
+        )
 
         db.session.commit()
 
@@ -107,7 +149,9 @@ def edit(id):
             "success",
         )
 
-        return redirect(url_for("campaign.index"))
+        return redirect(
+            url_for("campaign.index")
+        )
 
     return render_template(
         "campaign/form.html",
@@ -121,12 +165,43 @@ def edit(id):
 # Delete Campaign
 # ==========================================================
 
-@campaign_bp.route("/delete/<int:id>")
+@campaign_bp.route(
+    "/delete/<int:id>",
+    methods=["POST"],
+)
+@admin_required
 def delete(id):
 
-    campaign = Campaign.query.get_or_404(id)
+    campaign = (
+        Campaign.query.get_or_404(id)
+    )
 
-    db.session.delete(campaign)
+    # ------------------------------------------------------
+    # Protect Active Campaign
+    # ------------------------------------------------------
+
+    if campaign.is_active:
+
+        flash(
+            (
+                "The active campaign cannot be deleted. "
+                "Deactivate it before attempting deletion."
+            ),
+            "warning",
+        )
+
+        return redirect(
+            url_for("campaign.index")
+        )
+
+    # ------------------------------------------------------
+    # Delete Inactive Campaign
+    # ------------------------------------------------------
+
+    db.session.delete(
+        campaign
+    )
+
     db.session.commit()
 
     flash(
@@ -134,4 +209,6 @@ def delete(id):
         "success",
     )
 
-    return redirect(url_for("campaign.index"))
+    return redirect(
+        url_for("campaign.index")
+    )

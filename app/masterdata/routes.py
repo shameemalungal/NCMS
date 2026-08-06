@@ -8,12 +8,14 @@ from app.models import Campaign
 from app.masterdata.forms import MasterDataImportForm
 from app.masterdata.importer import MasterDataImporter
 from app.masterdata.services import validate_excel
+from app.auth.decorators import admin_required
 
 
 masterdata_bp = Blueprint("masterdata", __name__, url_prefix="/masterdata")
 
 
 @masterdata_bp.route("/", methods=["GET", "POST"])
+@admin_required
 def index():
     form = MasterDataImportForm()
     campaigns = Campaign.query.order_by(Campaign.name).all()

@@ -7,6 +7,7 @@ from flask import (
 from app.reports import reports_bp
 from app.reports.services import ReportService
 from app.services.monitoring_service import MonitoringService
+from app.auth.decorators import admin_required
 
 
 # ==========================================================
@@ -14,6 +15,7 @@ from app.services.monitoring_service import MonitoringService
 # ==========================================================
 
 @reports_bp.route("/")
+@admin_required
 def index():
 
     # Reuse the established monitoring calculations.
@@ -44,6 +46,7 @@ def index():
 # ==========================================================
 
 @reports_bp.route("/panchayath-achievement")
+@admin_required
 def panchayath_achievement():
 
     data = MonitoringService.get_dashboard()
@@ -69,6 +72,7 @@ def panchayath_achievement():
 # ==========================================================
 
 @reports_bp.route("/squad-wise")
+@admin_required
 def squad_wise():
 
     # Reuse the same validated monitoring dataset.
@@ -99,6 +103,7 @@ def squad_wise():
 # ==========================================================
 
 @reports_bp.route("/pending-submissions")
+@admin_required
 def pending_submissions():
 
     # Reuse the validated monitoring dataset.
@@ -129,6 +134,7 @@ def pending_submissions():
 # ==========================================================
 
 @reports_bp.route("/squad-wise/export")
+@admin_required
 def export_squad_wise():
 
     # ------------------------------------------------------
@@ -224,6 +230,7 @@ def export_squad_wise():
 @reports_bp.route(
     "/panchayath-achievement/export"
 )
+@admin_required
 def export_panchayath_achievement():
 
     # ------------------------------------------------------
@@ -315,6 +322,7 @@ def export_panchayath_achievement():
 # ==========================================================
 
 @reports_bp.route("/pending-submissions/export")
+@admin_required
 def export_pending_submissions():
 
     # ------------------------------------------------------

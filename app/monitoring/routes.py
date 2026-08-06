@@ -2,6 +2,8 @@ from flask import Blueprint, render_template
 
 from app.services.monitoring_service import MonitoringService
 
+from app.auth.decorators import admin_required
+
 
 # ==========================================================
 # Monitoring Blueprint
@@ -19,6 +21,7 @@ monitoring_bp = Blueprint(
 # ==========================================================
 
 @monitoring_bp.route("/")
+@admin_required
 def index():
 
     data = MonitoringService.get_dashboard()
@@ -38,6 +41,7 @@ def index():
 # ==========================================================
 
 @monitoring_bp.route("/squads")
+@admin_required
 def squads():
 
     data = MonitoringService.get_dashboard()

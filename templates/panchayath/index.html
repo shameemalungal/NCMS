@@ -98,6 +98,12 @@
                                 style="display:inline;"
                                 onsubmit="return confirm('Delete this Panchayath?');">
 
+                                <input
+                                    type="hidden"
+                                    name="csrf_token"
+                                    value="{{ csrf_token() }}"
+                                >
+
                                 <button
                                     class="btn btn-sm btn-danger">
 

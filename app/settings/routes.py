@@ -19,12 +19,15 @@ from app.models import (
 
 from app.settings import settings_bp
 
+from app.auth.decorators import admin_required
+
 
 # ==========================================================
 # Settings Dashboard
 # ==========================================================
 
 @settings_bp.route("/")
+@admin_required
 def index():
 
     # ------------------------------------------------------
@@ -59,6 +62,7 @@ def index():
     "/submission-control",
     methods=["POST"],
 )
+@admin_required
 def submission_control():
 
     # ------------------------------------------------------
@@ -144,6 +148,7 @@ def submission_control():
 # ==========================================================
 
 @settings_bp.route("/squads")
+@admin_required
 def squads():
 
     # ------------------------------------------------------
@@ -324,6 +329,7 @@ def squads():
     "/squads/<int:squad_id>/edit",
     methods=["GET", "POST"],
 )
+@admin_required
 def edit_squad(squad_id):
 
     # ------------------------------------------------------

@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify
 
 from app.services.dashboard_service import DashboardService
 
+from app.auth.decorators import admin_required
+
 
 bp = Blueprint(
     "dashboard_api",
@@ -11,6 +13,7 @@ bp = Blueprint(
 
 
 @bp.get("/summary")
+@admin_required
 def summary():
 
     return jsonify(

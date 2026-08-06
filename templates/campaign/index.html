@@ -201,14 +201,44 @@ Manage Vaccination Campaigns
 
                                 </a>
 
-                                <a
-                                    href="{{ url_for('campaign.delete', id=campaign.id) }}"
-                                    class="btn btn-sm btn-outline-danger"
-                                    onclick="return confirm('Delete this campaign?');">
+                                {% if campaign.is_active %}
 
-                                    Delete
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-secondary"
+                                        disabled
+                                        title="Active campaign cannot be deleted"
+                                    >
+                                        <i class="bi bi-lock-fill"></i>
+                                        Delete
+                                    </button>
 
-                                </a>
+                                {% else %}
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('campaign.delete', id=campaign.id) }}"
+                                        style="display: inline;"
+                                        onsubmit="return confirm('Are you sure you want to permanently delete this campaign and its associated data?');"
+                                    >
+
+                                        <input
+                                            type="hidden"
+                                            name="csrf_token"
+                                            value="{{ csrf_token() }}"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-sm btn-outline-danger"
+                                        >
+                                            <i class="bi bi-trash"></i>
+                                            Delete
+                                        </button>
+
+                                    </form>
+
+                                {% endif %}
 
                             </td>
 

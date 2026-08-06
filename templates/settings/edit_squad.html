@@ -337,6 +337,12 @@ Edit Squad & Members - NCMS
 
     <form method="POST" action="{{ url_for('settings.edit_squad', squad_id=squad.id) }}">
 
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="{{ csrf_token() }}"
+        >
+
 
         <!-- ==========================================
              SQUAD DETAILS

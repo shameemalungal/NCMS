@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from flask import Flask, app
+from flask import Flask
 
 from config import Config
-from app.extensions import db, migrate
+from app.extensions import db, migrate, csrf
 
 # Blueprints
 from app.dashboard import dashboard_bp
@@ -15,47 +15,101 @@ from app.panchayath import panchayath_bp
 from app.reports import reports_bp
 from app.monitoring import monitoring_bp
 from app.settings import settings_bp
+from app.auth import auth_bp
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 def create_app():
+
+    # ======================================================
+    # Flask Application
+    # ======================================================
+
     app = Flask(
         __name__,
         template_folder=str(BASE_DIR / "templates"),
         static_folder=str(BASE_DIR / "static"),
     )
 
+    # ======================================================
     # Configuration
+    # ======================================================
+
     app.config.from_object(Config)
 
+    # ======================================================
     # Extensions
+    # ======================================================
+
     db.init_app(app)
-    migrate.init_app(app, db)
 
-    # -----------------------------
+    migrate.init_app(
+        app,
+        db,
+    )
+
+    csrf.init_app(app)
+
+    # ======================================================
     # Register Blueprints
-    # -----------------------------
-    app.register_blueprint(dashboard_bp)
-    app.register_blueprint(dashboard_api_bp)
-    app.register_blueprint(campaign_bp)
-    app.register_blueprint(masterdata_bp)
-    app.register_blueprint(submission_bp)
-    app.register_blueprint(panchayath_bp)
-    app.register_blueprint(reports_bp)
-    app.register_blueprint(monitoring_bp)
-    app.register_blueprint(settings_bp)
+    # ======================================================
 
-    
+    app.register_blueprint(
+        dashboard_bp
+    )
 
-    # -----------------------------
+    app.register_blueprint(
+        dashboard_api_bp
+    )
+
+    app.register_blueprint(
+        campaign_bp
+    )
+
+    app.register_blueprint(
+        masterdata_bp
+    )
+
+    app.register_blueprint(
+        submission_bp
+    )
+
+    app.register_blueprint(
+        panchayath_bp
+    )
+
+    app.register_blueprint(
+        reports_bp
+    )
+
+    app.register_blueprint(
+        monitoring_bp
+    )
+
+    app.register_blueprint(
+        settings_bp
+    )
+
+    app.register_blueprint(
+        auth_bp
+    )
+
+    # ======================================================
     # Context Processors
-    # -----------------------------
-    from app.context_processors import inject_active_campaign
+    # ======================================================
 
-    app.context_processor(inject_active_campaign)
+    from app.context_processors import (
+        inject_active_campaign,
+    )
 
-    # -----------------------------
+    app.context_processor(
+        inject_active_campaign
+    )
+
+    # ======================================================
     # Return Application
-    # -----------------------------
+    # ======================================================
+
     return app

@@ -1,0 +1,141 @@
+from flask import (
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
+
+from app.auth import auth_bp
+
+
+# ==========================================================
+# Admin Login
+# ==========================================================
+
+@auth_bp.route(
+    "/login",
+    methods=["GET", "POST"],
+)
+def login():
+
+    # Already logged in
+    if session.get("admin_authenticated"):
+
+        return redirect(
+            url_for("dashboard.index")
+        )
+
+    # ------------------------------------------------------
+    # Login Submission
+    # ------------------------------------------------------
+
+    if request.method == "POST":
+
+        username = (
+            request.form.get(
+                "username",
+                ""
+            )
+            .strip()
+        )
+
+        password = (
+            request.form.get(
+                "password",
+                ""
+            )
+        )
+
+        expected_username = (
+            current_app.config.get(
+                "ADMIN_USERNAME"
+            )
+        )
+
+        expected_password = (
+            current_app.config.get(
+                "ADMIN_PASSWORD"
+            )
+        )
+
+
+        if (
+            username == expected_username
+            and
+            password == expected_password
+        ):
+
+            session.clear()
+
+            session[
+                "admin_authenticated"
+            ] = True
+
+            session[
+                "admin_username"
+            ] = username
+
+            # ----------------------------------------------
+            # Return to requested admin page
+            # ----------------------------------------------
+
+            next_url = request.args.get(
+                "next"
+            )
+
+            if (
+                next_url
+                and
+                next_url.startswith("/")
+                and
+                not next_url.startswith("//")
+            ):
+
+                return redirect(
+                    next_url
+                )
+
+            return redirect(
+                url_for(
+                    "dashboard.index"
+                )
+            )
+
+        flash(
+            "Invalid username or password.",
+            "danger",
+        )
+
+    # ------------------------------------------------------
+    # Login Screen
+    # ------------------------------------------------------
+
+    return render_template(
+        "auth/login.html",
+        page_title="Administrator Login",
+    )
+
+
+# ==========================================================
+# Admin Logout
+# ==========================================================
+
+@auth_bp.route(
+    "/logout",
+    methods=["POST"],
+)
+def logout():
+
+    session.clear()
+
+    flash(
+        "You have been logged out.",
+        "success",
+    )
+
+    return redirect(
+        url_for("auth.login")
+    )

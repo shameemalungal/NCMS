@@ -8,49 +8,64 @@
             id="sidebarToggle"
             class="icon-btn d-lg-none"
             type="button"
-            aria-label="Toggle Sidebar">
+            aria-label="Toggle Sidebar"
+        >
 
             <i class="bi bi-list"></i>
 
         </button>
 
+
+        <!-- Page Heading -->
+
         <div class="page-heading">
 
             <div class="page-label">
-    {{ page_label|default("NCMS Dashboard") }}
-</div>
+                {{ page_label|default("NCMS Dashboard") }}
+            </div>
 
-<h1 class="page-title">
-    {{ page_title|default("Dashboard") }}
-</h1>
+            <h1 class="page-title">
+                {{ page_title|default("Dashboard") }}
+            </h1>
 
-<div class="page-subtitle">
-    {{ page_subtitle|default("NADCP Campaign Management System") }}
-</div>
+            <div class="page-subtitle">
+                {{ page_subtitle|default("NADCP Campaign Management System") }}
+            </div>
 
         </div>
 
     </div>
 
+
     <div class="navbar-right">
+
+        <!-- Active Campaign -->
 
         {% if active_campaign %}
 
-        <div class="campaign-status">
+            <div class="campaign-status">
 
-            <span class="badge bg-success px-3 py-2">
+                <span class="badge bg-success px-3 py-2">
 
-                <i class="bi bi-broadcast-pin me-2"></i>
+                    <i class="bi bi-broadcast-pin me-2"></i>
 
-                {{ active_campaign.code }}
+                    {{ active_campaign.code }}
 
-            </span>
+                </span>
 
-        </div>
+            </div>
 
         {% endif %}
 
-        <button class="icon-btn" title="Notifications">
+
+        <!-- Notifications -->
+
+        <button
+            class="icon-btn"
+            type="button"
+            title="Notifications"
+            aria-label="Notifications"
+        >
 
             <i class="bi bi-bell"></i>
 
@@ -58,7 +73,11 @@
 
         </button>
 
+
         <div class="vr mx-2 d-none d-lg-block"></div>
+
+
+        <!-- Administrator -->
 
         <div class="user-profile">
 
@@ -71,20 +90,44 @@
             <div class="user-details">
 
                 <div class="user-name">
-
                     Administrator
-
                 </div>
 
                 <small>
-
                     NCMS System
-
                 </small>
 
             </div>
 
         </div>
+
+
+        <!-- Logout -->
+
+        <form
+            method="POST"
+            action="{{ url_for('auth.logout') }}"
+            class="navbar-logout-form"
+        >
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <button
+                type="submit"
+                class="icon-btn navbar-logout-button"
+                title="Logout"
+                aria-label="Logout"
+            >
+
+                <i class="bi bi-box-arrow-right"></i>
+
+            </button>
+
+        </form>
 
     </div>
 
