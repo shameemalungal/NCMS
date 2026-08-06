@@ -71,7 +71,7 @@
     .report-summary {
         display: grid;
         grid-template-columns:
-            repeat(4, minmax(0, 1fr));
+            repeat(5, minmax(0, 1fr));
         gap: 12px;
         margin-bottom: 20px;
     }
@@ -243,7 +243,7 @@
     .squad-report-table {
         width: 100%;
         border-collapse: collapse;
-        min-width: 1650px;
+        min-width: 1780px;
     }
 
     .squad-report-table th {
@@ -261,8 +261,8 @@
 
     .squad-report-table th:nth-child(2),
     .squad-report-table th:nth-child(4),
-    .squad-report-table th:nth-child(11),
-    .squad-report-table th:nth-child(12) {
+    .squad-report-table th:nth-child(12),
+    .squad-report-table th:nth-child(13) {
         text-align: left;
     }
 
@@ -277,8 +277,8 @@
 
     .squad-report-table td:nth-child(2),
     .squad-report-table td:nth-child(4),
-    .squad-report-table td:nth-child(11),
-    .squad-report-table td:nth-child(12) {
+    .squad-report-table td:nth-child(12),
+    .squad-report-table td:nth-child(13) {
         text-align: left;
     }
 
@@ -411,6 +411,34 @@
 
     .pending-value {
         color: #98a2b3;
+    }
+
+
+    /* =====================================================
+       PASHUDHAN SHORTFALL
+       ===================================================== */
+
+    .shortfall-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 42px;
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 0.68rem;
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+    .shortfall-pending {
+        background: #fde7e9;
+        color: #c92a3a;
+    }
+
+    .shortfall-clear {
+        background: #e4f7ed;
+        color: #087f4f;
     }
 
 
@@ -634,6 +662,35 @@
 
         </div>
 
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Pashudhan Shortfall
+            </div>
+
+            <div class="summary-value
+                {% if summary.entry_shortfall > 0 %}
+                    achievement-low
+                {% else %}
+                    achievement-met
+                {% endif %}
+            ">
+                {{ "{:,}".format(summary.entry_shortfall) }}
+            </div>
+
+            <div class="summary-sub">
+
+                {% if summary.entry_shortfall > 0 %}
+                    Pashudhan entries pending
+                {% else %}
+                    No Pashudhan entry shortfall
+                {% endif %}
+
+            </div>
+
+        </div>
+
     </section>
 
 
@@ -815,6 +872,7 @@
                         <th>Vacc. %</th>
                         <th>Pashudhan</th>
                         <th>Pash. %</th>
+                        <th>Pashudhan Shortfall</th>
                         <th>Status</th>
                         <th>Reasons</th>
                         <th>Submission Ref.</th>
@@ -973,6 +1031,31 @@
                                 >
                                     {{ squad.pashudhan_percentage }}%
                                 </span>
+
+                            </td>
+
+
+                            <td>
+
+                                {% if squad.entry_shortfall > 0 %}
+
+                                    <span
+                                        class="shortfall-badge shortfall-pending"
+                                        title="Pashudhan entries pending"
+                                    >
+                                        {{ "{:,}".format(squad.entry_shortfall) }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span
+                                        class="shortfall-badge shortfall-clear"
+                                        title="No Pashudhan entry shortfall"
+                                    >
+                                        0
+                                    </span>
+
+                                {% endif %}
 
                             </td>
 
@@ -1195,6 +1278,7 @@
                             </td>
 
 
+                            <td class="pending-value">-</td>
                             <td class="pending-value">-</td>
                             <td class="pending-value">-</td>
                             <td class="pending-value">-</td>

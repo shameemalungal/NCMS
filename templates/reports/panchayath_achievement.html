@@ -73,7 +73,7 @@
     .report-summary {
         display: grid;
         grid-template-columns:
-            repeat(4, minmax(0, 1fr));
+            repeat(5, minmax(0, 1fr));
         gap: 12px;
         margin-bottom: 20px;
     }
@@ -250,7 +250,7 @@
     .achievement-table {
         width: 100%;
         border-collapse: collapse;
-        min-width: 1250px;
+        min-width: 1380px;
     }
 
     .achievement-table th {
@@ -350,6 +350,34 @@
     .status-neutral {
         background: #edf1f5;
         color: #475467;
+    }
+
+
+    /* =====================================================
+       PASHUDHAN SHORTFALL
+       ===================================================== */
+
+    .shortfall-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 42px;
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 0.68rem;
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+    .shortfall-pending {
+        background: #fde7e9;
+        color: #c92a3a;
+    }
+
+    .shortfall-clear {
+        background: #e4f7ed;
+        color: #087f4f;
     }
 
 
@@ -568,7 +596,34 @@
             </div>
 
             <div class="summary-sub">
-                Target: {{ summary.pashudhan_target }}%
+                Pashudhan entries ÷ population target
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Pashudhan Shortfall
+            </div>
+
+            <div class="summary-value
+                {% if summary.entry_shortfall > 0 %}
+                    achievement-low
+                {% else %}
+                    achievement-met
+                {% endif %}
+            ">
+                {{ "{:,}".format(summary.entry_shortfall) }}
+            </div>
+
+            <div class="summary-sub">
+                {% if summary.entry_shortfall > 0 %}
+                    Pashudhan entries pending
+                {% else %}
+                    No Pashudhan entry shortfall
+                {% endif %}
             </div>
 
         </div>
@@ -761,6 +816,8 @@
 
                         <th>Pash. %</th>
 
+                        <th>Pashudhan Shortfall</th>
+
                         <th>Status</th>
 
                     </tr>
@@ -862,6 +919,31 @@
                             >
                                 {{ row.pashudhan_percentage }}%
                             </span>
+
+                        </td>
+
+
+                        <td>
+
+                            {% if row.entry_shortfall > 0 %}
+
+                                <span
+                                    class="shortfall-badge shortfall-pending"
+                                    title="Pashudhan entries pending"
+                                >
+                                    {{ "{:,}".format(row.entry_shortfall) }}
+                                </span>
+
+                            {% else %}
+
+                                <span
+                                    class="shortfall-badge shortfall-clear"
+                                    title="No Pashudhan entry shortfall"
+                                >
+                                    0
+                                </span>
+
+                            {% endif %}
 
                         </td>
 
