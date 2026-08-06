@@ -12,13 +12,23 @@
 
             <div class="card shadow border-0">
 
-                <div class="card-header bg-success text-white">
+                <div class="submission-title-header">
 
-                    <h3 class="mb-0 text-white">
-                        Vaccination Report Submission
-                    </h3>
+                    <div class="submission-title-icon">
+                        <i class="bi bi-clipboard2-check-fill"></i>
+                    </div>
 
-                </div>
+                    <div>
+                        <h2>
+                            NADCP Completion Report Submission Form
+                        </h2>
+
+                        <div class="submission-campaign-title">
+                            NADCP 8
+                        </div>
+                    </div>
+
+</div>
 
                 <div class="card-body">
 
@@ -688,13 +698,23 @@
                             id="step2"
                         >
 
-                            <h3 class="mb-4">
+                            <div class="review-heading mb-3">
 
-                                <i class="bi bi-clipboard-check me-2"></i>
+                                <div class="review-heading-icon">
+                                    <i class="bi bi-clipboard-check"></i>
+                                </div>
 
-                                Review Submission
+                                <div>
+                                    <h3 class="mb-1">
+                                        Review Completion Report
+                                    </h3>
 
-                            </h3>
+                                    <p class="text-muted mb-0">
+                                        Verify the information below before continuing.
+                                    </p>
+                                </div>
+
+                            </div>
 
 
                             <div
@@ -746,7 +766,7 @@
                                 <p class="text-muted mb-4">
 
                                     Please confirm that you have reviewed all
-                                    vaccination details before submitting.
+                                    completion report details before submitting.
 
                                 </p>
 
@@ -779,7 +799,8 @@
 
 
                         <div
-                            class="d-flex justify-content-between align-items-center gap-3 flex-wrap"
+                            class="wizard-navigation d-flex justify-content-between align-items-center gap-3 flex-wrap"
+                            id="wizardNavigation"
                         >
 
                             <!--
@@ -834,7 +855,7 @@
                                 {{ form.submit(
                                     class="btn btn-success d-none",
                                     id="submitBtn",
-                                    value="Submit Vaccination Report"
+                                    value="Submit Completion Report"
                                 ) }}
 
                             </div>
@@ -852,6 +873,271 @@
     </div>
 
 </div>
+<style>
+
+.submission-title-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 26px;
+    background: linear-gradient(135deg, #087f4f, #0b9660);
+    color: #ffffff;
+}
+
+.submission-title-icon {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.16);
+    font-size: 24px;
+}
+
+.submission-title-header h2 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 1.35rem;
+    font-weight: 700;
+}
+
+.submission-campaign-title {
+    margin-top: 4px;
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.88);
+    font-weight: 500;
+}
+
+
+/* =====================================================
+   REVIEW
+===================================================== */
+
+.review-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.review-heading-icon {
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #ecfdf3;
+    color: #087f4f;
+    font-size: 21px;
+}
+
+.review-heading h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.review-section {
+    margin-bottom: 16px;
+    padding: 18px;
+    border: 1px solid #e4e7ec;
+    border-radius: 14px;
+    background: #ffffff;
+}
+
+.review-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    color: #087f4f;
+    font-size: 0.84rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.review-grid {
+    display: grid;
+    gap: 10px;
+}
+
+.review-grid-4 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.review-item {
+    padding: 11px 13px;
+    background: #f8faf9;
+    border-radius: 9px;
+}
+
+.review-item span,
+.review-metric span,
+.review-leftover span {
+    display: block;
+    margin-bottom: 3px;
+    color: #667085;
+    font-size: 0.72rem;
+}
+
+.review-item strong {
+    color: #101828;
+    font-size: 0.88rem;
+}
+
+
+/* Metrics */
+
+.review-metric-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.review-metric {
+    padding: 13px;
+    text-align: center;
+    border-radius: 10px;
+    background: #f8faf9;
+}
+
+.review-metric strong {
+    display: block;
+    color: #101828;
+    font-size: 1.15rem;
+}
+
+.review-value-success {
+    color: #087f4f !important;
+}
+
+.review-value-danger {
+    color: #dc3545 !important;
+}
+
+
+/* Reasons */
+
+.review-reason {
+    margin-top: 12px;
+    padding: 12px 14px;
+    border-radius: 9px;
+    background: #fff8e6;
+    border-left: 4px solid #f59e0b;
+}
+
+.review-reason span {
+    display: block;
+    margin-bottom: 3px;
+    color: #7a5b00;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+.review-reason strong {
+    color: #4b3b00;
+    font-size: 0.84rem;
+}
+
+
+/* Leftover */
+
+.review-leftover-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 9px;
+}
+
+.review-leftover {
+    padding: 10px;
+    text-align: center;
+    background: #f8faf9;
+    border-radius: 9px;
+}
+
+.review-leftover strong {
+    display: block;
+    font-size: 1rem;
+}
+
+.review-text-row,
+.review-remarks {
+    margin-top: 12px;
+    padding: 11px 13px;
+    background: #f8faf9;
+    border-radius: 9px;
+}
+
+.review-text-row span {
+    display: block;
+    margin-bottom: 3px;
+    color: #667085;
+    font-size: 0.72rem;
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+.wizard-navigation {
+    position: sticky;
+    bottom: 12px;
+    z-index: 100;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid #e4e7ec;
+    border-radius: 14px;
+    box-shadow: 0 -4px 20px rgba(16, 24, 40, 0.08);
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 767px) {
+
+    .submission-title-header {
+        padding: 18px;
+    }
+
+    .submission-title-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 20px;
+    }
+
+    .submission-title-header h2 {
+        font-size: 1.05rem;
+        line-height: 1.35;
+    }
+
+    .review-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .review-metric-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .review-leftover-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .wizard-navigation {
+        bottom: 6px;
+    }
+
+    .wizard-navigation .btn {
+        font-size: 0.78rem;
+    }
+
+}
+
+</style>
 
 {% endblock %}
 
@@ -861,6 +1147,8 @@
 <script>
 
 document.addEventListener("DOMContentLoaded", function () {
+
+
 
     // =====================================================
     // ELEMENTS
@@ -1293,250 +1581,307 @@ document.addEventListener("DOMContentLoaded", function () {
     // REVIEW
     // =====================================================
 
-    function buildReview() {
+        function buildReview() {
 
-        const result =
-            calculate();
+            const result =
+                calculate();
 
-        const submissionData =
-            document.getElementById("submissionData");
+            const submissionData =
+                document.getElementById("submissionData");
+
+            const campaign =
+                submissionData.dataset.campaign || "";
+
+            const panchayath =
+                submissionData.dataset.panchayath || "";
+
+            const squad =
+                submissionData.dataset.squad || "";
+
+            const daysAllotted =
+                submissionData.dataset.days || "";
+
+            const vaccinationReasonText =
+                result.vaccinationPercentage < 83
+                    ? escapeHtml(vaccinationReason.value)
+                    : "Not required";
+
+            const pashudhanReasonText =
+                result.pashudhanPercentage < 97
+                    ? escapeHtml(pashudhanReason.value)
+                    : "Not required";
+
+            const vaccinationClass =
+                result.vaccinationPercentage >= 83
+                    ? "review-value-success"
+                    : "review-value-danger";
+
+            const pashudhanClass =
+                result.pashudhanPercentage >= 97
+                    ? "review-value-success"
+                    : "review-value-danger";
+
+            const shortfall =
+                Math.max(
+                    result.vaccinated - result.pashudhanEntries,
+                    0
+                );
+
+            const remaining =
+                Math.max(
+                    target - result.vaccinated,
+                    0
+                );
+
+            reviewContainer.innerHTML = `
+
+                <div class="review-section">
+
+                    <div class="review-section-title">
+                        <i class="bi bi-geo-alt"></i>
+                        Squad Information
+                    </div>
+
+                    <div class="review-grid review-grid-4">
+
+                        <div class="review-item">
+                            <span>Campaign</span>
+                            <strong>${escapeHtml(campaign)}</strong>
+                        </div>
+
+                        <div class="review-item">
+                            <span>Panchayath</span>
+                            <strong>${escapeHtml(panchayath)}</strong>
+                        </div>
+
+                        <div class="review-item">
+                            <span>Squad</span>
+                            <strong>${escapeHtml(squad)}</strong>
+                        </div>
+
+                        <div class="review-item">
+                            <span>Target</span>
+                            <strong>${target}</strong>
+                        </div>
+
+                        <div class="review-item">
+                            <span>Days Allotted</span>
+                            <strong>${escapeHtml(daysAllotted)}</strong>
+                        </div>
+
+                        <div class="review-item">
+                            <span>Days Worked</span>
+                            <strong>${numberValue("days_worked")}</strong>
+                        </div>
+
+                    </div>
+
+                </div>
 
 
-        const campaign =
-            submissionData.dataset.campaign || "";
+                <div class="review-section">
 
-        const panchayath =
-            submissionData.dataset.panchayath || "";
+                    <div class="review-section-title">
+                        <i class="bi bi-bar-chart-fill"></i>
+                        Vaccination Summary
+                    </div>
 
-        const squad =
-            submissionData.dataset.squad || "";
+                    <div class="review-metric-grid">
 
+                        <div class="review-metric">
+                            <span>Target</span>
+                            <strong>${target}</strong>
+                        </div>
 
-        reviewContainer.innerHTML = `
+                        <div class="review-metric">
+                            <span>Vaccinated</span>
+                            <strong>${result.vaccinated}</strong>
+                        </div>
 
-            <div class="table-responsive">
-
-                <table class="table table-bordered align-middle">
-
-                    <tbody>
-
-                        <tr>
-                            <th style="width:40%">
-                                Campaign
-                            </th>
-                            <td>
-                                ${escapeHtml(campaign)}
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <th>
-                                Panchayath
-                            </th>
-                            <td>
-                                ${escapeHtml(panchayath)}
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <th>
-                                Squad
-                            </th>
-                            <td>
-                                ${escapeHtml(squad)}
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <th>
-                                Target
-                            </th>
-                            <td>
-                                ${target}
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <th>
-                                Days Worked
-                            </th>
-                            <td>
-                                ${numberValue("days_worked")}
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <th>
-                                Vaccinations Done
-                            </th>
-                            <td>
-                                ${result.vaccinated}
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <th>
-                                Vaccination Achievement
-                            </th>
-                            <td>
+                        <div class="review-metric">
+                            <span>Achievement</span>
+                            <strong class="${vaccinationClass}">
                                 ${result.vaccinationPercentage.toFixed(2)}%
-                            </td>
-                        </tr>
+                            </strong>
+                        </div>
 
-                        <tr>
-                            <th>
-                                Reason for Low Vaccination Achievement
-                            </th>
-                            <td>
-                                ${
-                                    result.vaccinationPercentage < 83
-                                    ? escapeHtml(
-                                        vaccinationReason.value
-                                      )
-                                    : "Not required"
-                                }
-                            </td>
-                        </tr>
+                        <div class="review-metric">
+                            <span>Remaining</span>
+                            <strong>${remaining}</strong>
+                        </div>
 
-                        <tr>
-                            <th>
-                                Pashudhan Entries
-                            </th>
-                            <td>
-                                ${result.pashudhanEntries}
-                            </td>
-                        </tr>
+                    </div>
 
-                        <tr>
-                            <th>
-                                Pashudhan Achievement
-                            </th>
-                            <td>
+                    ${
+                        result.vaccinationPercentage < 83
+                        ? `
+                            <div class="review-reason">
+                                <span>
+                                    Reason for Low Vaccination Achievement
+                                </span>
+                                <strong>
+                                    ${vaccinationReasonText}
+                                </strong>
+                            </div>
+                        `
+                        : ""
+                    }
+
+                </div>
+
+
+                <div class="review-section">
+
+                    <div class="review-section-title">
+                        <i class="bi bi-database-check"></i>
+                        Pashudhan Summary
+                    </div>
+
+                    <div class="review-metric-grid">
+
+                        <div class="review-metric">
+                            <span>Vaccinations</span>
+                            <strong>${result.vaccinated}</strong>
+                        </div>
+
+                        <div class="review-metric">
+                            <span>Pashudhan Entries</span>
+                            <strong>${result.pashudhanEntries}</strong>
+                        </div>
+
+                        <div class="review-metric">
+                            <span>Achievement</span>
+                            <strong class="${pashudhanClass}">
                                 ${result.pashudhanPercentage.toFixed(2)}%
-                            </td>
-                        </tr>
+                            </strong>
+                        </div>
 
-                        <tr>
-                            <th>
-                                Reason for Low Pashudhan Achievement
-                            </th>
-                            <td>
-                                ${
-                                    result.pashudhanPercentage < 97
-                                    ? escapeHtml(
-                                        pashudhanReason.value
-                                      )
-                                    : "Not required"
-                                }
-                            </td>
-                        </tr>
+                        <div class="review-metric">
+                            <span>Entry Shortfall</span>
+                            <strong>${shortfall}</strong>
+                        </div>
 
-                        <tr>
-                            <th>
-                                Diseased
-                            </th>
-                            <td>
-                                ${numberValue("diseased")}
-                            </td>
-                        </tr>
+                    </div>
 
-                        <tr>
-                            <th>
-                                Below 4 Months
-                            </th>
-                            <td>
-                                ${numberValue("below_4_months")}
-                            </td>
-                        </tr>
+                    ${
+                        result.pashudhanPercentage < 97
+                        ? `
+                            <div class="review-reason">
+                                <span>
+                                    Reason for Low Pashudhan Achievement
+                                </span>
+                                <strong>
+                                    ${pashudhanReasonText}
+                                </strong>
+                            </div>
+                        `
+                        : ""
+                    }
 
-                        <tr>
-                            <th>
-                                Pregnant
-                            </th>
-                            <td>
-                                ${numberValue("pregnant")}
-                            </td>
-                        </tr>
+                </div>
 
-                        <tr>
-                            <th>
-                                Owner Unwilling
-                            </th>
-                            <td>
-                                ${numberValue("unwilling")}
-                            </td>
-                        </tr>
 
-                        <tr>
-                            <th>
-                                Other Reason
-                            </th>
-                            <td>
-                                ${
-                                    escapeHtml(
-                                        textValue("other_reason")
-                                    ) || "-"
-                                }
-                            </td>
-                        </tr>
+                <div class="review-section">
 
-                        <tr>
-                            <th>
-                                Other Count
-                            </th>
-                            <td>
-                                ${numberValue("other_count")}
-                            </td>
-                        </tr>
+                    <div class="review-section-title">
+                        <i class="bi bi-list-check"></i>
+                        Leftover Details
+                    </div>
 
-                        <tr>
-                            <th>
+                    <div class="review-leftover-grid">
+
+                        <div class="review-leftover">
+                            <span>Diseased</span>
+                            <strong>${numberValue("diseased")}</strong>
+                        </div>
+
+                        <div class="review-leftover">
+                            <span>Below 4 Months</span>
+                            <strong>${numberValue("below_4_months")}</strong>
+                        </div>
+
+                        <div class="review-leftover">
+                            <span>Pregnant</span>
+                            <strong>${numberValue("pregnant")}</strong>
+                        </div>
+
+                        <div class="review-leftover">
+                            <span>Owner Unwilling</span>
+                            <strong>${numberValue("unwilling")}</strong>
+                        </div>
+
+                        <div class="review-leftover">
+                            <span>Other Count</span>
+                            <strong>${numberValue("other_count")}</strong>
+                        </div>
+
+                    </div>
+
+                    ${
+                        textValue("other_reason")
+                        ? `
+                            <div class="review-text-row">
+                                <span>Other Reason</span>
+                                <strong>
+                                    ${escapeHtml(textValue("other_reason"))}
+                                </strong>
+                            </div>
+                        `
+                        : ""
+                    }
+
+                </div>
+
+
+                ${
+                    textValue("remarks")
+                    ? `
+                        <div class="review-section">
+
+                            <div class="review-section-title">
+                                <i class="bi bi-chat-left-text"></i>
                                 Remarks
-                            </th>
-                            <td>
-                                ${
-                                    escapeHtml(
-                                        textValue("remarks")
-                                    ) || "-"
-                                }
-                            </td>
-                        </tr>
+                            </div>
 
-                    </tbody>
+                            <div class="review-remarks">
+                                ${escapeHtml(textValue("remarks"))}
+                            </div>
 
-                </table>
+                        </div>
+                    `
+                    : ""
+                }
 
-            </div>
-        `;
-    }
-
-
-    // =====================================================
-    // SHOW STEP
-    // =====================================================
-
-    function showStep(step) {
-
-        currentStep = step;
-
-
-        wizardPages.forEach(function (page) {
-
-            page.classList.add("d-none");
-        });
-
-
-        const currentPage =
-            document.getElementById(
-                "step" + step
-            );
-
-        if (currentPage) {
-
-            currentPage.classList.remove(
-                "d-none"
-            );
+            `;
         }
+
+
+            // =====================================================
+            // SHOW STEP
+            // =====================================================
+
+            function showStep(step) {
+
+                currentStep = step;
+
+
+                wizardPages.forEach(function (page) {
+
+                    page.classList.add("d-none");
+                });
+
+
+                const currentPage =
+                    document.getElementById(
+                        "step" + step
+                    );
+
+                if (currentPage) {
+
+                    currentPage.classList.remove(
+                        "d-none"
+                    );
+                }
 
 
         // ---------------------------------------------
