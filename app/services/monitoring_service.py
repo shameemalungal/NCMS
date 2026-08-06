@@ -31,7 +31,7 @@ class MonitoringService:
     def _get_squad_members(squad):
         """
         Convert SquadMember model objects into dictionaries that
-        can safely be used by the monitoring template and search.
+        can safely be used by the monitoring templates and search.
         """
 
         members = []
@@ -67,6 +67,10 @@ class MonitoringService:
             .first()
         )
 
+        # ------------------------------------------------------
+        # No Active Campaign
+        # ------------------------------------------------------
+
         if not campaign:
 
             return {
@@ -80,6 +84,7 @@ class MonitoringService:
                     "target": 0,
                     "vaccinations": 0,
                     "entries": 0,
+                    "entry_shortfall": 0,
                     "vaccination_percentage": 0.0,
                     "pashudhan_percentage": 0.0,
                     "vaccination_target":
@@ -118,7 +123,7 @@ class MonitoringService:
         # ------------------------------------------------------
         # Submitted Squads
         #
-        # Count actual Submission records.
+        # One Submission record represents one submitted squad.
         # ------------------------------------------------------
 
         submitted_squads = (
@@ -146,8 +151,8 @@ class MonitoringService:
         # ------------------------------------------------------
         # District Population Target
         #
-        # Panchayath.population is the campaign population.
-        # Squad.target is an allocation of that population.
+        # Panchayath.population represents the campaign
+        # population target for the Panchayath.
         # ------------------------------------------------------
 
         district_target = (
@@ -221,10 +226,17 @@ class MonitoringService:
         # DISTRICT ACHIEVEMENT
         #
         # Vaccination Achievement:
-        # Vaccinations / Population × 100
+        #
+        # Vaccinations Done
+        # ----------------- × 100
+        # Population Target
+        #
         #
         # Pashudhan Achievement:
-        # Pashudhan Entries / Population × 100
+        #
+        # Pashudhan Entries
+        # ----------------- × 100
+        # Vaccinations Done
         # ======================================================
 
         if district_target:
@@ -238,10 +250,17 @@ class MonitoringService:
                 2,
             )
 
+        else:
+
+            district_vaccination_percentage = 0.0
+
+
+        if district_vaccinations:
+
             district_pashudhan_percentage = round(
                 (
                     district_entries
-                    / district_target
+                    / district_vaccinations
                 )
                 * 100,
                 2,
@@ -249,8 +268,19 @@ class MonitoringService:
 
         else:
 
-            district_vaccination_percentage = 0.0
             district_pashudhan_percentage = 0.0
+
+
+        # ------------------------------------------------------
+        # District Pashudhan Entry Shortfall
+        #
+        # Vaccinations Done - Pashudhan Entries
+        # ------------------------------------------------------
+
+        district_entry_shortfall = (
+            district_vaccinations
+            - district_entries
+        )
 
 
         # ======================================================
@@ -277,7 +307,10 @@ class MonitoringService:
 
             total = len(squads)
 
-            target = panchayath.population or 0
+            target = (
+                panchayath.population
+                or 0
+            )
 
 
             # --------------------------------------------------
@@ -311,13 +344,15 @@ class MonitoringService:
 
                 # ----------------------------------------------
                 # Submission
+                #
+                # Current NCMS data model allows one submission
+                # per squad.
                 # ----------------------------------------------
 
                 submission = (
                     Submission.query
-                    .filter_by(squad_id=squad.id)
-                    .order_by(
-                        Submission.submitted_at.desc()
+                    .filter_by(
+                        squad_id=squad.id
                     )
                     .first()
                 )
@@ -326,32 +361,32 @@ class MonitoringService:
                 # ==============================================
                 # PENDING SQUAD
                 # ==============================================
+
                 if not submission:
-                
+
                     pending_squad_details.append(
                         {
                             "id":
                                 squad.id,
-                
+
                             "squad_no":
                                 squad.squad_no,
-                
+
                             "squad_days":
                                 squad.squad_days or 0,
-                
+
                             "target":
                                 squad.target or 0,
-                
+
                             "status":
                                 "Pending",
-                
+
                             "members":
                                 members,
                         }
                     )
-                
+
                     continue
-                                
 
 
                 # ==============================================
@@ -375,12 +410,19 @@ class MonitoringService:
                     or 0
                 )
 
-                panchayath_vaccinations += vaccinations
-                panchayath_entries += entries
+                panchayath_vaccinations += (
+                    vaccinations
+                )
+
+                panchayath_entries += (
+                    entries
+                )
 
 
                 # ----------------------------------------------
                 # Squad Vaccination Achievement
+                #
+                # Vaccinations / Squad Target × 100
                 # ----------------------------------------------
 
                 if squad_target:
@@ -402,15 +444,15 @@ class MonitoringService:
                 # ----------------------------------------------
                 # Squad Pashudhan Achievement
                 #
-                # Pashudhan Entries / Squad Population Target
+                # Pashudhan Entries / Vaccinations × 100
                 # ----------------------------------------------
 
-                if squad_target:
+                if vaccinations:
 
                     squad_pashudhan_percentage = round(
                         (
                             entries
-                            / squad_target
+                            / vaccinations
                         )
                         * 100,
                         2,
@@ -419,6 +461,16 @@ class MonitoringService:
                 else:
 
                     squad_pashudhan_percentage = 0.0
+
+
+                # ----------------------------------------------
+                # Squad Pashudhan Entry Shortfall
+                # ----------------------------------------------
+
+                squad_entry_shortfall = (
+                    vaccinations
+                    - entries
+                )
 
 
                 # ----------------------------------------------
@@ -442,25 +494,35 @@ class MonitoringService:
 
                 if (
                     squad_vaccination_target_met
-                    and squad_pashudhan_target_met
+                    and
+                    squad_pashudhan_target_met
                 ):
 
-                    squad_status = "Target Achieved"
+                    squad_status = (
+                        "Target Achieved"
+                    )
 
                 elif (
                     not squad_vaccination_target_met
-                    and not squad_pashudhan_target_met
+                    and
+                    not squad_pashudhan_target_met
                 ):
 
-                    squad_status = "Low Both"
+                    squad_status = (
+                        "Low Both"
+                    )
 
                 elif not squad_vaccination_target_met:
 
-                    squad_status = "Low Vaccination"
+                    squad_status = (
+                        "Low Vaccination"
+                    )
 
                 else:
 
-                    squad_status = "Low Pashudhan"
+                    squad_status = (
+                        "Low Pashudhan"
+                    )
 
 
                 # ----------------------------------------------
@@ -492,6 +554,9 @@ class MonitoringService:
 
                         "entries":
                             entries,
+
+                        "entry_shortfall":
+                            squad_entry_shortfall,
 
                         "vaccination_percentage":
                             squad_vaccination_percentage,
@@ -535,11 +600,11 @@ class MonitoringService:
             # ==================================================
             # PANCHAYATH ACHIEVEMENT
             #
-            # Vaccination %:
+            # Vaccination Achievement:
             # Vaccinations / Panchayath Population × 100
             #
-            # Pashudhan %:
-            # Entries / Panchayath Population × 100
+            # Pashudhan Achievement:
+            # Entries / Vaccinations × 100
             # ==================================================
 
             if target:
@@ -553,10 +618,17 @@ class MonitoringService:
                     2,
                 )
 
+            else:
+
+                vaccination_percentage = 0.0
+
+
+            if panchayath_vaccinations:
+
                 pashudhan_percentage = round(
                     (
                         panchayath_entries
-                        / target
+                        / panchayath_vaccinations
                     )
                     * 100,
                     2,
@@ -564,8 +636,17 @@ class MonitoringService:
 
             else:
 
-                vaccination_percentage = 0.0
                 pashudhan_percentage = 0.0
+
+
+            # --------------------------------------------------
+            # Panchayath Pashudhan Entry Shortfall
+            # --------------------------------------------------
+
+            entry_shortfall = (
+                panchayath_vaccinations
+                - panchayath_entries
+            )
 
 
             # --------------------------------------------------
@@ -584,7 +665,7 @@ class MonitoringService:
 
 
             # --------------------------------------------------
-            # Pending
+            # Pending Squads
             # --------------------------------------------------
 
             pending = max(
@@ -602,48 +683,60 @@ class MonitoringService:
 
             if submitted == 0:
 
-                status = "Not Started"
+                status = (
+                    "Not Started"
+                )
 
             elif pending > 0:
 
-                status = "Pending"
+                status = (
+                    "Pending"
+                )
 
             elif (
                 vaccination_target_met
-                and pashudhan_target_met
+                and
+                pashudhan_target_met
             ):
 
-                status = "Target Achieved"
+                status = (
+                    "Target Achieved"
+                )
 
             elif (
                 not vaccination_target_met
-                and not pashudhan_target_met
+                and
+                not pashudhan_target_met
             ):
 
-                status = "Low Both"
+                status = (
+                    "Low Both"
+                )
 
             elif not vaccination_target_met:
 
-                status = "Low Vaccination"
+                status = (
+                    "Low Vaccination"
+                )
 
             else:
 
-                status = "Low Pashudhan"
+                status = (
+                    "Low Pashudhan"
+                )
 
 
             # ==================================================
             # SEARCH TEXT
             #
-            # Build one searchable string containing:
+            # Searchable values:
             #
             # - Panchayath
-            # - Squad numbers
-            # - Member names
-            # - Offices
-            # - Pashudhan IDs
-            # - Submission references
-            #
-            # The HTML/JavaScript can use this for instant search.
+            # - Squad number
+            # - Squad member
+            # - Office
+            # - Pashudhan ID
+            # - Submission reference
             # ==================================================
 
             search_parts = [
@@ -655,15 +748,23 @@ class MonitoringService:
             # Submitted Squads Search Data
             # --------------------------------------------------
 
-            for squad_data in submitted_squad_details:
+            for squad_data in (
+                submitted_squad_details
+            ):
 
                 search_parts.append(
                     str(
-                        squad_data["squad_no"]
+                        squad_data[
+                            "squad_no"
+                        ]
                     )
                 )
 
-                if squad_data["submission_token"]:
+                if (
+                    squad_data[
+                        "submission_token"
+                    ]
+                ):
 
                     search_parts.append(
                         squad_data[
@@ -671,13 +772,23 @@ class MonitoringService:
                         ]
                     )
 
-                for member in squad_data["members"]:
+                for member in (
+                    squad_data[
+                        "members"
+                    ]
+                ):
 
                     search_parts.extend(
                         [
-                            member["member_name"],
-                            member["office"],
-                            member["pashudhan_id"],
+                            member[
+                                "member_name"
+                            ],
+                            member[
+                                "office"
+                            ],
+                            member[
+                                "pashudhan_id"
+                            ],
                         ]
                     )
 
@@ -686,21 +797,35 @@ class MonitoringService:
             # Pending Squads Search Data
             # --------------------------------------------------
 
-            for squad_data in pending_squad_details:
+            for squad_data in (
+                pending_squad_details
+            ):
 
                 search_parts.append(
                     str(
-                        squad_data["squad_no"]
+                        squad_data[
+                            "squad_no"
+                        ]
                     )
                 )
 
-                for member in squad_data["members"]:
+                for member in (
+                    squad_data[
+                        "members"
+                    ]
+                ):
 
                     search_parts.extend(
                         [
-                            member["member_name"],
-                            member["office"],
-                            member["pashudhan_id"],
+                            member[
+                                "member_name"
+                            ],
+                            member[
+                                "office"
+                            ],
+                            member[
+                                "pashudhan_id"
+                            ],
                         ]
                     )
 
@@ -739,7 +864,11 @@ class MonitoringService:
                     "entries":
                         panchayath_entries,
 
-                    # Kept for compatibility
+                    "entry_shortfall":
+                        entry_shortfall,
+
+                    # Kept for compatibility with
+                    # existing templates.
                     "achievement":
                         vaccination_percentage,
 
@@ -773,14 +902,19 @@ class MonitoringService:
         # ======================================================
         # SORT PANCHAYATH MONITORING
         #
-        # Panchayaths with the most submissions appear first.
-        # Alphabetical order is used when submission counts match.
+        # Panchayaths with the greatest number of submitted
+        # squads appear first.
+        #
+        # Alphabetical order is used where submission counts
+        # are equal.
         # ======================================================
 
         monitoring.sort(
             key=lambda row: (
                 -row["submitted"],
-                row["panchayath"].name.lower(),
+                row[
+                    "panchayath"
+                ].name.lower(),
             )
         )
 
@@ -810,6 +944,9 @@ class MonitoringService:
 
             "entries":
                 district_entries,
+
+            "entry_shortfall":
+                district_entry_shortfall,
 
             "vaccination_percentage":
                 district_vaccination_percentage,

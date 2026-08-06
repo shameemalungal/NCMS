@@ -1,61 +1,65 @@
 {% extends "base.html" %}
 
+{% block page_label %}NCMS Monitoring{% endblock %}
+{% block page_title %}District Monitoring{% endblock %}
+{% block page_subtitle %}Campaign Progress Monitoring{% endblock %}
+
 {% block content %}
 
 <style>
     /* =====================================================
-       NCMS MONITORING V2
+       NCMS DISTRICT MONITORING V3
        ===================================================== */
 
     .monitoring-page {
         padding-bottom: 40px;
     }
 
+    /* =====================================================
+       HERO
+       ===================================================== */
+
     .monitoring-hero {
-        background: linear-gradient(
-            135deg,
-            #087f4f 0%,
-            #11995f 100%
-        );
-        color: #ffffff;
-        border-radius: 14px;
+        background: linear-gradient(135deg, #087f4f, #11995f);
+        color: #fff;
+        border-radius: 16px;
         padding: 24px 28px;
-        margin-bottom: 22px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        margin-bottom: 18px;
+        box-shadow: 0 8px 24px rgba(8, 127, 79, 0.14);
     }
 
     .monitoring-hero-top {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
+        align-items: center;
         gap: 20px;
         flex-wrap: wrap;
     }
 
     .monitoring-hero h2 {
-        margin: 0 0 6px 0;
+        margin: 0 0 6px;
         font-size: 1.55rem;
         font-weight: 800;
-        color: #ffffff;
+        color: #fff;
     }
 
     .monitoring-hero p {
         margin: 0;
-        opacity: 0.9;
-        font-size: 0.95rem;
+        opacity: .9;
+        font-size: .9rem;
     }
 
     .campaign-chip {
         display: inline-flex;
         align-items: center;
         gap: 7px;
-        background: rgba(255, 255, 255, 0.16);
-        border: 1px solid rgba(255, 255, 255, 0.30);
-        color: #ffffff;
-        border-radius: 999px;
         padding: 8px 14px;
-        font-size: 0.85rem;
+        border-radius: 999px;
+        background: rgba(255,255,255,.16);
+        border: 1px solid rgba(255,255,255,.3);
+        font-size: .82rem;
         font-weight: 700;
+        white-space: nowrap;
     }
 
     /* =====================================================
@@ -64,100 +68,124 @@
 
     .monitoring-stats {
         display: grid;
-        grid-template-columns:
-            repeat(4, minmax(0, 1fr));
-        gap: 14px;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 12px;
         margin-bottom: 18px;
     }
 
-    .monitoring-stat-card {
-        background: #ffffff;
+    .stat-card {
+        background: #fff;
         border: 1px solid #e4e9ef;
-        border-radius: 12px;
-        padding: 18px;
+        border-radius: 14px;
+        padding: 16px;
         min-height: 112px;
-        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+        box-shadow: 0 3px 12px rgba(0,0,0,.04);
     }
 
-    .monitoring-stat-label {
-        font-size: 0.78rem;
+    .stat-label {
+        font-size: .7rem;
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        letter-spacing: .045em;
         color: #667085;
-        font-weight: 700;
-        margin-bottom: 7px;
+        font-weight: 800;
+        margin-bottom: 8px;
     }
 
-    .monitoring-stat-value {
-        font-size: 1.7rem;
+    .stat-value {
+        font-size: 1.5rem;
+        line-height: 1.1;
         font-weight: 800;
         color: #172033;
-        line-height: 1.1;
     }
 
-    .monitoring-stat-sub {
-        margin-top: 7px;
+    .stat-sub {
+        margin-top: 8px;
+        font-size: .74rem;
         color: #667085;
-        font-size: 0.82rem;
+        line-height: 1.35;
     }
 
-    .text-success-monitor {
-        color: #098a51;
+    .stat-card.attention {
+        border-color: #f5c2c7;
+        background: #fffafa;
     }
 
-    .text-danger-monitor {
-        color: #dc3545;
+    .stat-card.good {
+        border-color: #bfe6cf;
+        background: #fbfffc;
+    }
+
+    .stat-card.discrepancy {
+        border-color: #ffd591;
+        background: #fffdf7;
+    }
+
+    .text-green {
+        color: #087f4f !important;
+    }
+
+    .text-red {
+        color: #c92a3a !important;
+    }
+
+    .text-orange {
+        color: #b45f06 !important;
     }
 
     /* =====================================================
-       ACHIEVEMENT CARDS
+       ACHIEVEMENT
        ===================================================== */
 
     .achievement-grid {
         display: grid;
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 14px;
-        margin-bottom: 22px;
+        margin-bottom: 20px;
     }
 
     .achievement-card {
-        background: #ffffff;
+        background: #fff;
         border: 1px solid #e4e9ef;
-        border-radius: 12px;
+        border-radius: 14px;
         padding: 18px 20px;
-        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+        box-shadow: 0 3px 12px rgba(0,0,0,.04);
     }
 
-    .achievement-card-header {
+    .achievement-head {
         display: flex;
-        align-items: center;
         justify-content: space-between;
+        align-items: flex-start;
         gap: 12px;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
     }
 
-    .achievement-card-title {
-        font-size: 0.95rem;
+    .achievement-title {
+        font-size: .93rem;
         font-weight: 800;
         color: #172033;
     }
 
+    .achievement-description {
+        font-size: .72rem;
+        color: #667085;
+        margin-top: 3px;
+    }
+
     .achievement-value {
-        font-size: 1.2rem;
+        font-size: 1.25rem;
         font-weight: 800;
+        white-space: nowrap;
     }
 
     .achievement-target {
+        font-size: .75rem;
         color: #667085;
-        font-size: 0.78rem;
-        margin-bottom: 10px;
+        margin-bottom: 9px;
     }
 
     .achievement-progress {
-        width: 100%;
-        height: 12px;
-        background: #e6e9ed;
+        height: 10px;
+        background: #e7ebee;
         border-radius: 999px;
         overflow: hidden;
     }
@@ -165,32 +193,34 @@
     .achievement-progress-bar {
         height: 100%;
         border-radius: 999px;
-        transition: width 0.3s ease;
     }
 
-    .bar-success {
+    .bar-green {
         background: #0da15c;
     }
 
-    .bar-danger {
+    .bar-red {
         background: #dc3545;
     }
 
     /* =====================================================
-       TABLE PANEL
+       PANEL
        ===================================================== */
 
     .monitoring-panel {
-        background: #ffffff;
+        background: #fff;
         border: 1px solid #e1e6eb;
-        border-radius: 13px;
+        border-radius: 14px;
         overflow: hidden;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 16px rgba(0,0,0,.05);
     }
 
     .monitoring-panel-header {
         padding: 17px 20px;
         border-bottom: 1px solid #e5e7eb;
+    }
+
+    .panel-heading-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -198,32 +228,93 @@
         flex-wrap: wrap;
     }
 
-    .monitoring-panel-title {
+    .panel-title {
         font-size: 1.05rem;
         font-weight: 800;
         color: #172033;
     }
 
-    .monitoring-panel-subtitle {
+    .panel-subtitle {
         color: #667085;
-        font-size: 0.8rem;
+        font-size: .78rem;
         margin-top: 3px;
     }
 
+    /* =====================================================
+       FILTERS
+       ===================================================== */
+
+    .monitoring-tools {
+        margin-top: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .monitoring-filters {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .monitoring-filter {
+        border: 1px solid #d6dce3;
+        background: #fff;
+        color: #475467;
+        border-radius: 999px;
+        padding: 7px 10px;
+        font-size: .7rem;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .monitoring-filter:hover {
+        background: #f4f7f9;
+    }
+
+    .monitoring-filter.active {
+        background: #087f4f;
+        border-color: #087f4f;
+        color: #fff;
+    }
+
+    .filter-count {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        min-width: 19px;
+        height: 19px;
+        padding: 0 5px;
+        margin-left: 3px;
+        border-radius: 999px;
+        background: rgba(0,0,0,.07);
+        font-size: .64rem;
+    }
+
+    .monitoring-filter.active .filter-count {
+        background: rgba(255,255,255,.2);
+    }
+
     .monitoring-search {
-        width: 280px;
+        width: 310px;
         max-width: 100%;
         padding: 9px 12px;
         border: 1px solid #d6dce3;
-        border-radius: 8px;
-        font-size: 0.88rem;
+        border-radius: 9px;
+        font-size: .82rem;
         outline: none;
     }
 
     .monitoring-search:focus {
         border-color: #0d9b59;
-        box-shadow: 0 0 0 3px rgba(13, 155, 89, 0.10);
+        box-shadow: 0 0 0 3px rgba(13,155,89,.1);
     }
+
+    /* =====================================================
+       TABLE
+       ===================================================== */
 
     .monitoring-table-wrapper {
         overflow-x: auto;
@@ -231,37 +322,37 @@
 
     .monitoring-table {
         width: 100%;
+        min-width: 1400px;
         border-collapse: collapse;
-        min-width: 1250px;
     }
 
     .monitoring-table th {
+        padding: 11px 9px;
         background: #f7f9fb;
-        color: #344054;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.025em;
-        font-weight: 800;
-        padding: 12px 11px;
         border-bottom: 1px solid #dfe4ea;
-        text-align: left;
+        color: #344054;
+        font-size: .69rem;
+        text-transform: uppercase;
+        letter-spacing: .02em;
+        font-weight: 800;
         white-space: nowrap;
     }
 
     .monitoring-table td {
-        padding: 12px 11px;
+        padding: 11px 9px;
         border-bottom: 1px solid #edf0f3;
-        font-size: 0.84rem;
+        font-size: .8rem;
         vertical-align: middle;
         color: #172033;
     }
 
-    .monitoring-table tbody tr:hover {
+    .monitoring-table tbody tr.panchayath-row:hover {
         background: #fafcfb;
     }
 
     .panchayath-name {
         font-weight: 800;
+        min-width: 145px;
     }
 
     .number-cell {
@@ -269,7 +360,38 @@
     }
 
     /* =====================================================
-       BADGES
+       ENTRY DIFFERENCE
+       ===================================================== */
+
+    .difference-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 62px;
+        padding: 5px 8px;
+        border-radius: 7px;
+        font-size: .72rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .difference-pending {
+        background: #fde7e9;
+        color: #c92a3a;
+    }
+
+    .difference-matched {
+        background: #dff7e9;
+        color: #087f4f;
+    }
+
+    .difference-excess {
+        background: #fff3cd;
+        color: #8a6100;
+    }
+
+    /* =====================================================
+       STATUS
        ===================================================== */
 
     .monitor-badge {
@@ -278,7 +400,7 @@
         justify-content: center;
         border-radius: 999px;
         padding: 5px 9px;
-        font-size: 0.72rem;
+        font-size: .69rem;
         font-weight: 800;
         white-space: nowrap;
     }
@@ -311,7 +433,7 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.78rem;
+        font-size: .74rem;
         font-weight: 800;
     }
 
@@ -326,28 +448,21 @@
     }
 
     /* =====================================================
-       MINI ACHIEVEMENT
+       MINI PROGRESS
        ===================================================== */
 
     .mini-achievement {
-        min-width: 120px;
+        min-width: 95px;
     }
 
-    .mini-achievement-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 5px;
-        gap: 8px;
-    }
-
-    .mini-achievement-value {
-        font-size: 0.78rem;
+    .mini-value {
+        font-size: .73rem;
         font-weight: 800;
+        margin-bottom: 4px;
     }
 
     .mini-progress {
-        height: 7px;
+        height: 6px;
         background: #e5e8ec;
         border-radius: 999px;
         overflow: hidden;
@@ -359,22 +474,22 @@
     }
 
     /* =====================================================
-       EXPANDABLE DETAILS
+       DETAILS
        ===================================================== */
 
     .details-button {
-        border: 1px solid #ccd4dd;
-        background: #ffffff;
-        color: #344054;
+        border: 1px solid #b8d9c7;
+        background: #fff;
+        color: #087f4f;
         border-radius: 7px;
         padding: 6px 10px;
         cursor: pointer;
-        font-size: 0.76rem;
-        font-weight: 700;
+        font-size: .72rem;
+        font-weight: 800;
     }
 
     .details-button:hover {
-        background: #f4f7f9;
+        background: #f0fbf5;
     }
 
     .detail-row {
@@ -396,163 +511,115 @@
 
     .detail-title {
         font-weight: 800;
-        margin-bottom: 10px;
+        margin-bottom: 11px;
         color: #172033;
+    }
+
+    .detail-table-wrapper {
+        overflow-x: auto;
     }
 
     .squad-detail-table {
         width: 100%;
+        min-width: 1250px;
         border-collapse: collapse;
-        background: #ffffff;
+        background: #fff;
         border: 1px solid #e3e7eb;
-        border-radius: 8px;
-        overflow: hidden;
     }
 
     .squad-detail-table th,
     .squad-detail-table td {
-        padding: 9px 10px;
+        padding: 9px 9px;
         border-bottom: 1px solid #edf0f3;
-        font-size: 0.78rem;
+        font-size: .74rem;
+        vertical-align: top;
     }
 
     .squad-detail-table th {
         background: #f4f6f8;
         color: #475467;
         font-weight: 800;
-    }
-
-    .pending-squad-list {
-        margin-top: 14px;
-        padding: 12px 14px;
-        border-radius: 8px;
-        background: #fff6f6;
-        border: 1px solid #f5c7cb;
-    }
-
-    .pending-squad-list strong {
-        color: #b42332;
-    }
-
-    .reason-text {
-        max-width: 260px;
-        white-space: normal;
-        color: #475467;
+        white-space: nowrap;
     }
 
     .member-cell {
-        min-width: 220px;
-        white-space: normal;
+        min-width: 210px;
     }
 
     .member-item {
-        padding: 4px 0;
-        line-height: 1.35;
+        padding: 2px 0 5px;
+        line-height: 1.3;
     }
 
     .member-name {
         font-weight: 800;
-        color: #172033;
     }
 
     .member-meta {
         display: block;
         margin-top: 2px;
         color: #667085;
-        font-size: 0.72rem;
+        font-size: .68rem;
+    }
+
+    .reason-text {
+        max-width: 230px;
+        min-width: 150px;
+        white-space: normal;
+        color: #475467;
+    }
+
+    .pending-squad-list {
+        margin-top: 14px;
+        padding: 12px 14px;
+        border-radius: 9px;
+        background: #fff6f6;
+        border: 1px solid #f5c7cb;
+        line-height: 1.7;
+        font-size: .76rem;
+    }
+
+    .pending-squad-list strong {
+        color: #b42332;
     }
 
     .search-match-row {
         background: #f0fbf5 !important;
     }
 
+    .monitoring-no-results,
     .empty-monitoring {
         text-align: center;
-        padding: 45px 20px;
+        padding: 40px 20px;
         color: #667085;
-    }
-
-    /* =====================================================
-       QUICK STATUS FILTERS
-       ===================================================== */
-
-    .monitoring-tools {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-
-    .monitoring-filters {
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        flex-wrap: wrap;
-    }
-
-    .monitoring-filter {
-        border: 1px solid #d6dce3;
-        background: #ffffff;
-        color: #475467;
-        border-radius: 999px;
-        padding: 8px 12px;
-        font-size: 0.76rem;
-        font-weight: 800;
-        cursor: pointer;
-        transition: 0.2s ease;
-        white-space: nowrap;
-    }
-
-    .monitoring-filter:hover {
-        background: #f4f7f9;
-        border-color: #bfc8d2;
-    }
-
-    .monitoring-filter.active {
-        background: #087f4f;
-        border-color: #087f4f;
-        color: #ffffff;
-    }
-
-    .monitoring-filter-count {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 20px;
-        height: 20px;
-        padding: 0 6px;
-        margin-left: 4px;
-        border-radius: 999px;
-        background: rgba(0, 0, 0, 0.07);
-        font-size: 0.68rem;
-    }
-
-    .monitoring-filter.active .monitoring-filter-count {
-        background: rgba(255, 255, 255, 0.20);
     }
 
     .monitoring-no-results {
         display: none;
-        text-align: center;
-        padding: 35px 20px;
-        color: #667085;
-        border-top: 1px solid #edf0f3;
     }
 
     /* =====================================================
        RESPONSIVE
        ===================================================== */
 
-    @media (max-width: 1200px) {
+    @media (max-width: 1400px) {
         .monitoring-stats {
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
         }
     }
 
-    @media (max-width: 768px) {
-        .monitoring-stats,
+    @media (max-width: 900px) {
+        .monitoring-stats {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
         .achievement-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .monitoring-stats {
             grid-template-columns: 1fr;
         }
 
@@ -564,21 +631,8 @@
             width: 100%;
         }
 
-        .monitoring-panel-header {
-            align-items: stretch;
-        }
-
         .monitoring-tools {
-            width: 100%;
             align-items: stretch;
-        }
-
-        .monitoring-filters {
-            width: 100%;
-        }
-
-        .monitoring-filter {
-            flex: 1 1 auto;
         }
     }
 
@@ -587,7 +641,7 @@
 
 <div class="monitoring-page">
 
-    {% if campaign %}
+{% if campaign %}
 
     <!-- ==================================================
          HERO
@@ -599,15 +653,15 @@
 
             <div>
                 <h2>District Campaign Monitoring</h2>
-
                 <p>
-                    Live Panchayath and squad-level monitoring
-                    of vaccination and Pashudhan achievements.
+                    Live monitoring of campaign completion,
+                    vaccination achievement and Pashudhan data entry.
                 </p>
             </div>
 
             <div class="campaign-chip">
-                ● {{ campaign.name }}
+                <i class="bi bi-broadcast-pin"></i>
+                {{ campaign.name }}
             </div>
 
         </div>
@@ -616,126 +670,168 @@
 
 
     <!-- ==================================================
-         SUMMARY CARDS
+         SUMMARY
          ================================================== -->
 
     <section class="monitoring-stats">
 
-        <div class="monitoring-stat-card">
-            <div class="monitoring-stat-label">
-                Panchayaths
-            </div>
-
-            <div class="monitoring-stat-value">
+        <div class="stat-card">
+            <div class="stat-label">Panchayaths</div>
+            <div class="stat-value">
                 {{ summary.panchayaths }}
             </div>
-
-            <div class="monitoring-stat-sub">
+            <div class="stat-sub">
                 Campaign Panchayaths
             </div>
         </div>
 
 
-        <div class="monitoring-stat-card">
-            <div class="monitoring-stat-label">
-                Squad Submissions
-            </div>
-
-            <div class="monitoring-stat-value">
+        <div class="stat-card
+            {% if summary.pending_squads > 0 %}attention{% else %}good{% endif %}">
+            <div class="stat-label">Squad Submissions</div>
+            <div class="stat-value">
                 {{ summary.submitted_squads }}
                 /
                 {{ summary.total_squads }}
             </div>
-
-            <div class="monitoring-stat-sub">
-                {{ summary.pending_squads }}
-                squad{% if summary.pending_squads != 1 %}s{% endif %}
-                pending
+            <div class="stat-sub">
+                {% if summary.pending_squads > 0 %}
+                    {{ summary.pending_squads }} pending
+                {% else %}
+                    All squads submitted
+                {% endif %}
             </div>
         </div>
 
 
-        <div class="monitoring-stat-card">
-            <div class="monitoring-stat-label">
-                Population Target
-            </div>
-
-            <div class="monitoring-stat-value">
+        <div class="stat-card">
+            <div class="stat-label">Population Target</div>
+            <div class="stat-value">
                 {{ "{:,}".format(summary.target) }}
             </div>
-
-            <div class="monitoring-stat-sub">
-                Total allocated campaign target
+            <div class="stat-sub">
+                Total campaign target
             </div>
         </div>
 
 
-        <div class="monitoring-stat-card">
-            <div class="monitoring-stat-label">
-                Vaccinations / Entries
-            </div>
-
-            <div class="monitoring-stat-value">
+        <div class="stat-card">
+            <div class="stat-label">Vaccinations Done</div>
+            <div class="stat-value">
                 {{ "{:,}".format(summary.vaccinations) }}
             </div>
-
-            <div class="monitoring-stat-sub">
-                {{ "{:,}".format(summary.entries) }}
-                Pashudhan entries
+            <div class="stat-sub">
+                Reported vaccinations
             </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-label">Pashudhan Entries</div>
+            <div class="stat-value">
+                {{ "{:,}".format(summary.entries) }}
+            </div>
+            <div class="stat-sub">
+                Entries completed
+            </div>
+        </div>
+
+
+        <div class="stat-card
+            {% if summary.entry_shortfall > 0 %}
+                attention
+            {% elif summary.entry_shortfall < 0 %}
+                discrepancy
+            {% else %}
+                good
+            {% endif %}
+        ">
+
+            <div class="stat-label">
+                Entry Difference
+            </div>
+
+            <div class="stat-value
+                {% if summary.entry_shortfall > 0 %}
+                    text-red
+                {% elif summary.entry_shortfall < 0 %}
+                    text-orange
+                {% else %}
+                    text-green
+                {% endif %}
+            ">
+                {% if summary.entry_shortfall > 0 %}
+                    {{ "{:,}".format(summary.entry_shortfall) }}
+                {% elif summary.entry_shortfall < 0 %}
+                    {{ "{:,}".format(summary.entry_shortfall) }}
+                {% else %}
+                    0
+                {% endif %}
+            </div>
+
+            <div class="stat-sub">
+                {% if summary.entry_shortfall > 0 %}
+                    Pashudhan entries pending
+                {% elif summary.entry_shortfall < 0 %}
+                    Excess entries detected
+                {% else %}
+                    Vaccination and entry counts matched
+                {% endif %}
+            </div>
+
         </div>
 
     </section>
 
 
     <!-- ==================================================
-         DISTRICT ACHIEVEMENT
+         ACHIEVEMENT
          ================================================== -->
 
     <section class="achievement-grid">
 
-        <!-- Vaccination -->
-
         <div class="achievement-card">
 
-            <div class="achievement-card-header">
+            <div class="achievement-head">
 
-                <div class="achievement-card-title">
-                    District Vaccination Achievement
+                <div>
+                    <div class="achievement-title">
+                        Vaccination Achievement
+                    </div>
+
+                    <div class="achievement-description">
+                        Vaccinations ÷ population target
+                    </div>
                 </div>
 
-                <div
-                    class="achievement-value
+                <div class="achievement-value
                     {% if summary.vaccination_percentage >= summary.vaccination_target %}
-                        text-success-monitor
+                        text-green
                     {% else %}
-                        text-danger-monitor
-                    {% endif %}"
-                >
+                        text-red
+                    {% endif %}
+                ">
                     {{ summary.vaccination_percentage }}%
                 </div>
 
             </div>
 
             <div class="achievement-target">
-                Target: {{ summary.vaccination_target }}%
+                District target:
+                {{ summary.vaccination_target }}%
             </div>
 
             <div class="achievement-progress">
 
                 <div
-                    class="
-                        achievement-progress-bar
-                        {% if summary.vaccination_percentage >= summary.vaccination_target %}
-                            bar-success
-                        {% else %}
-                            bar-danger
-                        {% endif %}
+                    class="achievement-progress-bar
+                    {% if summary.vaccination_percentage >= summary.vaccination_target %}
+                        bar-green
+                    {% else %}
+                        bar-red
+                    {% endif %}
                     "
-                    style="
-                        width:
-                        {{ [summary.vaccination_percentage, 100] | min }}%;
-                    "
+                    style="width: {{ [summary.vaccination_percentage, 100] | min }}%;"
                 ></div>
 
             </div>
@@ -743,48 +839,48 @@
         </div>
 
 
-        <!-- Pashudhan -->
-
         <div class="achievement-card">
 
-            <div class="achievement-card-header">
+            <div class="achievement-head">
 
-                <div class="achievement-card-title">
-                    District Pashudhan Achievement
+                <div>
+                    <div class="achievement-title">
+                        Pashudhan Entry Achievement
+                    </div>
+
+                    <div class="achievement-description">
+                        Pashudhan entries ÷ vaccinations
+                    </div>
                 </div>
 
-                <div
-                    class="achievement-value
+                <div class="achievement-value
                     {% if summary.pashudhan_percentage >= summary.pashudhan_target %}
-                        text-success-monitor
+                        text-green
                     {% else %}
-                        text-danger-monitor
-                    {% endif %}"
-                >
+                        text-red
+                    {% endif %}
+                ">
                     {{ summary.pashudhan_percentage }}%
                 </div>
 
             </div>
 
             <div class="achievement-target">
-                Target: {{ summary.pashudhan_target }}%
+                District target:
+                {{ summary.pashudhan_target }}%
             </div>
 
             <div class="achievement-progress">
 
                 <div
-                    class="
-                        achievement-progress-bar
-                        {% if summary.pashudhan_percentage >= summary.pashudhan_target %}
-                            bar-success
-                        {% else %}
-                            bar-danger
-                        {% endif %}
+                    class="achievement-progress-bar
+                    {% if summary.pashudhan_percentage >= summary.pashudhan_target %}
+                        bar-green
+                    {% else %}
+                        bar-red
+                    {% endif %}
                     "
-                    style="
-                        width:
-                        {{ [summary.pashudhan_percentage, 100] | min }}%;
-                    "
+                    style="width: {{ [summary.pashudhan_percentage, 100] | min }}%;"
                 ></div>
 
             </div>
@@ -795,38 +891,48 @@
 
 
     <!-- ==================================================
-         PANCHAYATH MONITORING
+         PANCHAYATH TABLE
          ================================================== -->
 
     <section class="monitoring-panel">
 
         <div class="monitoring-panel-header">
 
-            <div>
-                <div class="monitoring-panel-title">
-                    Panchayath Monitoring
+            <div class="panel-heading-row">
+
+                <div>
+                    <div class="panel-title">
+                        Panchayath Monitoring
+                    </div>
+
+                    <div class="panel-subtitle">
+                        Submission status, achievement and
+                        Pashudhan entry difference
+                    </div>
                 </div>
 
-                <div class="monitoring-panel-subtitle">
-                    Submission status and achievement
-                    for all Panchayaths
-                </div>
+                <input
+                    type="text"
+                    id="monitoringSearch"
+                    class="monitoring-search"
+                    placeholder="Search Panchayath, squad, member, office or Pashudhan ID..."
+                    autocomplete="off"
+                >
+
             </div>
+
 
             <div class="monitoring-tools">
 
-                <div
-                    class="monitoring-filters"
-                    id="monitoringFilters"
-                    aria-label="Monitoring status filters"
-                >
+                <div class="monitoring-filters">
+
                     <button
                         type="button"
                         class="monitoring-filter active"
                         data-filter="all"
                     >
                         All
-                        <span class="monitoring-filter-count">
+                        <span class="filter-count">
                             {{ monitoring | length }}
                         </span>
                     </button>
@@ -902,15 +1008,8 @@
                     >
                         Low Both
                     </button>
-                </div>
 
-                <input
-                    type="text"
-                    id="monitoringSearch"
-                    class="monitoring-search"
-                    placeholder="Search Panchayath, squad, member, office, Pashudhan ID or status..."
-                    autocomplete="off"
-                >
+                </div>
 
             </div>
 
@@ -921,14 +1020,11 @@
 
         <div class="monitoring-table-wrapper">
 
-            <table
-                class="monitoring-table"
-                id="monitoringTable"
-            >
+            <table class="monitoring-table">
 
                 <thead>
                     <tr>
-                        <th>Sl. No.</th>
+                        <th>Sl.</th>
                         <th>Panchayath</th>
                         <th>Squads</th>
                         <th>Submitted</th>
@@ -937,6 +1033,7 @@
                         <th>Vaccinated</th>
                         <th>Vacc. %</th>
                         <th>Pashudhan</th>
+                        <th>Difference</th>
                         <th>Pash. %</th>
                         <th>Status</th>
                         <th>Details</th>
@@ -945,141 +1042,135 @@
 
                 <tbody>
 
-                    {% for row in monitoring %}
+                {% for row in monitoring %}
 
                     <tr
-                        class="panchayath-main-row"
+                        class="panchayath-row"
                         data-search="{{ row.search_text | default(row.panchayath.name, true) | lower }}"
                         data-status="{{ row.status | default('', true) | lower }}"
                         data-vaccination-met="{{ 'true' if row.vaccination_target_met else 'false' }}"
                         data-pashudhan-met="{{ 'true' if row.pashudhan_target_met else 'false' }}"
                     >
 
-                        <!-- Serial Number -->
-
-                        <td
-                            class="number-cell monitoring-serial"
-                        >
+                        <td class="monitoring-serial">
                             {{ loop.index }}
                         </td>
-
-
-                        <!-- Panchayath -->
 
                         <td class="panchayath-name">
                             {{ row.panchayath.name }}
                         </td>
 
-
-                        <!-- Squads -->
-
                         <td class="number-cell">
                             {{ row.total }}
                         </td>
-
-
-                        <!-- Submitted -->
 
                         <td class="number-cell">
                             {{ row.submitted }}
                         </td>
 
-
-                        <!-- Pending -->
-
                         <td>
-
-                            {% if row.pending == 0 %}
-
-                                <span
-                                    class="
-                                        pending-count
-                                        pending-zero
-                                    "
-                                >
-                                    0
-                                </span>
-
-                            {% else %}
-
-                                <span
-                                    class="
-                                        pending-count
-                                        pending-active
-                                    "
-                                >
-                                    {{ row.pending }}
-                                </span>
-
-                            {% endif %}
-
+                            <span class="pending-count
+                                {% if row.pending == 0 %}
+                                    pending-zero
+                                {% else %}
+                                    pending-active
+                                {% endif %}
+                            ">
+                                {{ row.pending }}
+                            </span>
                         </td>
-
-
-                        <!-- Target -->
 
                         <td class="number-cell">
                             {{ "{:,}".format(row.target) }}
                         </td>
-
-
-                        <!-- Vaccination -->
 
                         <td class="number-cell">
                             {{ "{:,}".format(row.vaccinations) }}
                         </td>
 
 
-                        <!-- Vaccination Achievement -->
+                        <!-- Vaccination % -->
 
                         <td>
 
                             {% if row.submitted > 0 %}
 
-                            <div class="mini-achievement">
+                                <div class="mini-achievement">
 
-                                <div class="mini-achievement-top">
-
-                                    <span
-                                        class="
-                                            mini-achievement-value
-                                            {% if row.vaccination_target_met %}
-                                                text-success-monitor
-                                            {% else %}
-                                                text-danger-monitor
-                                            {% endif %}
-                                        "
-                                    >
+                                    <div class="mini-value
+                                        {% if row.vaccination_target_met %}
+                                            text-green
+                                        {% else %}
+                                            text-red
+                                        {% endif %}
+                                    ">
                                         {{ row.vaccination_percentage }}%
-                                    </span>
+                                    </div>
 
-                                </div>
+                                    <div class="mini-progress">
 
-                                <div class="mini-progress">
-
-                                    <div
-                                        class="
-                                            mini-progress-bar
+                                        <div
+                                            class="mini-progress-bar
                                             {% if row.vaccination_target_met %}
-                                                bar-success
+                                                bar-green
                                             {% else %}
-                                                bar-danger
+                                                bar-red
                                             {% endif %}
-                                        "
-                                        style="
-                                            width:
-                                            {{ [row.vaccination_percentage, 100] | min }}%;
-                                        "
-                                    ></div>
+                                            "
+                                            style="width: {{ [row.vaccination_percentage, 100] | min }}%;"
+                                        ></div>
+
+                                    </div>
 
                                 </div>
-
-                            </div>
 
                             {% else %}
 
-                                <span class="text-muted">
-                                    -
+                                <span class="text-muted">-</span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td class="number-cell">
+                            {{ "{:,}".format(row.entries) }}
+                        </td>
+
+
+                        <!-- Difference -->
+
+                        <td>
+
+                            {% if row.submitted == 0 %}
+
+                                <span class="text-muted">-</span>
+
+                            {% elif row.entry_shortfall > 0 %}
+
+                                <span
+                                    class="difference-badge difference-pending"
+                                    title="Pashudhan entries pending"
+                                >
+                                    +{{ row.entry_shortfall }}
+                                </span>
+
+                            {% elif row.entry_shortfall < 0 %}
+
+                                <span
+                                    class="difference-badge difference-excess"
+                                    title="Pashudhan entries exceed reported vaccinations"
+                                >
+                                    {{ row.entry_shortfall }}
+                                </span>
+
+                            {% else %}
+
+                                <span
+                                    class="difference-badge difference-matched"
+                                    title="Vaccination and Pashudhan counts match"
+                                >
+                                    0
                                 </span>
 
                             {% endif %}
@@ -1087,64 +1178,44 @@
                         </td>
 
 
-                        <!-- Pashudhan -->
-
-                        <td class="number-cell">
-                            {{ "{:,}".format(row.entries) }}
-                        </td>
-
-
-                        <!-- Pashudhan Achievement -->
+                        <!-- Pashudhan % -->
 
                         <td>
 
                             {% if row.submitted > 0 %}
 
-                            <div class="mini-achievement">
+                                <div class="mini-achievement">
 
-                                <div class="mini-achievement-top">
-
-                                    <span
-                                        class="
-                                            mini-achievement-value
-                                            {% if row.pashudhan_target_met %}
-                                                text-success-monitor
-                                            {% else %}
-                                                text-danger-monitor
-                                            {% endif %}
-                                        "
-                                    >
+                                    <div class="mini-value
+                                        {% if row.pashudhan_target_met %}
+                                            text-green
+                                        {% else %}
+                                            text-red
+                                        {% endif %}
+                                    ">
                                         {{ row.pashudhan_percentage }}%
-                                    </span>
+                                    </div>
 
-                                </div>
+                                    <div class="mini-progress">
 
-                                <div class="mini-progress">
-
-                                    <div
-                                        class="
-                                            mini-progress-bar
+                                        <div
+                                            class="mini-progress-bar
                                             {% if row.pashudhan_target_met %}
-                                                bar-success
+                                                bar-green
                                             {% else %}
-                                                bar-danger
+                                                bar-red
                                             {% endif %}
-                                        "
-                                        style="
-                                            width:
-                                            {{ [row.pashudhan_percentage, 100] | min }}%;
-                                        "
-                                    ></div>
+                                            "
+                                            style="width: {{ [row.pashudhan_percentage, 100] | min }}%;"
+                                        ></div>
+
+                                    </div>
 
                                 </div>
-
-                            </div>
 
                             {% else %}
 
-                                <span class="text-muted">
-                                    -
-                                </span>
+                                <span class="text-muted">-</span>
 
                             {% endif %}
 
@@ -1157,78 +1228,25 @@
 
                             {% if row.status == "Target Achieved" %}
 
-                                <span
-                                    class="
-                                        monitor-badge
-                                        badge-success-monitor
-                                    "
-                                >
+                                <span class="monitor-badge badge-success-monitor">
                                     Target Achieved
                                 </span>
 
                             {% elif row.status == "Pending" %}
 
-                                <span
-                                    class="
-                                        monitor-badge
-                                        badge-warning-monitor
-                                    "
-                                >
+                                <span class="monitor-badge badge-warning-monitor">
                                     Pending
                                 </span>
 
                             {% elif row.status == "Not Started" %}
 
-                                <span
-                                    class="
-                                        monitor-badge
-                                        badge-neutral-monitor
-                                    "
-                                >
+                                <span class="monitor-badge badge-neutral-monitor">
                                     Not Started
-                                </span>
-
-                            {% elif row.status == "Low Vaccination" %}
-
-                                <span
-                                    class="
-                                        monitor-badge
-                                        badge-danger-monitor
-                                    "
-                                >
-                                    Low Vaccination
-                                </span>
-
-                            {% elif row.status == "Low Pashudhan" %}
-
-                                <span
-                                    class="
-                                        monitor-badge
-                                        badge-danger-monitor
-                                    "
-                                >
-                                    Low Pashudhan
-                                </span>
-
-                            {% elif row.status == "Low Both" %}
-
-                                <span
-                                    class="
-                                        monitor-badge
-                                        badge-danger-monitor
-                                    "
-                                >
-                                    Low Both
                                 </span>
 
                             {% else %}
 
-                                <span
-                                    class="
-                                        monitor-badge
-                                        badge-neutral-monitor
-                                    "
-                                >
+                                <span class="monitor-badge badge-danger-monitor">
                                     {{ row.status }}
                                 </span>
 
@@ -1237,19 +1255,15 @@
                         </td>
 
 
-                        <!-- Details -->
-
                         <td>
 
                             <button
                                 type="button"
                                 class="details-button"
-                                onclick="
-                                    toggleMonitoringDetails(
-                                        'details-{{ loop.index }}',
-                                        this
-                                    )
-                                "
+                                onclick="toggleMonitoringDetails(
+                                    'details-{{ loop.index }}',
+                                    this
+                                )"
                             >
                                 View
                             </button>
@@ -1259,19 +1273,16 @@
                     </tr>
 
 
-                    <!-- ==================================
-                         EXPANDED DETAILS
-                         ================================== -->
+                    <!-- ==================================================
+                         EXPANDED SQUAD DETAILS
+                         ================================================== -->
 
                     <tr
                         id="details-{{ loop.index }}"
                         class="detail-row"
                     >
 
-                        <td
-                            colspan="12"
-                            class="detail-cell"
-                        >
+                        <td colspan="13" class="detail-cell">
 
                             <div class="detail-container">
 
@@ -1283,15 +1294,9 @@
 
                                 {% if row.submitted_squads %}
 
-                                <div
-                                    style="
-                                        overflow-x: auto;
-                                    "
-                                >
+                                <div class="detail-table-wrapper">
 
-                                    <table
-                                        class="squad-detail-table"
-                                    >
+                                    <table class="squad-detail-table">
 
                                         <thead>
                                             <tr>
@@ -1301,6 +1306,7 @@
                                                 <th>Vaccinated</th>
                                                 <th>Vacc. %</th>
                                                 <th>Pashudhan</th>
+                                                <th>Difference</th>
                                                 <th>Pash. %</th>
                                                 <th>Reference</th>
                                                 <th>Low Vaccination Reason</th>
@@ -1310,7 +1316,7 @@
 
                                         <tbody>
 
-                                            {% for squad in row.submitted_squads %}
+                                        {% for squad in row.submitted_squads %}
 
                                             <tr
                                                 class="squad-search-row"
@@ -1323,16 +1329,23 @@
                                                     </strong>
                                                 </td>
 
+
                                                 <td class="member-cell">
+
                                                     {% if squad.members %}
+
                                                         {% for member in squad.members %}
+
                                                             <div class="member-item">
+
                                                                 <span class="member-name">
                                                                     {{ member.member_name }}
                                                                 </span>
 
                                                                 {% if member.office or member.pashudhan_id %}
+
                                                                     <span class="member-meta">
+
                                                                         {% if member.office %}
                                                                             {{ member.office }}
                                                                         {% endif %}
@@ -1344,14 +1357,23 @@
                                                                         {% if member.pashudhan_id %}
                                                                             ID: {{ member.pashudhan_id }}
                                                                         {% endif %}
+
                                                                     </span>
+
                                                                 {% endif %}
+
                                                             </div>
+
                                                         {% endfor %}
+
                                                     {% else %}
+
                                                         <span class="text-muted">-</span>
+
                                                     {% endif %}
+
                                                 </td>
+
 
                                                 <td>
                                                     {{ squad.target }}
@@ -1362,46 +1384,59 @@
                                                 </td>
 
                                                 <td>
-
-                                                    <span
-                                                        class="
-                                                            {% if squad.vaccination_percentage >= summary.vaccination_target %}
-                                                                text-success-monitor
-                                                            {% else %}
-                                                                text-danger-monitor
-                                                            {% endif %}
-                                                        "
-                                                        style="
-                                                            font-weight: 800;
-                                                        "
-                                                    >
+                                                    <strong class="
+                                                        {% if squad.vaccination_target_met %}
+                                                            text-green
+                                                        {% else %}
+                                                            text-red
+                                                        {% endif %}
+                                                    ">
                                                         {{ squad.vaccination_percentage }}%
-                                                    </span>
-
+                                                    </strong>
                                                 </td>
 
                                                 <td>
                                                     {{ squad.entries }}
                                                 </td>
 
+
                                                 <td>
 
-                                                    <span
-                                                        class="
-                                                            {% if squad.pashudhan_percentage >= summary.pashudhan_target %}
-                                                                text-success-monitor
-                                                            {% else %}
-                                                                text-danger-monitor
-                                                            {% endif %}
-                                                        "
-                                                        style="
-                                                            font-weight: 800;
-                                                        "
-                                                    >
-                                                        {{ squad.pashudhan_percentage }}%
-                                                    </span>
+                                                    {% if squad.entry_shortfall > 0 %}
+
+                                                        <span class="difference-badge difference-pending">
+                                                            +{{ squad.entry_shortfall }}
+                                                        </span>
+
+                                                    {% elif squad.entry_shortfall < 0 %}
+
+                                                        <span class="difference-badge difference-excess">
+                                                            {{ squad.entry_shortfall }}
+                                                        </span>
+
+                                                    {% else %}
+
+                                                        <span class="difference-badge difference-matched">
+                                                            0
+                                                        </span>
+
+                                                    {% endif %}
 
                                                 </td>
+
+
+                                                <td>
+                                                    <strong class="
+                                                        {% if squad.pashudhan_target_met %}
+                                                            text-green
+                                                        {% else %}
+                                                            text-red
+                                                        {% endif %}
+                                                    ">
+                                                        {{ squad.pashudhan_percentage }}%
+                                                    </strong>
+                                                </td>
+
 
                                                 <td>
                                                     {% if squad.submission_token %}
@@ -1413,25 +1448,18 @@
                                                     {% endif %}
                                                 </td>
 
+
                                                 <td class="reason-text">
-                                                    {% if squad.vaccination_reason %}
-                                                        {{ squad.vaccination_reason }}
-                                                    {% else %}
-                                                        -
-                                                    {% endif %}
+                                                    {{ squad.vaccination_reason or "-" }}
                                                 </td>
 
                                                 <td class="reason-text">
-                                                    {% if squad.pashudhan_reason %}
-                                                        {{ squad.pashudhan_reason }}
-                                                    {% else %}
-                                                        -
-                                                    {% endif %}
+                                                    {{ squad.pashudhan_reason or "-" }}
                                                 </td>
 
                                             </tr>
 
-                                            {% endfor %}
+                                        {% endfor %}
 
                                         </tbody>
 
@@ -1441,60 +1469,58 @@
 
                                 {% else %}
 
-                                    <div
-                                        style="
-                                            color: #667085;
-                                            font-size: 0.85rem;
-                                        "
-                                    >
-                                        No squad has submitted
-                                        a report yet.
+                                    <div class="text-muted">
+                                        No squad has submitted a report yet.
                                     </div>
 
                                 {% endif %}
 
 
-                                <!-- Pending Squads -->
-
                                 {% if row.pending_squads %}
 
-                                <div class="pending-squad-list">
+                                    <div class="pending-squad-list">
 
-                                    <strong>
-                                        Pending Squad{% if row.pending_squads | length != 1 %}s{% endif %}:
-                                    </strong>
+                                        <strong>
+                                            Pending Squad{% if row.pending_squads|length != 1 %}s{% endif %}:
+                                        </strong>
 
-                                    {% for squad in row.pending_squads %}
+                                        {% for squad in row.pending_squads %}
 
-                                        <span
-                                            class="pending-squad-search-item"
-                                            data-search="{{ squad.search_text | default('', true) | lower }}"
-                                        >
+                                            <span
+                                                class="pending-squad-search-item"
+                                                data-search="{{ squad.search_text | default('', true) | lower }}"
+                                            >
                                             Squad {{ squad.squad_no }}
 
                                             {% if squad.members %}
+
                                                 (
                                                 {% for member in squad.members %}
+
                                                     {{ member.member_name }}
+
                                                     {% if member.office %}
                                                         - {{ member.office }}
                                                     {% endif %}
+
                                                     {% if member.pashudhan_id %}
                                                         - ID: {{ member.pashudhan_id }}
                                                     {% endif %}
+
                                                     {% if not loop.last %}; {% endif %}
+
                                                 {% endfor %}
                                                 )
+
                                             {% endif %}
-                                        </span>
 
-                                        {% if not loop.last %}
-                                            ,
-                                        {% endif %}
+                                            </span>
 
-                                    {% endfor %}
+                                            {% if not loop.last %}, {% endif %}
 
-                                </div>
+                                        {% endfor %}
+
+                                    </div>
 
                                 {% endif %}
 
@@ -1504,7 +1530,7 @@
 
                     </tr>
 
-                    {% endfor %}
+                {% endfor %}
 
                 </tbody>
 
@@ -1512,30 +1538,27 @@
 
         </div>
 
+
         <div
-            class="monitoring-no-results"
             id="monitoringNoResults"
+            class="monitoring-no-results"
         >
-            No Panchayath matches the current search and status filter.
+            No Panchayath matches the current search or filter.
         </div>
+
 
         {% else %}
 
-        <div class="empty-monitoring">
-            No monitoring data are available
-            for the active campaign.
-        </div>
+            <div class="empty-monitoring">
+                No monitoring data are available for the active campaign.
+            </div>
 
         {% endif %}
 
     </section>
 
 
-    {% else %}
-
-    <!-- ==================================================
-         NO CAMPAIGN
-         ================================================== -->
+{% else %}
 
     <div class="monitoring-panel">
 
@@ -1544,15 +1567,14 @@
             <h3>No Active Campaign</h3>
 
             <p>
-                Activate a campaign to view
-                district monitoring information.
+                Activate a campaign to view district monitoring information.
             </p>
 
         </div>
 
     </div>
 
-    {% endif %}
+{% endif %}
 
 </div>
 
@@ -1560,7 +1582,7 @@
 <script>
 
     // =====================================================
-    // Expand / Collapse Panchayath Details
+    // DETAILS
     // =====================================================
 
     function toggleMonitoringDetails(rowId, button) {
@@ -1571,23 +1593,18 @@
             return;
         }
 
-        const isOpen = row.classList.contains("open");
+        const open = row.classList.contains("open");
 
         row.classList.toggle("open");
 
-        button.textContent = isOpen
+        button.textContent = open
             ? "View"
             : "Hide";
     }
 
 
     // =====================================================
-    // Universal Search + Quick Status Filters
-    //
-    // Search and status filters work together.
-    // Individual squad rows are never removed.
-    // Matching Panchayaths automatically open during text search
-    // so member/squad details remain immediately visible.
+    // SEARCH + FILTER
     // =====================================================
 
     document.addEventListener(
@@ -1595,159 +1612,111 @@
         function () {
 
             const search =
-                document.getElementById(
-                    "monitoringSearch"
-                );
+                document.getElementById("monitoringSearch");
 
-            const filterButtons =
-                document.querySelectorAll(
-                    ".monitoring-filter"
-                );
+            const buttons =
+                document.querySelectorAll(".monitoring-filter");
 
             const noResults =
-                document.getElementById(
-                    "monitoringNoResults"
-                );
+                document.getElementById("monitoringNoResults");
 
             let activeFilter = "all";
 
 
-            function matchesFilter(
-                row,
-                filterName
-            ) {
+            function matchesFilter(row, filter) {
 
                 const status =
-                    row.dataset.status
-                    || "";
+                    row.dataset.status || "";
 
                 const vaccinationMet =
-                    row.dataset.vaccinationMet
-                    === "true";
+                    row.dataset.vaccinationMet === "true";
 
                 const pashudhanMet =
-                    row.dataset.pashudhanMet
-                    === "true";
+                    row.dataset.pashudhanMet === "true";
 
-
-                if (filterName === "all") {
+                if (filter === "all") {
                     return true;
                 }
 
-                if (
-                    filterName
-                    === "vaccination achieved"
-                ) {
+                if (filter === "vaccination achieved") {
                     return vaccinationMet;
                 }
 
-                if (
-                    filterName
-                    === "pashudhan achieved"
-                ) {
+                if (filter === "pashudhan achieved") {
                     return pashudhanMet;
                 }
 
-                if (
-                    filterName
-                    === "both achieved"
-                ) {
-                    return (
-                        vaccinationMet
-                        && pashudhanMet
-                    );
+                if (filter === "both achieved") {
+                    return vaccinationMet && pashudhanMet;
                 }
 
-                return status === filterName;
+                return status === filter;
             }
 
 
-            function updateFilterCounts(
-                rows,
-                searchValue
-            ) {
+            function updateCounts(rows, searchValue) {
 
-                filterButtons.forEach(
+                buttons.forEach(
                     function (button) {
 
-                        const filterName =
-                            button.dataset.filter
-                            || "all";
+                        const filter =
+                            button.dataset.filter || "all";
 
                         let count = 0;
 
                         rows.forEach(
                             function (row) {
 
-                                const rowSearch =
-                                    row.dataset.search
-                                    || "";
+                                const text =
+                                    row.dataset.search || "";
 
                                 const status =
-                                    row.dataset.status
-                                    || "";
+                                    row.dataset.status || "";
 
                                 const searchMatch =
                                     !searchValue
-                                    || rowSearch.includes(
-                                        searchValue
-                                    )
-                                    || status.includes(
-                                        searchValue
-                                    );
+                                    || text.includes(searchValue)
+                                    || status.includes(searchValue);
 
                                 if (
                                     searchMatch
-                                    && matchesFilter(
-                                        row,
-                                        filterName
-                                    )
+                                    && matchesFilter(row, filter)
                                 ) {
-                                    count += 1;
+                                    count++;
                                 }
+
                             }
                         );
 
-                        let countElement =
-                            button.querySelector(
-                                ".monitoring-filter-count"
-                            );
 
-                        if (!countElement) {
+                        let badge =
+                            button.querySelector(".filter-count");
 
-                            countElement =
-                                document.createElement(
-                                    "span"
-                                );
+                        if (!badge) {
 
-                            countElement.className =
-                                "monitoring-filter-count";
+                            badge =
+                                document.createElement("span");
 
-                            button.appendChild(
-                                countElement
-                            );
+                            badge.className = "filter-count";
+
+                            button.appendChild(badge);
                         }
 
-                        countElement.textContent =
-                            count;
+                        badge.textContent = count;
                     }
                 );
             }
 
 
-            function applyMonitoringFilters() {
+            function applyFilters() {
 
                 const value =
                     search
-                        ? search.value
-                            .trim()
-                            .toLowerCase()
+                        ? search.value.trim().toLowerCase()
                         : "";
 
                 const rows =
-                    document.querySelectorAll(
-                        ".panchayath-main-row"
-                    );
+                    document.querySelectorAll(".panchayath-row");
 
                 let visibleCount = 0;
 
@@ -1755,149 +1724,110 @@
                 rows.forEach(
                     function (row) {
 
-                        const rowSearch =
-                            row.dataset.search
-                            || "";
+                        const text =
+                            row.dataset.search || "";
 
                         const status =
-                            row.dataset.status
-                            || "";
+                            row.dataset.status || "";
+
+                        const searchMatch =
+                            !value
+                            || text.includes(value)
+                            || status.includes(value);
+
+                        const filterMatch =
+                            matchesFilter(row, activeFilter);
+
+                        const visible =
+                            searchMatch && filterMatch;
+
+                        row.style.display =
+                            visible ? "" : "none";
+
 
                         const detailRow =
                             row.nextElementSibling;
 
                         const button =
-                            row.querySelector(
-                                ".details-button"
-                            );
+                            row.querySelector(".details-button");
 
 
-                        // Never hide individual squad rows.
+                        // Keep all squad details intact while filtering/searching.
+                        // The parent row.search_text contains squad/member metadata,
+                        // so matching a member, office, squad or Pashudhan ID can
+                        // reveal the Panchayath and open its full details.
                         if (
                             detailRow
-                            &&
-                            detailRow.classList.contains(
-                                "detail-row"
-                            )
+                            && detailRow.classList.contains("detail-row")
                         ) {
+                            detailRow
+                                .querySelectorAll(".squad-search-row")
+                                .forEach(function (squadRow) {
+                                    squadRow.style.display = "";
+                                    squadRow.classList.remove("search-match-row");
+                                });
 
                             detailRow
-                                .querySelectorAll(
-                                    ".squad-search-row"
-                                )
-                                .forEach(
-                                    function (squadRow) {
-                                        squadRow.style.display = "";
-                                        squadRow.classList.remove(
-                                            "search-match-row"
-                                        );
-                                    }
-                                );
-
-                            detailRow
-                                .querySelectorAll(
-                                    ".pending-squad-search-item"
-                                )
-                                .forEach(
-                                    function (item) {
-                                        item.style.display = "";
-                                    }
-                                );
+                                .querySelectorAll(".pending-squad-search-item")
+                                .forEach(function (item) {
+                                    item.style.display = "";
+                                });
                         }
-
-
-                        const searchMatch =
-                            !value
-                            || rowSearch.includes(value)
-                            || status.includes(value);
-
-                        const filterMatch =
-                            matchesFilter(
-                                row,
-                                activeFilter
-                            );
-
-
-                        const visible =
-                            searchMatch
-                            && filterMatch;
-
-                        row.style.display =
-                            visible
-                                ? ""
-                                : "none";
-
-                        row.classList.toggle(
-                            "search-match-row",
-                            visible && Boolean(value)
-                        );
 
 
                         if (visible) {
 
-                            visibleCount += 1;
+                            visibleCount++;
 
-                            const serialCell =
-                                row.querySelector(
-                                    ".monitoring-serial"
-                                );
+                            const serial =
+                                row.querySelector(".monitoring-serial");
 
-                            if (serialCell) {
-                                serialCell.textContent =
-                                    visibleCount;
+                            if (serial) {
+                                serial.textContent = visibleCount;
                             }
+
                         }
 
 
                         if (
                             detailRow
-                            &&
-                            detailRow.classList.contains(
-                                "detail-row"
-                            )
+                            && detailRow.classList.contains("detail-row")
                         ) {
 
                             if (!visible) {
 
-                                detailRow.classList.remove(
-                                    "open"
-                                );
+                                detailRow.classList.remove("open");
 
                                 if (button) {
                                     button.textContent = "View";
                                 }
-                            }
 
-                            else if (value) {
+                            } else if (value) {
 
-                                // Text search opens the full squad breakup.
-                                detailRow.classList.add(
-                                    "open"
-                                );
+                                detailRow.classList.add("open");
 
                                 if (button) {
                                     button.textContent = "Hide";
                                 }
-                            }
 
-                            else {
+                            } else {
 
-                                // Status filtering alone keeps the normal
-                                // manual View/Hide behaviour.
-                                detailRow.classList.remove(
-                                    "open"
-                                );
+                                detailRow.classList.remove("open");
 
                                 if (button) {
                                     button.textContent = "View";
                                 }
+
                             }
+
                         }
+
                     }
                 );
 
 
                 if (noResults) {
+
                     noResults.style.display =
                         visibleCount === 0
                             ? "block"
@@ -1905,13 +1835,7 @@
                 }
 
 
-                // Counts reflect the current text search.
-                // This lets the user immediately see how many
-                // Panchayaths fall into each achievement group.
-                updateFilterCounts(
-                    rows,
-                    value
-                );
+                updateCounts(rows, value);
             }
 
 
@@ -1919,12 +1843,12 @@
 
                 search.addEventListener(
                     "input",
-                    applyMonitoringFilters
+                    applyFilters
                 );
             }
 
 
-            filterButtons.forEach(
+            buttons.forEach(
                 function (button) {
 
                     button.addEventListener(
@@ -1932,29 +1856,25 @@
                         function () {
 
                             activeFilter =
-                                button.dataset.filter
-                                || "all";
+                                button.dataset.filter || "all";
 
-                            filterButtons.forEach(
+                            buttons.forEach(
                                 function (item) {
-                                    item.classList.remove(
-                                        "active"
-                                    );
+                                    item.classList.remove("active");
                                 }
                             );
 
-                            button.classList.add(
-                                "active"
-                            );
+                            button.classList.add("active");
 
-                            applyMonitoringFilters();
+                            applyFilters();
                         }
                     );
+
                 }
             );
 
 
-            applyMonitoringFilters();
+            applyFilters();
         }
     );
 
