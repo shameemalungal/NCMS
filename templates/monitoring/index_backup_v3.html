@@ -220,7 +220,7 @@
 }
 
 
-/* Pashudhan shortfall icon */
+/* Entry difference icon */
 
 .stat-card.attention .stat-icon {
     background: #fdecee;
@@ -521,7 +521,7 @@
     }
 
     /* =====================================================
-       PASHUDHAN SHORTFALL
+       ENTRY DIFFERENCE
        ===================================================== */
 
     .difference-badge {
@@ -544,6 +544,11 @@
     .difference-matched {
         background: #dff7e9;
         color: #087f4f;
+    }
+
+    .difference-excess {
+        background: #fff3cd;
+        color: #8a6100;
     }
 
     /* =====================================================
@@ -1099,7 +1104,7 @@
                     </div>
 
                     <div class="achievement-description">
-                        Pashudhan entries ÷ population target
+                        Pashudhan entries ÷ vaccinations
                     </div>
                 </div>
 
@@ -1157,7 +1162,7 @@
 
                     <div class="panel-subtitle">
                         Submission status, achievement and
-                        Pashudhan shortfall
+                        Pashudhan entry difference
                     </div>
                 </div>
 
@@ -1401,7 +1406,7 @@
                                     class="difference-badge difference-pending"
                                     title="Pashudhan entries pending"
                                 >
-                                    {{ "{:,}".format(row.entry_shortfall) }}
+                                    {{ row.entry_shortfall }}
                                 </span>
 
                             {% else %}
@@ -1645,7 +1650,7 @@
                                                     {% if squad.entry_shortfall > 0 %}
 
                                                         <span class="difference-badge difference-pending">
-                                                            {{ "{:,}".format(squad.entry_shortfall) }}
+                                                            {{ squad.entry_shortfall }}
                                                         </span>
 
                                                     {% else %}

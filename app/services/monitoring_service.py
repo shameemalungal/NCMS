@@ -236,7 +236,7 @@ class MonitoringService:
         #
         # Pashudhan Entries
         # ----------------- × 100
-        # Vaccinations Done
+        # Population Target
         # ======================================================
 
         if district_target:
@@ -255,12 +255,12 @@ class MonitoringService:
             district_vaccination_percentage = 0.0
 
 
-        if district_vaccinations:
+        if district_target:
 
             district_pashudhan_percentage = round(
                 (
                     district_entries
-                    / district_vaccinations
+                    / district_target
                 )
                 * 100,
                 2,
@@ -277,9 +277,10 @@ class MonitoringService:
         # Vaccinations Done - Pashudhan Entries
         # ------------------------------------------------------
 
-        district_entry_shortfall = (
+        district_entry_shortfall = max(
             district_vaccinations
-            - district_entries
+            - district_entries,
+            0,
         )
 
 
@@ -444,15 +445,15 @@ class MonitoringService:
                 # ----------------------------------------------
                 # Squad Pashudhan Achievement
                 #
-                # Pashudhan Entries / Vaccinations × 100
+                # Pashudhan Entries / Squad Target × 100
                 # ----------------------------------------------
 
-                if vaccinations:
+                if squad_target:
 
                     squad_pashudhan_percentage = round(
                         (
                             entries
-                            / vaccinations
+                            / squad_target
                         )
                         * 100,
                         2,
@@ -467,9 +468,10 @@ class MonitoringService:
                 # Squad Pashudhan Entry Shortfall
                 # ----------------------------------------------
 
-                squad_entry_shortfall = (
+                squad_entry_shortfall = max(
                     vaccinations
-                    - entries
+                    - entries,
+                    0,
                 )
 
 
@@ -604,7 +606,7 @@ class MonitoringService:
             # Vaccinations / Panchayath Population × 100
             #
             # Pashudhan Achievement:
-            # Entries / Vaccinations × 100
+            # Entries / Panchayath Population × 100
             # ==================================================
 
             if target:
@@ -623,12 +625,12 @@ class MonitoringService:
                 vaccination_percentage = 0.0
 
 
-            if panchayath_vaccinations:
+            if target:
 
                 pashudhan_percentage = round(
                     (
                         panchayath_entries
-                        / panchayath_vaccinations
+                        / target
                     )
                     * 100,
                     2,
@@ -643,9 +645,10 @@ class MonitoringService:
             # Panchayath Pashudhan Entry Shortfall
             # --------------------------------------------------
 
-            entry_shortfall = (
+            entry_shortfall = max(
                 panchayath_vaccinations
-                - panchayath_entries
+                - panchayath_entries,
+                0,
             )
 
 

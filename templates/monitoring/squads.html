@@ -69,47 +69,104 @@
 
 
     /* =====================================================
-       SUMMARY
+       SUMMARY KPI CARDS
        ===================================================== */
 
     .monitor-summary {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
-        margin-bottom: 18px;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 20px;
     }
 
     .summary-card {
         background: #ffffff;
-        border: 1px solid #e4e7ec;
-        border-radius: 11px;
-        padding: 15px 16px;
-        box-shadow:
-            0 3px 12px rgba(0,0,0,0.04);
+        border: 1px solid #e4e9ef;
+        border-radius: 16px;
+        padding: 22px 16px 18px;
+        min-width: 0;
+        min-height: 205px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, .05);
+        transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+
+    .summary-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, .08);
+        border-color: #d5ddd9;
+    }
+
+    .summary-icon {
+        width: 54px;
+        height: 54px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+        border-radius: 50%;
+        background: #eaf8f0;
+        color: #0b9654;
+        font-size: 1.35rem;
     }
 
     .summary-label {
-        color: #667085;
-        font-size: 0.67rem;
+        width: 100%;
+        margin-bottom: 8px;
+        color: #475467;
+        font-size: .72rem;
         font-weight: 800;
+        line-height: 1.3;
         text-transform: uppercase;
-        letter-spacing: 0.03em;
-        margin-bottom: 5px;
+        letter-spacing: .045em;
+        white-space: normal;
     }
 
     .summary-value {
-        color: #172033;
-        font-size: 1.25rem;
+        width: 100%;
+        color: #087f4f;
+        font-size: 1.55rem;
         font-weight: 800;
-        line-height: 1.2;
+        line-height: 1.15;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+    .summary-separator {
+        width: 100%;
+        margin: 14px 0 11px;
+        border-top: 1px dashed #d9e1e7;
     }
 
     .summary-note {
-        color: #98a2b3;
-        font-size: 0.66rem;
-        margin-top: 4px;
+        width: 100%;
+        margin: 0;
+        color: #667085;
+        font-size: .72rem;
+        line-height: 1.45;
+        white-space: normal;
     }
 
+    .summary-card.good {
+        border-color: #cce8d8;
+    }
+
+    .summary-card.attention {
+        border-color: #f1c6ca;
+        background: #fffdfd;
+    }
+
+    .summary-card.attention .summary-icon {
+        background: #fdecee;
+        color: #cf3040;
+    }
+
+    .summary-card.attention .summary-value {
+        color: #cf3040;
+    }
 
     /* =====================================================
        MAIN CARD
@@ -234,7 +291,7 @@
 
     .squad-table {
         width: 100%;
-        min-width: 1350px;
+        min-width: 1480px;
         border-collapse: collapse;
     }
 
@@ -378,6 +435,33 @@
 
 
     /* =====================================================
+       PASHUDHAN SHORTFALL
+       ===================================================== */
+
+    .shortfall-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 42px;
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: .68rem;
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .shortfall-pending {
+        background: #fde8ea;
+        color: #c92a3a;
+    }
+
+    .shortfall-clear {
+        background: #e5f6ed;
+        color: #087f4f;
+    }
+
+
+    /* =====================================================
        EMPTY
        ===================================================== */
 
@@ -407,10 +491,18 @@
        RESPONSIVE
        ===================================================== */
 
-    @media (max-width: 1000px) {
+    @media (max-width: 1400px) {
 
         .monitor-summary {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+    }
+
+    @media (max-width: 800px) {
+
+        .monitor-summary {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
     }
@@ -423,7 +515,12 @@
         }
 
         .monitor-summary {
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
+        }
+
+        .summary-card {
+            min-height: auto;
+            padding: 20px;
         }
 
         .search-row {
@@ -493,7 +590,8 @@
         both_achieved=0,
         low_vacc=0,
         low_pash=0,
-        low_both=0
+        low_both=0,
+        pashudhan_shortfall=0
     ) %}
 
 
@@ -502,6 +600,14 @@
         {% if item.submitted %}
 
             {% set ns.submitted = ns.submitted + 1 %}
+
+            {% set ns.pashudhan_shortfall =
+                ns.pashudhan_shortfall
+                + (
+                    item.squad.entry_shortfall
+                    |default(0, true)
+                )
+            %}
 
             {% set vacc_pct =
                 item.squad.vaccination_percentage
@@ -546,6 +652,10 @@
 
         <div class="summary-card">
 
+            <div class="summary-icon">
+                <i class="bi bi-people"></i>
+            </div>
+
             <div class="summary-label">
                 Total Squads
             </div>
@@ -554,6 +664,8 @@
                 {{ squad_rows|length }}
             </div>
 
+            <div class="summary-separator"></div>
+
             <div class="summary-note">
                 Campaign squads
             </div>
@@ -561,7 +673,11 @@
         </div>
 
 
-        <div class="summary-card">
+        <div class="summary-card good">
+
+            <div class="summary-icon">
+                <i class="bi bi-check2-circle"></i>
+            </div>
 
             <div class="summary-label">
                 Submitted
@@ -571,6 +687,8 @@
                 {{ ns.submitted }}
             </div>
 
+            <div class="summary-separator"></div>
+
             <div class="summary-note">
                 Completed submissions
             </div>
@@ -578,7 +696,11 @@
         </div>
 
 
-        <div class="summary-card">
+        <div class="summary-card {% if ns.pending > 0 %}attention{% else %}good{% endif %}">
+
+            <div class="summary-icon">
+                <i class="bi bi-hourglass-split"></i>
+            </div>
 
             <div class="summary-label">
                 Pending
@@ -588,6 +710,8 @@
                 {{ ns.pending }}
             </div>
 
+            <div class="summary-separator"></div>
+
             <div class="summary-note">
                 Awaiting submission
             </div>
@@ -595,7 +719,11 @@
         </div>
 
 
-        <div class="summary-card">
+        <div class="summary-card good">
+
+            <div class="summary-icon">
+                <i class="bi bi-bullseye"></i>
+            </div>
 
             <div class="summary-label">
                 Both Targets Achieved
@@ -605,8 +733,45 @@
                 {{ ns.both_achieved }}
             </div>
 
+            <div class="summary-separator"></div>
+
             <div class="summary-note">
                 Vaccination ≥83% and Pashudhan ≥97%
+            </div>
+
+        </div>
+
+
+        <div class="summary-card {% if ns.pashudhan_shortfall > 0 %}attention{% else %}good{% endif %}">
+
+            <div class="summary-icon">
+
+                {% if ns.pashudhan_shortfall > 0 %}
+                    <i class="bi bi-exclamation-triangle"></i>
+                {% else %}
+                    <i class="bi bi-check2-circle"></i>
+                {% endif %}
+
+            </div>
+
+            <div class="summary-label">
+                Pashudhan Shortfall
+            </div>
+
+            <div class="summary-value">
+                {{ "{:,}".format(ns.pashudhan_shortfall) }}
+            </div>
+
+            <div class="summary-separator"></div>
+
+            <div class="summary-note">
+
+                {% if ns.pashudhan_shortfall > 0 %}
+                    Pashudhan entries pending
+                {% else %}
+                    No Pashudhan entry shortfall
+                {% endif %}
+
             </div>
 
         </div>
@@ -798,6 +963,8 @@
                             <th>Pashudhan</th>
 
                             <th>Pash. %</th>
+
+                            <th>Pashudhan Shortfall</th>
 
                             <th>Days Worked</th>
 
@@ -1066,6 +1233,36 @@
 
                                     <td>
 
+                                        {% set shortfall =
+                                            squad.entry_shortfall
+                                            |default(0, true)
+                                        %}
+
+                                        {% if shortfall > 0 %}
+
+                                            <span
+                                                class="shortfall-badge shortfall-pending"
+                                                title="Pashudhan entries pending"
+                                            >
+                                                {{ "{:,}".format(shortfall) }}
+                                            </span>
+
+                                        {% else %}
+
+                                            <span
+                                                class="shortfall-badge shortfall-clear"
+                                                title="No Pashudhan entry shortfall"
+                                            >
+                                                0
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
                                         {{
                                             squad.days_worked
                                             |default(0, true)
@@ -1162,6 +1359,13 @@
 
 
                                 {% else %}
+
+
+                                    <td>
+                                        <span class="reason-none">
+                                            -
+                                        </span>
+                                    </td>
 
 
                                     <td>
