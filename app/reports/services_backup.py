@@ -101,7 +101,7 @@ class ReportService:
         worksheet.freeze_panes = "A8"
 
         worksheet.auto_filter.ref = (
-            f"A7:L{7 + len(filtered_rows)}"
+            f"A7:K{7 + len(filtered_rows)}"
         )
 
         worksheet.page_setup.orientation = "landscape"
@@ -118,7 +118,7 @@ class ReportService:
         # ======================================================
 
         worksheet.merge_cells(
-            "A1:L1"
+            "A1:K1"
         )
 
         title_cell = worksheet["A1"]
@@ -150,7 +150,7 @@ class ReportService:
         # ======================================================
 
         worksheet.merge_cells(
-            "A2:L2"
+            "A2:K2"
         )
 
         campaign_cell = worksheet["A2"]
@@ -180,7 +180,7 @@ class ReportService:
         # ======================================================
 
         worksheet.merge_cells(
-            "A3:L3"
+            "A3:K3"
         )
 
         filter_cell = worksheet["A3"]
@@ -221,7 +221,7 @@ class ReportService:
         )
 
         worksheet.merge_cells(
-            "F4:L4"
+            "F4:K4"
         )
 
         worksheet["F4"] = (
@@ -239,7 +239,7 @@ class ReportService:
         # ======================================================
 
         worksheet.merge_cells(
-            "A5:L5"
+            "A5:K5"
         )
 
         worksheet["A5"] = (
@@ -270,7 +270,7 @@ class ReportService:
         # ======================================================
 
         worksheet.merge_cells(
-            "A6:L6"
+            "A6:K6"
         )
 
         generated_at = datetime.now().strftime(
@@ -307,7 +307,6 @@ class ReportService:
             "Vaccination %",
             "Pashudhan Entries",
             "Pashudhan %",
-            "Pashudhan Shortfall",
             "Status",
         ]
 
@@ -388,7 +387,6 @@ class ReportService:
                 row["vaccination_percentage"] / 100,
                 row["entries"],
                 row["pashudhan_percentage"] / 100,
-                row.get("entry_shortfall", 0),
                 row["status"],
             ]
 
@@ -486,25 +484,9 @@ class ReportService:
             # Status Colour
             # --------------------------------------------------
 
-            shortfall_cell = worksheet.cell(
-                row=excel_row,
-                column=11,
-            )
-
-            if row.get("entry_shortfall", 0) > 0:
-                shortfall_cell.font = Font(bold=True, color=ReportService.RED)
-                shortfall_cell.fill = PatternFill(
-                    fill_type="solid", fgColor=ReportService.LIGHT_RED
-                )
-            else:
-                shortfall_cell.font = Font(bold=True, color=ReportService.GREEN)
-                shortfall_cell.fill = PatternFill(
-                    fill_type="solid", fgColor=ReportService.LIGHT_GREEN
-                )
-
             status_cell = worksheet.cell(
                 row=excel_row,
-                column=12,
+                column=11,
             )
 
             ReportService._style_status_cell(
@@ -528,7 +510,6 @@ class ReportService:
             9: 18,
             10: 15,
             11: 20,
-            12: 20,
         }
 
         for column_number, width in widths.items():
@@ -834,7 +815,7 @@ class ReportService:
         # ======================================================
 
         worksheet.merge_cells(
-            "A1:Q1"
+            "A1:P1"
         )
 
         title_cell = worksheet["A1"]
@@ -866,7 +847,7 @@ class ReportService:
         # ======================================================
 
         worksheet.merge_cells(
-            "A2:Q2"
+            "A2:P2"
         )
 
         campaign_name = (
@@ -894,7 +875,7 @@ class ReportService:
         # ======================================================
 
         worksheet.merge_cells(
-            "A3:Q3"
+            "A3:P3"
         )
 
         worksheet["A3"] = (
@@ -933,7 +914,7 @@ class ReportService:
         )
 
         worksheet.merge_cells(
-            "I4:Q4"
+            "I4:P4"
         )
 
         worksheet["I4"] = (
@@ -951,7 +932,7 @@ class ReportService:
         # ======================================================
 
         worksheet.merge_cells(
-            "A5:Q5"
+            "A5:P5"
         )
 
         worksheet["A5"] = (
@@ -980,7 +961,7 @@ class ReportService:
         # ======================================================
 
         worksheet.merge_cells(
-            "A6:Q6"
+            "A6:P6"
         )
 
         generated_at = datetime.now().strftime(
@@ -1018,7 +999,6 @@ class ReportService:
             "Vaccination %",
             "Pashudhan Entries",
             "Pashudhan %",
-            "Pashudhan Shortfall",
             "Status",
             "Vaccination Reason",
             "Pashudhan Reason",
@@ -1292,7 +1272,6 @@ class ReportService:
                         0,
                     ),
                     pashudhan_percentage,
-                    squad.get("entry_shortfall", 0),
                     status,
                     squad.get(
                         "vaccination_reason",
@@ -1335,7 +1314,6 @@ class ReportService:
                     "",
                     "",
                     "",
-                    "",
                     status,
                     "",
                     "",
@@ -1368,9 +1346,9 @@ class ReportService:
                             4,
                             5,
                             6,
+                            13,
                             14,
                             15,
-                            16,
                         )
                         else "center"
                     ),
@@ -1448,26 +1426,9 @@ class ReportService:
             # Status styling
             # --------------------------------------------------
 
-            if is_submitted:
-                shortfall_cell = worksheet.cell(
-                    row=excel_row,
-                    column=12,
-                )
-
-                if squad.get("entry_shortfall", 0) > 0:
-                    shortfall_cell.font = Font(bold=True, color=ReportService.RED)
-                    shortfall_cell.fill = PatternFill(
-                        fill_type="solid", fgColor=ReportService.LIGHT_RED
-                    )
-                else:
-                    shortfall_cell.font = Font(bold=True, color=ReportService.GREEN)
-                    shortfall_cell.fill = PatternFill(
-                        fill_type="solid", fgColor=ReportService.LIGHT_GREEN
-                    )
-
             status_cell = worksheet.cell(
                 row=excel_row,
-                column=13,
+                column=12,
             )
 
             ReportService._style_squad_status_cell(
@@ -1487,7 +1448,7 @@ class ReportService:
         )
 
         worksheet.auto_filter.ref = (
-            f"A{header_row}:Q{last_row}"
+            f"A{header_row}:P{last_row}"
         )
 
         # ======================================================
@@ -1506,12 +1467,11 @@ class ReportService:
             9: 15,
             10: 18,
             11: 14,
-            12: 20,
-            13: 18,
+            12: 18,
+            13: 32,
             14: 32,
-            15: 32,
-            16: 22,
-            17: 21,
+            15: 22,
+            16: 21,
         }
 
         for column_number, width in widths.items():
