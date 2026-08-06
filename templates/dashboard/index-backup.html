@@ -1,0 +1,1509 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+
+{% block styles %}
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+<style>
+
+    /* =====================================================
+       LIVE PROGRESS PANELS
+       ===================================================== */
+
+    .live-progress-row {
+        margin-top: 0;
+        margin-bottom: 24px;
+    }
+
+    .progress-metric {
+        margin-bottom: 22px;
+    }
+
+    .progress-metric:last-child {
+        margin-bottom: 0;
+    }
+
+    .progress-metric-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 8px;
+    }
+
+    .progress-metric-title {
+        color: #344054;
+        font-size: 0.84rem;
+        font-weight: 700;
+    }
+
+    .progress-metric-value {
+        color: #172033;
+        font-size: 0.84rem;
+        font-weight: 800;
+    }
+
+    .dashboard-progress-track {
+        width: 100%;
+        height: 10px;
+        background: #edf1f4;
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .dashboard-progress-bar {
+        height: 100%;
+        border-radius: 999px;
+        transition: width 0.4s ease;
+    }
+
+    .vaccination-bar {
+        background: #0b8f55;
+    }
+
+    .pashudhan-bar {
+        background: #2878d0;
+    }
+
+    .submission-bar {
+        background: #e58b20;
+    }
+
+    .progress-detail {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 7px;
+        color: #667085;
+        font-size: 0.73rem;
+    }
+
+
+    /* =====================================================
+       ACHIEVEMENT PANEL
+       ===================================================== */
+
+    .achievement-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .achievement-box {
+        background: #f8fafb;
+        border: 1px solid #e4e7ec;
+        border-radius: 11px;
+        padding: 16px 12px;
+        text-align: center;
+    }
+
+    .achievement-icon {
+        width: 38px;
+        height: 38px;
+        margin: 0 auto 8px auto;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+
+    .achievement-icon.vaccination {
+        background: #e5f6ed;
+        color: #087f4f;
+    }
+
+    .achievement-icon.pashudhan {
+        background: #e8f1fc;
+        color: #2468ad;
+    }
+
+    .achievement-number {
+        color: #172033;
+        font-size: 1.35rem;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .achievement-label {
+        margin-top: 4px;
+        color: #667085;
+        font-size: 0.68rem;
+        font-weight: 600;
+    }
+
+    .achievement-summary {
+        border-top: 1px solid #edf0f3;
+        padding-top: 14px;
+    }
+
+    .achievement-summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        padding: 6px 0;
+    }
+
+    .achievement-summary-label {
+        color: #667085;
+        font-size: 0.74rem;
+    }
+
+    .achievement-summary-value {
+        color: #172033;
+        font-size: 0.76rem;
+        font-weight: 800;
+        text-align: right;
+    }
+
+
+
+    /* =====================================================
+       CAMPAIGN HERO / KPI ENHANCEMENTS
+       ===================================================== */
+
+    .dashboard-page {
+        --dash-green: #0b9654;
+        --dash-green-dark: #087f4f;
+        --dash-red: #d9363e;
+        --dash-light-green: #8bd8ad;
+    }
+
+    .dashboard-page .dashboard-card {
+        transition: transform .22s ease, box-shadow .22s ease;
+    }
+
+    .dashboard-page .dashboard-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .dashboard-progress-track {
+        height: 14px;
+        padding: 3px;
+        background: rgba(255,255,255,.94);
+        border: 1px solid rgba(255,255,255,.98);
+        box-shadow:
+            0 0 0 1px rgba(15,23,42,.08),
+            0 2px 7px rgba(15,23,42,.08);
+    }
+
+    .dashboard-progress-bar {
+        height: 100%;
+        transform-origin: left center;
+        animation: dashboardBarGrow .9s cubic-bezier(.22,.8,.28,1) both;
+    }
+
+    .vaccination-bar,
+    .coverage-bar {
+        background: linear-gradient(90deg, #dc3545, #ef5961);
+    }
+
+    .vaccination-bar.target-reached,
+    .coverage-bar.target-reached {
+        background: linear-gradient(90deg, #77cf9d, #a8e4bf);
+    }
+
+    .pashudhan-bar {
+        background: linear-gradient(90deg, #2878d0, #64a9ed);
+    }
+
+    .pashudhan-bar.target-reached {
+        background: linear-gradient(90deg, #77cf9d, #a8e4bf);
+    }
+
+    .submission-bar {
+        background: linear-gradient(90deg, #e58b20, #f1b45c);
+    }
+
+    .submission-bar.target-reached {
+        background: linear-gradient(90deg, #77cf9d, #a8e4bf);
+    }
+
+    @keyframes dashboardBarGrow {
+        from { transform: scaleX(0); opacity: .55; }
+        to { transform: scaleX(1); opacity: 1; }
+    }
+
+    .dashboard-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 14px;
+        margin: 0 0 24px;
+    }
+
+    .dashboard-kpi {
+        min-width: 0;
+        min-height: 205px;
+        padding: 22px 16px 18px;
+        border: 1px solid #e4e9ef;
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        background: #fff;
+        box-shadow: 0 6px 18px rgba(15,23,42,.05);
+        transition: transform .22s ease, box-shadow .22s ease;
+        animation: dashboardCardIn .55s ease both;
+    }
+
+    .dashboard-kpi:nth-child(2) { animation-delay: .06s; }
+    .dashboard-kpi:nth-child(3) { animation-delay: .12s; }
+    .dashboard-kpi:nth-child(4) { animation-delay: .18s; }
+    .dashboard-kpi:nth-child(5) { animation-delay: .24s; }
+
+    .dashboard-kpi:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(15,23,42,.10);
+    }
+
+    @keyframes dashboardCardIn {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dashboard-kpi.blue {
+        background: linear-gradient(180deg,#f5f9ff,#fff);
+        border-color: #dce9fb;
+    }
+
+    .dashboard-kpi.green {
+        background: linear-gradient(180deg,#f2fbf6,#fff);
+        border-color: #d5efdf;
+    }
+
+    .dashboard-kpi.violet {
+        background: linear-gradient(180deg,#f8f5ff,#fff);
+        border-color: #e7defd;
+    }
+
+    .dashboard-kpi.orange {
+        background: linear-gradient(180deg,#fff8f1,#fff);
+        border-color: #f7e1ca;
+    }
+
+    .dashboard-kpi.red {
+        background: linear-gradient(180deg,#fff5f5,#fff);
+        border-color: #f4d5d7;
+    }
+
+    .dashboard-kpi-icon {
+        width: 54px;
+        height: 54px;
+        margin-bottom: 15px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+    }
+
+    .blue .dashboard-kpi-icon { background:#e7f1ff; color:#2878d0; }
+    .green .dashboard-kpi-icon { background:#e5f6ed; color:#0b9654; }
+    .violet .dashboard-kpi-icon { background:#eee8ff; color:#7254d6; }
+    .orange .dashboard-kpi-icon { background:#fff0df; color:#e27a12; }
+    .red .dashboard-kpi-icon { background:#fde8ea; color:#d9363e; }
+
+    .dashboard-kpi-label {
+        width: 100%;
+        margin-bottom: 8px;
+        color: #475467;
+        font-size: .72rem;
+        font-weight: 800;
+        line-height: 1.3;
+        text-transform: uppercase;
+        letter-spacing: .045em;
+    }
+
+    .dashboard-kpi-value {
+        width: 100%;
+        color: #172033;
+        font-size: 1.55rem;
+        font-weight: 800;
+        line-height: 1.15;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+    .dashboard-kpi-separator {
+        width: 100%;
+        margin: 14px 0 11px;
+        border-top: 1px dashed #d9e1e7;
+    }
+
+    .dashboard-kpi-note {
+        width: 100%;
+        margin: 0;
+        color: #667085;
+        font-size: .72rem;
+        line-height: 1.45;
+    }
+
+    .campaign-visual {
+        position: relative;
+        overflow: hidden;
+        border-radius: 16px;
+        isolation: isolate;
+    }
+
+    .campaign-visual::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+            radial-gradient(circle at 82% 22%, rgba(255,255,255,.34), transparent 23%),
+            linear-gradient(110deg, transparent 58%, rgba(255,255,255,.12));
+        animation: heroShimmer 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroShimmer {
+        from { transform: translateX(-1.5%); opacity: .65; }
+        to { transform: translateX(1.5%); opacity: 1; }
+    }
+
+
+    /* =====================================================
+       COMPACT MODEL-MATCHING DASHBOARD
+       ===================================================== */
+
+    .compact-dashboard-hero {
+        min-height: 0 !important;
+        margin-bottom: 18px !important;
+        padding: 22px 30px !important;
+        border-radius: 20px !important;
+        background:
+            radial-gradient(circle at 82% 12%, rgba(255,255,255,.10), transparent 23%),
+            linear-gradient(110deg, #20a463 0%, #15935a 52%, #08794f 100%) !important;
+        box-shadow: 0 10px 30px rgba(15,23,42,.08);
+    }
+
+    .compact-dashboard-hero .hero-left {
+        max-width: 78%;
+    }
+
+    .compact-dashboard-hero .hero-badge {
+        margin-bottom: 12px;
+        padding: 6px 12px;
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 999px;
+        background: rgba(255,255,255,.14);
+        color: #fff;
+        font-size: .72rem;
+        font-weight: 700;
+    }
+
+    .compact-dashboard-hero h1 {
+        margin: 0 0 5px;
+        color: #081a38;
+        font-size: clamp(1.55rem, 2.3vw, 2.25rem);
+        font-weight: 800;
+        line-height: 1.08;
+    }
+
+    .compact-dashboard-hero .hero-subtitle {
+        margin: 0;
+        color: rgba(255,255,255,.96);
+        font-size: .82rem;
+    }
+
+    .compact-dashboard-hero .hero-progress {
+        max-width: 720px;
+        margin-top: 16px;
+    }
+
+    .hero-progress-track {
+        width: 100%;
+        height: 13px;
+        padding: 3px;
+        overflow: hidden;
+        border: 2px solid rgba(255,255,255,.98);
+        border-radius: 999px;
+        background: rgba(255,255,255,.24);
+        box-shadow: 0 2px 8px rgba(0,0,0,.10);
+    }
+
+    .hero-progress-bar {
+        height: 100%;
+        border-radius: 999px;
+        transform-origin: left center;
+        animation: dashboardBarGrow .9s cubic-bezier(.22,.8,.28,1) both;
+    }
+
+    .hero-progress-pending {
+        background: linear-gradient(90deg,#dc2626,#ef5961);
+    }
+
+    .hero-progress-achieved {
+        background: linear-gradient(90deg,#8bd8ad,#b9ebcc);
+    }
+
+    .compact-dashboard-hero .hero-progress small {
+        display: block;
+        margin-top: 6px;
+        color: #fff;
+        font-size: .72rem;
+        font-weight: 600;
+    }
+
+    .compact-dashboard-hero .hero-right {
+        min-width: 150px;
+    }
+
+    .compact-dashboard-hero .hero-circle {
+        width: 112px !important;
+        height: 112px !important;
+        background: rgba(255,255,255,.13) !important;
+        border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .compact-dashboard-hero .hero-circle i {
+        color: #fff;
+        font-size: 3.15rem !important;
+    }
+
+    .dashboard-kpi-grid {
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .dashboard-kpi {
+        min-height: 168px;
+        padding: 17px 15px 15px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(15,23,42,.06);
+    }
+
+    .dashboard-kpi.blue {
+        background: linear-gradient(145deg,#eef6ff 0%,#f8fbff 55%,#e7f1ff 100%);
+        border-color: #d8e8fb;
+    }
+
+    .dashboard-kpi.green {
+        background: linear-gradient(145deg,#effbf4 0%,#f8fdf9 55%,#e1f5e9 100%);
+        border-color: #d4eedf;
+    }
+
+    .dashboard-kpi.violet {
+        background: linear-gradient(145deg,#f4f0ff 0%,#fbf9ff 55%,#ece5ff 100%);
+        border-color: #e4dafd;
+    }
+
+    .dashboard-kpi.orange {
+        background: linear-gradient(145deg,#fff5e9 0%,#fffaf5 55%,#ffead3 100%);
+        border-color: #f7dec2;
+    }
+
+    .dashboard-kpi.red {
+        background: linear-gradient(145deg,#fff0f1 0%,#fff8f8 55%,#fde3e5 100%);
+        border-color: #f2d2d5;
+    }
+
+    .dashboard-kpi-icon {
+        width: 46px;
+        height: 46px;
+        margin-bottom: 11px;
+        box-shadow: 0 7px 16px rgba(15,23,42,.07);
+    }
+
+    .dashboard-kpi-label {
+        margin-bottom: 5px;
+        font-size: .68rem;
+    }
+
+    .dashboard-kpi-value {
+        font-size: 1.42rem;
+    }
+
+    .dashboard-kpi-separator {
+        margin: 10px 0 8px;
+    }
+
+    .dashboard-kpi-note {
+        font-size: .68rem;
+    }
+
+    .campaign-visual::after {
+        display: none;
+    }
+
+    .live-progress-row .dashboard-card {
+        background: linear-gradient(145deg,#f7fbff 0%,#ffffff 62%,#f0f8ff 100%);
+        border: 1px solid #dfe9f3;
+    }
+
+    .live-progress-row .col-lg-4 .dashboard-card {
+        background: linear-gradient(145deg,#f3fbf6 0%,#ffffff 62%,#edf8f1 100%);
+        border-color: #dbeee3;
+    }
+
+    .dashboard-progress-track {
+        height: 12px;
+        padding: 0;
+        overflow: hidden;
+        border: 1px solid #e0e6ec;
+        background: #edf1f4;
+        box-shadow: inset 0 1px 2px rgba(15,23,42,.05);
+    }
+
+    .dashboard-progress-bar {
+        height: 100%;
+    }
+
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .quick-actions .action-btn {
+        min-height: 92px;
+        padding: 18px;
+        border: 1px solid transparent;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        text-decoration: none;
+        font-weight: 700;
+        box-shadow: 0 8px 20px rgba(15,23,42,.05);
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .quick-actions .action-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 26px rgba(15,23,42,.10);
+    }
+
+    .quick-actions .action-btn:nth-child(1) {
+        background: linear-gradient(135deg,#edf5ff,#dfeeff);
+        border-color: #d5e6fb;
+        color: #2563eb;
+    }
+
+    .quick-actions .action-btn:nth-child(2) {
+        background: linear-gradient(135deg,#eefbf3,#dcf4e7);
+        border-color: #d2eddd;
+        color: #16a34a;
+    }
+
+    .quick-actions .action-btn:nth-child(3) {
+        background: linear-gradient(135deg,#f3efff,#e8e0ff);
+        border-color: #e0d6fb;
+        color: #6d4bd1;
+    }
+
+    .quick-actions .action-btn:nth-child(4) {
+        background: linear-gradient(135deg,#fff4e7,#ffe7cf);
+        border-color: #f6dcc1;
+        color: #e66d0a;
+    }
+
+    .quick-actions .action-btn i {
+        width: 44px;
+        height: 44px;
+        flex: 0 0 44px;
+        border-radius: 13px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,.72);
+        font-size: 1.25rem;
+        box-shadow: 0 4px 12px rgba(15,23,42,.06);
+    }
+
+    @media (max-width: 767px) {
+        .compact-dashboard-hero {
+            padding: 20px !important;
+        }
+
+        .compact-dashboard-hero .hero-left {
+            max-width: 100%;
+        }
+
+        .compact-dashboard-hero .hero-right {
+            display: none;
+        }
+
+        .quick-actions {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
+
+    @media (max-width: 1400px) {
+        .dashboard-kpi-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 800px) {
+        .dashboard-kpi-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 575px) {
+
+        .achievement-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard-kpi-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard-kpi {
+            min-height: auto;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid dashboard-page">
+
+
+    <!-- ==================================================
+         HERO SECTION
+         ================================================== -->
+
+    {% include "dashboard/partials/hero.html" %}
+
+
+    <!-- ==================================================
+         STATISTICS CARDS
+         ================================================== -->
+
+    <div style="display:none">
+        {% include "dashboard/partials/stats.html" %}
+    </div>
+
+    {% set submission_percentage =
+        (
+            (
+                dashboard.submitted_squads
+                / dashboard.total_squads
+            ) * 100
+        )
+        if dashboard.total_squads
+        else 0
+    %}
+
+    {% set pashudhan_shortfall =
+        [
+            (dashboard.total_vaccinations|default(0))
+            -
+            (dashboard.total_entries|default(0)),
+            0
+        ] | max
+    %}
+
+    <section class="dashboard-kpi-grid" aria-label="Campaign summary">
+
+        <div class="dashboard-kpi blue">
+            <div class="dashboard-kpi-icon">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="dashboard-kpi-label">Pending Squads</div>
+            <div class="dashboard-kpi-value">
+                {{ "{:,}".format(dashboard.pending_squads|default(0)) }}
+            </div>
+            <div class="dashboard-kpi-separator"></div>
+            <div class="dashboard-kpi-note">
+                {{ (100 - submission_percentage)|round(1) }}% awaiting submission
+            </div>
+        </div>
+
+        <div class="dashboard-kpi green">
+            <div class="dashboard-kpi-icon">
+                <i class="bi bi-check2-circle"></i>
+            </div>
+            <div class="dashboard-kpi-label">Submitted Squads</div>
+            <div class="dashboard-kpi-value">
+                {{ "{:,}".format(dashboard.submitted_squads|default(0)) }}
+            </div>
+            <div class="dashboard-kpi-separator"></div>
+            <div class="dashboard-kpi-note">
+                {{ submission_percentage|round(1) }}% submission completion
+            </div>
+        </div>
+
+        <div class="dashboard-kpi violet">
+            <div class="dashboard-kpi-icon">
+                <i class="bi bi-shield-check"></i>
+            </div>
+            <div class="dashboard-kpi-label">Vaccinations Done</div>
+            <div class="dashboard-kpi-value">
+                {{ "{:,}".format(dashboard.total_vaccinations|default(0)) }}
+            </div>
+            <div class="dashboard-kpi-separator"></div>
+            <div class="dashboard-kpi-note">
+                {{ dashboard.vaccination_percentage|default(0)|round(1) }}% of population target
+            </div>
+        </div>
+
+        <div class="dashboard-kpi orange">
+            <div class="dashboard-kpi-icon">
+                <i class="bi bi-database-check"></i>
+            </div>
+            <div class="dashboard-kpi-label">Pashudhan Entries</div>
+            <div class="dashboard-kpi-value">
+                {{ "{:,}".format(dashboard.total_entries|default(0)) }}
+            </div>
+            <div class="dashboard-kpi-separator"></div>
+            <div class="dashboard-kpi-note">
+                {{ dashboard.pashudhan_percentage|default(0)|round(1) }}% of population target
+            </div>
+        </div>
+
+        <div class="dashboard-kpi {% if pashudhan_shortfall > 0 %}red{% else %}green{% endif %}">
+            <div class="dashboard-kpi-icon">
+                {% if pashudhan_shortfall > 0 %}
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                {% else %}
+                    <i class="bi bi-check2-circle"></i>
+                {% endif %}
+            </div>
+            <div class="dashboard-kpi-label">Pashudhan Shortfall</div>
+            <div class="dashboard-kpi-value">
+                {{ "{:,}".format(pashudhan_shortfall) }}
+            </div>
+            <div class="dashboard-kpi-separator"></div>
+            <div class="dashboard-kpi-note">
+                {% if pashudhan_shortfall > 0 %}
+                    Pashudhan entries pending
+                {% else %}
+                    No Pashudhan entry shortfall
+                {% endif %}
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         LIVE CAMPAIGN PROGRESS
+         ================================================== -->
+
+    <div class="row g-4 live-progress-row">
+
+
+        <!-- ==============================================
+             VACCINATION PROGRESS
+             ============================================== -->
+
+        <div class="col-lg-8">
+
+            <div class="dashboard-card campaign-visual">
+
+                <div class="card-header-custom">
+
+                    <h5>
+                        <i class="bi bi-bar-chart-line-fill"></i>
+                        Campaign Progress
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body-custom">
+
+
+                    <!-- Vaccination Achievement -->
+
+                    <div class="progress-metric">
+
+                        <div class="progress-metric-header">
+
+                            <div class="progress-metric-title">
+                                Vaccination Achievement
+                            </div>
+
+                            <div class="progress-metric-value">
+                                {{
+                                    dashboard.vaccination_percentage
+                                    |default(0)
+                                    |round(1)
+                                }}%
+                            </div>
+
+                        </div>
+
+
+                        <div class="dashboard-progress-track">
+
+                            <div
+                                class="
+                                    dashboard-progress-bar
+                                    vaccination-bar
+                                    {% if dashboard.vaccination_percentage|default(0) >= 85 %}
+                                        target-reached
+                                    {% endif %}
+                                "
+                                style="
+                                    width:
+                                    {{
+                                        [
+                                            dashboard.vaccination_percentage
+                                            |default(0),
+                                            100
+                                        ] | min
+                                    }}%;
+                                "
+                            >
+                            </div>
+
+                        </div>
+
+
+                        <div class="progress-detail">
+
+                            <span>
+                                {{
+                                    dashboard.total_vaccinations
+                                    |default(0)
+                                }}
+                                vaccinated
+                            </span>
+
+                            <span>
+                                Target:
+                                {{
+                                    dashboard.target
+                                    |default(0)
+                                }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Pashudhan Achievement -->
+
+                    <div class="progress-metric">
+
+                        <div class="progress-metric-header">
+
+                            <div class="progress-metric-title">
+                                Pashudhan Entry Achievement
+                            </div>
+
+                            <div class="progress-metric-value">
+                                {{
+                                    dashboard.pashudhan_percentage
+                                    |default(0)
+                                    |round(1)
+                                }}%
+                            </div>
+
+                        </div>
+
+
+                        <div class="dashboard-progress-track">
+
+                            <div
+                                class="
+                                    dashboard-progress-bar
+                                    pashudhan-bar
+                                    {% if dashboard.pashudhan_percentage|default(0) >= 85 %}
+                                        target-reached
+                                    {% endif %}
+                                "
+                                style="
+                                    width:
+                                    {{
+                                        [
+                                            dashboard.pashudhan_percentage
+                                            |default(0),
+                                            100
+                                        ] | min
+                                    }}%;
+                                "
+                            >
+                            </div>
+
+                        </div>
+
+
+                        <div class="progress-detail">
+
+                            <span>
+                                {{
+                                    dashboard.total_entries
+                                    |default(0)
+                                }}
+                                entries
+                            </span>
+
+                            <span>
+                                Target:
+                                {{
+                                    dashboard.target
+                                    |default(0)
+                                }}
+                            </span>
+
+                        </div>
+
+                    </div>
+                    <!-- Vaccine Coverage -->
+
+                    <div class="progress-metric">
+
+                        <div class="progress-metric-header">
+
+                            <div class="progress-metric-title">
+                                Vaccine Coverage
+                            </div>
+
+                            <div class="progress-metric-value">
+                                {{
+                                    dashboard.vaccine_coverage_percentage
+                                    |default(0)
+                                    |round(1)
+                                }}%
+                            </div>
+
+                        </div>
+
+
+                        <div class="dashboard-progress-track">
+
+                            <div
+                                class="
+                                    dashboard-progress-bar
+                                    coverage-bar
+                                    {% if dashboard.vaccine_coverage_percentage|default(0) >= 85 %}
+                                        target-reached
+                                    {% endif %}
+                                "
+                                style="
+                                    width:
+                                    {{
+                                        [
+                                            dashboard.vaccine_coverage_percentage
+                                            |default(0),
+                                            100
+                                        ] | min
+                                    }}%;
+                                "
+                            >
+                            </div>
+
+                        </div>
+
+
+                        <div class="progress-detail">
+
+                            <span>
+                                {{
+                                    dashboard.total_vaccinations
+                                    |default(0)
+                                }}
+                                vaccinated
+                                +
+                                {{
+                                    dashboard.total_leftover
+                                    |default(0)
+                                }}
+                                leftover
+                            </span>
+
+                            <span>
+                                Target:
+                                {{
+                                    dashboard.target
+                                    |default(0)
+                                }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Submission Completion -->
+
+                    <div class="progress-metric">
+
+                        <div class="progress-metric-header">
+
+                            <div class="progress-metric-title">
+                                Squad Submission Completion
+                            </div>
+
+                            <div class="progress-metric-value">
+                                {{
+                                    submission_percentage
+                                    |round(1)
+                                }}%
+                            </div>
+
+                        </div>
+
+
+                        <div class="dashboard-progress-track">
+
+                            <div
+                                class="
+                                    dashboard-progress-bar
+                                    submission-bar
+                                    {% if submission_percentage >= 85 %}
+                                        target-reached
+                                    {% endif %}
+                                "
+                                style="
+                                    width:
+                                    {{
+                                        [
+                                            submission_percentage,
+                                            100
+                                        ] | min
+                                    }}%;
+                                "
+                            >
+                            </div>
+
+                        </div>
+
+
+                        <div class="progress-detail">
+
+                            <span>
+                                {{
+                                    dashboard.submitted_squads
+                                    |default(0)
+                                }}
+                                submitted
+                            </span>
+
+                            <span>
+                                {{
+                                    dashboard.pending_squads
+                                    |default(0)
+                                }}
+                                pending
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==============================================
+             ACHIEVEMENT PANEL
+             ============================================== -->
+
+        <div class="col-lg-4">
+
+            <div class="dashboard-card">
+
+                <div class="card-header-custom">
+
+                    <h5>
+                        <i class="bi bi-award-fill"></i>
+                        Achievement
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body-custom">
+
+
+                    <div class="achievement-grid">
+
+
+                        <!-- Vaccination -->
+
+                        <div class="achievement-box">
+
+                            <div
+                                class="
+                                    achievement-icon
+                                    vaccination
+                                "
+                            >
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+
+                            <div class="achievement-number">
+
+                                {{
+                                    dashboard.vaccination_percentage
+                                    |default(0)
+                                    |round(1)
+                                }}%
+
+                            </div>
+
+                            <div class="achievement-label">
+                                Vaccination
+                            </div>
+
+                        </div>
+
+
+                        <!-- Pashudhan -->
+
+                        <div class="achievement-box">
+
+                            <div
+                                class="
+                                    achievement-icon
+                                    pashudhan
+                                "
+                            >
+                                <i class="bi bi-database-check"></i>
+                            </div>
+
+                            <div class="achievement-number">
+
+                                {{
+                                    dashboard.pashudhan_percentage
+                                    |default(0)
+                                    |round(1)
+                                }}%
+
+                            </div>
+
+                            <div class="achievement-label">
+                                Pashudhan Entry
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="achievement-summary">
+
+
+                        <div class="achievement-summary-row">
+
+                            <span class="achievement-summary-label">
+                                Campaign Target
+                            </span>
+
+                            <span class="achievement-summary-value">
+                                {{
+                                    dashboard.target
+                                    |default(0)
+                                }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="achievement-summary-row">
+
+                            <span class="achievement-summary-label">
+                                Total Squads
+                            </span>
+
+                            <span class="achievement-summary-value">
+                                {{
+                                    dashboard.total_squads
+                                    |default(0)
+                                }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="achievement-summary-row">
+
+                            <span class="achievement-summary-label">
+                                Submitted
+                            </span>
+
+                            <span class="achievement-summary-value">
+                                {{
+                                    dashboard.submitted_squads
+                                    |default(0)
+                                }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="achievement-summary-row">
+
+                            <span class="achievement-summary-label">
+                                Pending
+                            </span>
+
+                            <span class="achievement-summary-value">
+                                {{
+                                    dashboard.pending_squads
+                                    |default(0)
+                                }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="achievement-summary-row">
+
+                            <span class="achievement-summary-label">
+                                Submitted Today
+                            </span>
+
+                            <span class="achievement-summary-value">
+                                {{
+                                    dashboard.today_submissions
+                                    |default(0)
+                                }}
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==================================================
+         BOTTOM ROW
+         ================================================== -->
+
+    <div class="row g-4">
+
+
+        <!-- ==============================================
+             RECENT SUBMISSIONS
+             ============================================== -->
+
+        <div class="col-lg-6">
+
+            <div class="dashboard-card">
+
+                <div class="card-header-custom">
+
+                    <h5>
+                        <i class="bi bi-clock-history"></i>
+                        Recent Submissions
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body-custom">
+
+                    {% if dashboard.recent_submissions %}
+
+                        <div class="list-group list-group-flush">
+
+                            {% for submission in dashboard.recent_submissions %}
+
+                                <div class="list-group-item">
+
+                                    <strong>
+                                        Squad
+                                        {{ submission.squad.squad_no }}
+                                    </strong>
+
+                                    {% if submission.squad.panchayath %}
+
+                                        <span class="text-muted">
+                                            -
+                                            {{
+                                                submission
+                                                .squad
+                                                .panchayath
+                                                .name
+                                            }}
+                                        </span>
+
+                                    {% endif %}
+
+                                    <br>
+
+                                    <small class="text-muted">
+
+                                        {% if submission.submitted_at %}
+
+                                            {{
+                                                submission
+                                                .submitted_at
+                                                .strftime(
+                                                    '%d-%m-%Y %I:%M %p'
+                                                )
+                                            }}
+
+                                        {% else %}
+
+                                            {{
+                                                submission
+                                                .created_at
+                                                .strftime(
+                                                    '%d-%m-%Y %I:%M %p'
+                                                )
+                                            }}
+
+                                        {% endif %}
+
+                                    </small>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div
+                            class="
+                                placeholder-box
+                                small-placeholder
+                            "
+                        >
+
+                            <i class="bi bi-inbox"></i>
+
+                            <p>
+                                No submissions available.
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==============================================
+             QUICK ACTIONS
+             ============================================== -->
+
+        <div class="col-lg-6">
+
+            <div class="dashboard-card">
+
+                <div class="card-header-custom">
+
+                    <h5>
+                        <i class="bi bi-lightning-charge-fill"></i>
+                        Quick Actions
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body-custom">
+
+                    <div class="quick-actions">
+
+
+                        <a
+                            href="{{ url_for('submission.index') }}"
+                            class="action-btn"
+                        >
+
+                            <i class="bi bi-pencil-square"></i>
+
+                            <span>
+                                New Submission
+                            </span>
+
+                        </a>
+
+
+                        <a
+                            href="{{ url_for('masterdata.index') }}"
+                            class="action-btn"
+                        >
+
+                            <i class="bi bi-upload"></i>
+
+                            <span>
+                                Master Data
+                            </span>
+
+                        </a>
+
+
+                        <a
+                            href="{{ url_for('campaign.index') }}"
+                            class="action-btn"
+                        >
+
+                            <i class="bi bi-broadcast"></i>
+
+                            <span>
+                                Campaigns
+                            </span>
+
+                        </a>
+
+
+                        <a
+                            href="{{ url_for('reports.index') }}"
+                            class="action-btn"
+                        >
+
+                            <i class="bi bi-file-earmark-bar-graph"></i>
+
+                            <span>
+                                Reports
+                            </span>
+
+                        </a>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script
+    src="{{ url_for('static', filename='js/dashboard.js') }}">
+</script>
+
+{% endblock %}
