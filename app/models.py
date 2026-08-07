@@ -452,3 +452,69 @@ class ImportHistory(TimestampMixin, db.Model):
 
     def __repr__(self):
         return f"<ImportHistory {self.filename}>"
+    # ==========================================================
+# Audit Log
+# ==========================================================
+
+class AuditLog(TimestampMixin, db.Model):
+    __tablename__ = "audit_logs"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+    )
+
+    username = db.Column(
+        db.String(100),
+        nullable=False,
+        index=True,
+    )
+
+    module = db.Column(
+        db.String(100),
+        nullable=False,
+        index=True,
+    )
+
+    action = db.Column(
+        db.String(255),
+        nullable=False,
+    )
+
+    ip_address = db.Column(
+        db.String(50),
+    )
+
+    def __repr__(self):
+        return (
+            f"<AuditLog "
+            f"{self.username} "
+            f"{self.module}>"
+        )
+class BackupHistory(
+    TimestampMixin,
+    db.Model
+):
+    __tablename__ = "backup_history"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    filename = db.Column(
+        db.String(255),
+        nullable=False
+    )
+
+    created_by = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    def __repr__(self):
+        return (
+            f"<BackupHistory "
+            f"{self.filename}>"
+        )
+    

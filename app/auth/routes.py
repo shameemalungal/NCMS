@@ -9,6 +9,7 @@ from flask import (
 )
 
 from app.auth import auth_bp
+from app.utils.audit import log_audit
 
 
 # ==========================================================
@@ -78,6 +79,12 @@ def login():
                 "admin_username"
             ] = username
 
+            log_audit(
+                username=username,
+                module="Authentication",
+                action="Administrator Login",
+            )
+
             # ----------------------------------------------
             # Return to requested admin page
             # ----------------------------------------------
@@ -128,6 +135,15 @@ def login():
     methods=["POST"],
 )
 def logout():
+
+    log_audit(
+        username=session.get(
+            "admin_username",
+            "Unknown",
+        ),
+        module="Authentication",
+        action="Administrator Logout",
+    )
 
     session.clear()
 

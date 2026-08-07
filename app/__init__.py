@@ -5,6 +5,7 @@ from flask import Flask
 from config import Config
 from app.extensions import db, migrate, csrf
 
+
 # Blueprints
 from app.dashboard import dashboard_bp
 from app.dashboard.api import bp as dashboard_api_bp
@@ -16,6 +17,10 @@ from app.reports import reports_bp
 from app.monitoring import monitoring_bp
 from app.settings import settings_bp
 from app.auth import auth_bp
+from app.audit import audit_bp
+
+#from app.backup import backup_bp
+
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -95,6 +100,14 @@ def create_app():
     app.register_blueprint(
         auth_bp
     )
+
+    app.register_blueprint(
+        audit_bp
+    )
+
+    #app.register_blueprint(
+    #    backup_bp
+    #)
 
     # ======================================================
     # Context Processors
