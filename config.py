@@ -83,10 +83,10 @@ class Config:
 
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
-    SESSION_COOKIE_SECURE = _env_bool(
+    SESSION_COOKIE_SECURE = os.environ.get(
         "NCMS_SESSION_COOKIE_SECURE",
-        IS_PRODUCTION,
-    )
+        "false",
+    ).lower() == "true"
 
     # ======================================================
     # Request / Host Security
