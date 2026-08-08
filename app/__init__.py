@@ -19,7 +19,7 @@ from app.settings import settings_bp
 from app.auth import auth_bp
 from app.audit import audit_bp
 
-#from app.backup import backup_bp
+from app.backup import backup_bp
 
 
 
@@ -105,9 +105,9 @@ def create_app():
         audit_bp
     )
 
-    #app.register_blueprint(
-    #    backup_bp
-    #)
+    app.register_blueprint(
+        backup_bp
+    )
 
     # ======================================================
     # Context Processors
