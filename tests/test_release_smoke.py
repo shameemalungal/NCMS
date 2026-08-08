@@ -50,10 +50,15 @@ def test_public_submission_page_without_campaign(client):
 
 
 def test_admin_pages_are_protected(client):
-    response = client.get("/settings/")
+    for path in (
+        "/settings/",
+        "/audit/",
+        "/backup/download",
+    ):
+        response = client.get(path)
 
-    assert response.status_code == 302
-    assert "/auth/login" in response.headers["Location"]
+        assert response.status_code == 302
+        assert "/auth/login" in response.headers["Location"]
 
 
 def test_admin_login_and_settings_access(client):
@@ -70,6 +75,13 @@ def test_admin_login_and_settings_access(client):
 
     response = client.get("/settings/")
     assert response.status_code == 200
+
+    response = client.get("/audit/")
+    assert response.status_code == 200
+
+    response = client.get("/backup/download")
+    assert response.status_code == 200
+    assert response.mimetype == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
 
 def test_public_submission_uses_only_active_campaign(client, app):
