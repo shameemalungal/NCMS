@@ -114,25 +114,41 @@
        ===================================================== */
 
     .report-panel-header {
-    width: 100%;
-    padding: 16px 18px;
-    border-bottom: 1px solid #e7ebef;
-    box-sizing: border-box;
+        width: 100%;
+        padding: 18px 18px 16px;
+        border-bottom: 1px solid #e7ebef;
+        box-sizing: border-box;
+        background: #ffffff;
     }
 
-    .report-header-content {
+    .panel-header {
         width: 100%;
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        gap: 16px;
+        align-items: flex-start;
+        gap: 18px;
     }
 
-    .report-header-title-area {
+    .panel-header-left {
         min-width: 0;
     }
 
-    .report-header-actions {
+    .panel-title {
+        margin: 0;
+        color: #172033;
+        font-size: 1.05rem;
+        font-weight: 800;
+        line-height: 1.3;
+    }
+
+    .panel-subtitle {
+        margin-top: 5px;
+        color: #667085;
+        font-size: 0.76rem;
+        line-height: 1.4;
+    }
+
+    .panel-header-right {
         display: flex;
         align-items: center;
         gap: 8px;
@@ -475,6 +491,16 @@
             grid-template-columns: 1fr;
         }
 
+        .panel-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .panel-header-right {
+            width: 100%;
+            justify-content: flex-end;
+        }
+
         .report-tools,
         .report-filters {
             width: 100%;
@@ -643,23 +669,22 @@
 
             <div class="report-panel-header">
 
-                <div class="report-header-content">
+                <div class="panel-header">
 
-                    <div class="report-header-title-area">
+                    <div class="panel-header-left">
 
-                        <div class="report-panel-title">
+                        <div class="panel-title">
                             Panchayath Achievement Report
                         </div>
 
-                        <div class="report-panel-subtitle">
-                            Panchayath-wise vaccination and
-                            Pashudhan achievement.
+                        <div class="panel-subtitle">
+                            Panchayath-wise vaccination and Pashudhan achievement.
                         </div>
 
                     </div>
 
 
-                    <div class="report-header-actions">
+                    <div class="panel-header-right">
 
                         <a
                             href="{{ url_for('reports.index') }}"
