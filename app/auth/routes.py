@@ -1,3 +1,5 @@
+from hmac import compare_digest
+
 from flask import (
     current_app,
     flash,
@@ -43,31 +45,36 @@ def login():
             .strip()
         )
 
-        password = (
-            request.form.get(
-                "password",
-                ""
-            )
+        password = request.form.get(
+            "password",
+            ""
         )
 
         expected_username = (
             current_app.config.get(
-                "ADMIN_USERNAME"
+                "ADMIN_USERNAME",
+                "",
             )
         )
 
         expected_password = (
             current_app.config.get(
-                "ADMIN_PASSWORD"
+                "ADMIN_PASSWORD",
+                "",
             )
         )
 
+        username_ok = compare_digest(
+            username,
+            expected_username,
+        )
 
-        if (
-            username == expected_username
-            and
-            password == expected_password
-        ):
+        password_ok = compare_digest(
+            password,
+            expected_password,
+        )
+
+        if username_ok and password_ok:
 
             session.clear()
 
@@ -95,15 +102,11 @@ def login():
 
             if (
                 next_url
-                and
-                next_url.startswith("/")
-                and
-                not next_url.startswith("//")
+                and next_url.startswith("/")
+                and not next_url.startswith("//")
             ):
 
-                return redirect(
-                    next_url
-                )
+                return redirect(next_url)
 
             return redirect(
                 url_for(
