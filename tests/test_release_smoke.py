@@ -6,6 +6,7 @@ os.environ.setdefault("NCMS_ENVIRONMENT", "testing")
 os.environ.setdefault("NCMS_SECRET_KEY", "test-secret-key")
 os.environ.setdefault("NCMS_ADMIN_USERNAME", "test-admin")
 os.environ.setdefault("NCMS_ADMIN_PASSWORD", "test-password")
+os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
 
 from app import create_app
 from app.extensions import db
@@ -19,11 +20,9 @@ def app():
     app.config.update(
         TESTING=True,
         WTF_CSRF_ENABLED=False,
-        SQLALCHEMY_DATABASE_URI="sqlite:///:memory:",
     )
 
     with app.app_context():
-        db.drop_all()
         db.create_all()
         yield app
         db.session.remove()
@@ -194,7 +193,6 @@ def test_duplicate_submission_is_blocked(client, app):
         submission = Submission(
             squad_id=squad.id,
             submission_token="DUP-TEST01",
-            submitted_at=db.func.now(),
         )
 
         db.session.add(submission)
