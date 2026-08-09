@@ -158,7 +158,7 @@ class SubmissionService:
                 or None
             )
 
-        # --------------------------------------------------
+                # --------------------------------------------------
         # ONE TRANSACTION
         # --------------------------------------------------
 
@@ -167,6 +167,13 @@ class SubmissionService:
             SubmissionRepository.add(submission)
 
             squad.status = SquadStatus.SUBMITTED
+
+            # A resubmission permission is one-time.
+            # Once the corrected submission is received,
+            # clear the permission.
+            squad.resubmission_allowed = False
+            squad.resubmission_allowed_at = None
+            squad.resubmission_allowed_by = None
 
             SubmissionRepository.commit()
 

@@ -533,6 +533,32 @@
 
     }
 
+    /* =====================================================
+    ALLOW RE-SUBMISSION
+    ===================================================== */
+
+    .allow-resubmission-btn {
+        border: 1px solid #b42318;
+        background: #ffffff;
+        color: #b42318;
+        border-radius: 7px;
+        padding: 6px 10px;
+        font-size: 0.66rem;
+        font-weight: 800;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.15s ease;
+    }
+
+    .allow-resubmission-btn:hover {
+        background: #b42318;
+        color: #ffffff;
+    }
+
+    .allow-resubmission-btn:active {
+        transform: translateY(1px);
+    }
+
 </style>
 
 {% endblock %}
@@ -975,6 +1001,8 @@
                             <th>Low Vaccination Reason</th>
 
                             <th>Low Pashudhan Reason</th>
+
+                            <th>Action</th>
 
                         </tr>
 
@@ -1439,6 +1467,40 @@
 
 
                                 {% endif %}
+                                <td>
+
+                                    {% if item.submitted %}
+
+                                        <form
+                                            method="POST"
+                                            action="{{ url_for(
+                                                'monitoring.allow_resubmission',
+                                                squad_id=squad.id
+                                            ) }}"
+                                            onsubmit="return confirm(
+                                                'Allow re-submission for this squad? The existing submission will be archived and removed from live data.'
+                                            );"
+                                        >
+
+                                            <button
+                                                type="submit"
+                                                class="allow-resubmission-btn"
+                                            >
+                                                Allow Re-submission
+                                            </button>
+
+                                        </form>
+
+                                    {% else %}
+
+                                        <span class="reason-none">
+                                            -
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
 
                             </tr>
 

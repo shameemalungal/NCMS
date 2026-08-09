@@ -367,7 +367,7 @@ class MonitoringService:
 
                     pending_squad_details.append(
                         {
-                            "id":
+                            "squad_id":
                                 squad.id,
 
                             "squad_no":
@@ -533,7 +533,7 @@ class MonitoringService:
 
                 submitted_squad_details.append(
                     {
-                        "id":
+                        "squad_id":
                             squad.id,
 
                         "squad_no":

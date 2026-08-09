@@ -1,6 +1,14 @@
-from flask import Blueprint, render_template
+from flask import (
+    Blueprint,
+    render_template,
+    redirect,
+    url_for,
+    flash,
+    session,
+)
 
 from app.services.monitoring_service import MonitoringService
+from app.services.resubmission_service import ResubmissionService
 
 from app.auth.decorators import admin_required
 
@@ -69,9 +77,7 @@ def squads():
 
             squad_rows.append(
                 {
-                    "panchayath": (
-                        row["panchayath"]
-                    ),
+                    "panchayath": row["panchayath"],
                     "squad": squad,
                     "submitted": True,
                 }
@@ -88,9 +94,7 @@ def squads():
 
             squad_rows.append(
                 {
-                    "panchayath": (
-                        row["panchayath"]
-                    ),
+                    "panchayath": row["panchayath"],
                     "squad": squad,
                     "submitted": False,
                 }
@@ -119,4 +123,50 @@ def squads():
         page_subtitle=(
             "Live squad-wise campaign monitoring"
         ),
+    )
+
+
+# ==========================================================
+# Allow Squad Re-submission
+# ==========================================================
+
+@monitoring_bp.route(
+    "/squads/<int:squad_id>/allow-resubmission",
+    methods=["POST"],
+)
+@admin_required
+def allow_resubmission(squad_id):
+
+    username = (
+        session.get("admin_username")
+        or session.get("username")
+        or session.get("user")
+        or "Administrator"
+    )
+
+    result = (
+        ResubmissionService.allow_resubmission(
+            squad_id=squad_id,
+            username=username,
+        )
+    )
+
+    if result["success"]:
+
+        flash(
+            result["message"],
+            "success",
+        )
+
+    else:
+
+        flash(
+            result["message"],
+            "danger",
+        )
+
+    return redirect(
+        url_for(
+            "monitoring.squads"
+        )
     )

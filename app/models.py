@@ -259,6 +259,23 @@ class Squad(TimestampMixin, db.Model):
         lazy=True,
     )
 
+    resubmission_allowed = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=False,
+        server_default="0",
+    )
+
+    resubmission_allowed_at = db.Column(
+        db.DateTime,
+        nullable=True,
+    )
+
+    resubmission_allowed_by = db.Column(
+        db.String(100),
+        nullable=True,
+    )
+
     @property
     def member_count(self):
         return len(self.members)
@@ -517,4 +534,115 @@ class BackupHistory(
             f"<BackupHistory "
             f"{self.filename}>"
         )
-    
+
+# ==========================================================
+# Submission History
+# ==========================================================
+
+class SubmissionHistory(TimestampMixin, db.Model):
+    __tablename__ = "submission_history"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+    )
+
+    original_submission_id = db.Column(
+        db.Integer,
+        nullable=False,
+        index=True,
+    )
+
+    squad_id = db.Column(
+        db.Integer,
+        nullable=False,
+        index=True,
+    )
+
+    days_worked = db.Column(
+        db.Integer,
+    )
+
+    vaccinations_done = db.Column(
+        db.Integer,
+    )
+
+    pashudhan_entries = db.Column(
+        db.Integer,
+    )
+
+    diseased = db.Column(
+        db.Integer,
+    )
+
+    below_4_months = db.Column(
+        db.Integer,
+    )
+
+    pregnant = db.Column(
+        db.Integer,
+    )
+
+    unwilling = db.Column(
+        db.Integer,
+    )
+
+    other_reason = db.Column(
+        db.String(250),
+    )
+
+    other_count = db.Column(
+        db.Integer,
+    )
+
+    remarks = db.Column(
+        db.Text,
+    )
+
+    vaccination_percentage = db.Column(
+        db.Float,
+    )
+
+    pashudhan_percentage = db.Column(
+        db.Float,
+    )
+
+    vaccination_reason = db.Column(
+        db.Text,
+    )
+
+    pashudhan_reason = db.Column(
+        db.Text,
+    )
+
+    source = db.Column(
+        db.String(50),
+    )
+
+    status = db.Column(
+        db.String(20),
+    )
+
+    submission_token = db.Column(
+        db.String(30),
+    )
+
+    submitted_at = db.Column(
+        db.DateTime,
+    )
+
+    archived_at = db.Column(
+        db.DateTime,
+        nullable=False,
+    )
+
+    archived_by = db.Column(
+        db.String(100),
+        nullable=False,
+    )
+
+    def __repr__(self):
+        return (
+            f"<SubmissionHistory "
+            f"{self.original_submission_id}>"
+        )
