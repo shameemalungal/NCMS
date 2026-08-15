@@ -291,3 +291,29 @@ class ResubmissionService:
                 "archived and removed from live data."
             ),
         }
+    # ==================================================
+    # Submission History
+    # ==================================================
+
+    @staticmethod
+    def get_submission_history():
+        """
+        Return archived submission history records,
+        newest archived submission first.
+        """
+
+        return (
+            db.session.query(
+                SubmissionHistory,
+                Squad,
+            )
+            .join(
+                Squad,
+                SubmissionHistory.squad_id
+                == Squad.id,
+            )
+            .order_by(
+                SubmissionHistory.archived_at.desc()
+            )
+            .all()
+        )

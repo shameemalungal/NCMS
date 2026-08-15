@@ -109,6 +109,14 @@
 
         </a>
 
+        <a
+            href="{{ url_for('monitoring.submission_history') }}"
+            class="nav-link {% if request.endpoint == 'monitoring.submission_history' %}active{% endif %}"
+        >
+            <i class="bi bi-clock-history"></i>
+            <span>Submission History</span>
+        </a>
+
 
         <!-- Reports -->
 

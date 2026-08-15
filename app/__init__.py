@@ -103,6 +103,31 @@ def create_app():
     app.context_processor(
         inject_active_campaign
     )
+    # ======================================================
+    # Template Filters
+    # ======================================================
+
+    from datetime import timezone
+    from zoneinfo import ZoneInfo
+
+    @app.template_filter("ist_datetime")
+    def ist_datetime(value):
+        """
+        Convert a stored UTC datetime to Indian Standard Time
+        for display only.
+
+        Database values remain unchanged.
+        """
+        if not value:
+            return ""
+
+        if value.tzinfo is None:
+            # Database stores UTC as a naive datetime
+            value = value.replace(tzinfo=timezone.utc)
+
+        return value.astimezone(
+            ZoneInfo("Asia/Kolkata")
+        ).strftime("%d-%m-%Y %I:%M %p")
 
     # ======================================================
     # Return Application

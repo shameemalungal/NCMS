@@ -170,3 +170,25 @@ def allow_resubmission(squad_id):
             "monitoring.squads"
         )
     )
+# ==========================================================
+# Submission History
+# ==========================================================
+
+@monitoring_bp.route("/submission-history")
+@admin_required
+def submission_history():
+
+    history = (
+        ResubmissionService
+        .get_submission_history()
+    )
+
+    return render_template(
+        "monitoring/submission_history.html",
+        history=history,
+        page_title="Submission History",
+        page_subtitle=(
+            "Archived submissions from "
+            "re-submission workflow"
+        ),
+    )

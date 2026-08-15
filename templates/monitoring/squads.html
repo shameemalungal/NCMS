@@ -2,562 +2,894 @@
 
 {% block title %}Squad Monitoring - NCMS{% endblock %}
 
-
 {% block styles %}
 
 <style>
 
-    /* =====================================================
-       PAGE
-       ===================================================== */
+/* =====================================================
+   PAGE
+   ===================================================== */
 
-    .squad-monitor-page {
-        width: 100%;
-        padding-bottom: 40px;
+.squad-monitor-page {
+    width: 100%;
+    padding-bottom: 50px;
+}
+
+
+/* =====================================================
+   HERO
+   ===================================================== */
+
+.squad-monitor-hero {
+    background: linear-gradient(
+        135deg,
+        #087f4f 0%,
+        #11995f 100%
+    );
+
+    color: #ffffff;
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.07);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.squad-monitor-hero h2 {
+    margin: 0 0 5px 0;
+    color: #ffffff;
+    font-size: 1.35rem;
+    font-weight: 800;
+}
+
+.squad-monitor-hero p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 0.78rem;
+}
+
+.campaign-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 7px 12px;
+    border-radius: 999px;
+
+    border: 1px solid rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.12);
+
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+
+/* =====================================================
+   SUMMARY KPI CARDS
+   ===================================================== */
+
+.monitor-summary {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.summary-card {
+    background: #ffffff;
+    border: 1px solid #e4e9ef;
+    border-radius: 16px;
+
+    padding: 22px 16px 18px;
+
+    min-width: 0;
+    min-height: 205px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    text-align: center;
+
+    box-shadow:
+        0 6px 18px rgba(15, 23, 42, .05);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+}
+
+.summary-card:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 24px rgba(15, 23, 42, .08);
+
+    border-color: #d5ddd9;
+}
+
+.summary-icon {
+    width: 54px;
+    height: 54px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 15px;
+
+    border-radius: 50%;
+
+    background: #eaf8f0;
+    color: #0b9654;
+
+    font-size: 1.35rem;
+}
+
+.summary-label {
+    width: 100%;
+    margin-bottom: 8px;
+
+    color: #475467;
+
+    font-size: .72rem;
+    font-weight: 800;
+    line-height: 1.3;
+
+    text-transform: uppercase;
+    letter-spacing: .045em;
+
+    white-space: normal;
+}
+
+.summary-value {
+    width: 100%;
+
+    color: #087f4f;
+
+    font-size: 1.55rem;
+    font-weight: 800;
+    line-height: 1.15;
+
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.summary-separator {
+    width: 100%;
+    margin: 14px 0 11px;
+
+    border-top: 1px dashed #d9e1e7;
+}
+
+.summary-note {
+    width: 100%;
+    margin: 0;
+
+    color: #667085;
+
+    font-size: .72rem;
+    line-height: 1.45;
+
+    white-space: normal;
+}
+
+.summary-card.good {
+    border-color: #cce8d8;
+}
+
+.summary-card.attention {
+    border-color: #f1c6ca;
+    background: #fffdfd;
+}
+
+.summary-card.attention .summary-icon {
+    background: #fdecee;
+    color: #cf3040;
+}
+
+.summary-card.attention .summary-value {
+    color: #cf3040;
+}
+
+
+/* =====================================================
+   MAIN CARD
+   ===================================================== */
+
+.monitor-card {
+    background: #ffffff;
+
+    border: 1px solid #e4e7ec;
+    border-radius: 12px;
+
+    overflow: visible;
+
+    box-shadow:
+        0 4px 16px rgba(0,0,0,0.04);
+}
+
+.monitor-card-header {
+    padding: 15px 16px;
+    border-bottom: 1px solid #e7ebef;
+}
+
+.monitor-card-title {
+    color: #172033;
+    font-size: 0.92rem;
+    font-weight: 800;
+    margin-bottom: 2px;
+}
+
+.monitor-card-subtitle {
+    color: #667085;
+    font-size: 0.7rem;
+}
+
+
+/* =====================================================
+   FILTERS
+   ===================================================== */
+
+.filter-area {
+    padding: 12px 16px;
+
+    border-bottom: 1px solid #e7ebef;
+
+    background: #ffffff;
+}
+
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 7px;
+
+    margin-bottom: 10px;
+}
+
+.filter-btn {
+    border: 1px solid #d8dee5;
+
+    background: #ffffff;
+    color: #475467;
+
+    border-radius: 999px;
+
+    padding: 6px 11px;
+
+    font-size: 0.68rem;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition: 0.15s ease;
+}
+
+.filter-btn:hover {
+    background: #f8fafb;
+}
+
+.filter-btn.active {
+    background: #087f4f;
+    border-color: #087f4f;
+    color: #ffffff;
+}
+
+.filter-count {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 20px;
+    height: 20px;
+
+    margin-left: 4px;
+    padding: 0 5px;
+
+    border-radius: 999px;
+
+    background: #f2f4f7;
+    color: #475467;
+
+    font-size: 0.62rem;
+}
+
+.filter-btn.active .filter-count {
+    background: rgba(255,255,255,0.18);
+    color: #ffffff;
+}
+
+.search-row {
+    display: flex;
+    gap: 10px;
+}
+
+.monitor-search {
+    width: 100%;
+    max-width: 360px;
+
+    border: 1px solid #d8dee5;
+    border-radius: 8px;
+
+    padding: 8px 11px;
+
+    font-size: 0.74rem;
+    color: #344054;
+
+    outline: none;
+}
+
+.monitor-search:focus {
+    border-color: #087f4f;
+
+    box-shadow:
+        0 0 0 3px rgba(8,127,79,0.08);
+}
+
+
+/* =====================================================
+   TABLE CONTAINER
+   ===================================================== */
+
+.squad-table-scroll {
+    width: 100% !important;
+    max-width: 100% !important;
+
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+
+    display: block !important;
+
+    box-sizing: border-box !important;
+
+    /*
+       Extra space is provided at the bottom because the
+       permanent floating scrollbar sits over the page.
+    */
+    padding-bottom: 4px;
+}
+
+
+/* =====================================================
+   ACTUAL TABLE
+   ===================================================== */
+
+.squad-table {
+    width: max-content !important;
+
+    min-width: 1900px !important;
+    max-width: none !important;
+
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+.squad-table thead th {
+    background: #f8fafb;
+
+    color: #475467;
+
+    font-size: 0.64rem;
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    white-space: nowrap;
+
+    padding: 11px 10px;
+
+    border-bottom: 1px solid #e4e7ec;
+}
+
+.squad-table tbody td {
+    color: #344054;
+
+    font-size: 0.72rem;
+
+    padding: 11px 10px;
+
+    border-bottom: 1px solid #edf0f3;
+
+    vertical-align: middle;
+}
+
+.squad-table tbody tr:hover {
+    background: #fbfcfd;
+}
+
+.squad-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.squad-number {
+    color: #172033;
+    font-weight: 800;
+}
+
+.panchayath-name {
+    color: #172033;
+    font-weight: 700;
+}
+
+
+/* =====================================================
+   TABLE SCROLLBAR
+   ===================================================== */
+
+.squad-table-scroll::-webkit-scrollbar {
+    height: 14px;
+}
+
+.squad-table-scroll::-webkit-scrollbar-track {
+    background: #e5e7eb;
+}
+
+.squad-table-scroll::-webkit-scrollbar-thumb {
+    background: #087f4f;
+
+    border-radius: 8px;
+
+    border: 3px solid #e5e7eb;
+}
+
+.squad-table-scroll::-webkit-scrollbar-thumb:hover {
+    background: #065f3b;
+}
+
+
+/* =====================================================
+   PERMANENT FLOATING HORIZONTAL SCROLLBAR
+   ===================================================== */
+
+/*
+   The actual table keeps horizontal scrolling enabled,
+   but its native scrollbar is hidden.
+
+   The fixed scrollbar below is the only visible
+   horizontal scrollbar.
+*/
+
+.squad-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+
+    /* Hide native scrollbar in Firefox */
+    scrollbar-width: none;
+
+    /* Prevent the native scrollbar from taking space */
+    -ms-overflow-style: none;
+}
+
+
+/* Hide native scrollbar in Chrome / Edge / Safari */
+
+.squad-table-scroll::-webkit-scrollbar {
+    display: none;
+    height: 0;
+}
+
+
+/* =====================================================
+   FIXED FLOATING SCROLLBAR
+   ===================================================== */
+
+#ncms-floating-scrollbar {
+    position: fixed;
+
+    /*
+       Start after the left navigation sidebar.
+    */
+    left: 305px;
+    right: 12px;
+
+    /*
+       Keep it slightly above the very bottom so that
+       the page footer remains visible.
+    */
+    bottom: 34px;
+
+    height: 20px;
+
+    overflow-x: scroll;
+    overflow-y: hidden;
+
+    background: #ffffff;
+
+    border: 1px solid #bfc7d1;
+
+    border-radius: 6px;
+
+    box-sizing: border-box;
+
+    /*
+       Always stay above page content.
+    */
+    z-index: 999999;
+
+    display: block !important;
+
+    visibility: visible !important;
+
+    opacity: 1 !important;
+
+    /*
+       Small shadow makes the floating bar visually
+       separate from the page.
+    */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =====================================================
+   SCROLLBAR INNER WIDTH
+   ===================================================== */
+
+#ncms-floating-scrollbar-inner {
+    height: 1px;
+
+    /*
+       Must be at least as wide as the monitoring table.
+    */
+    width: 1900px;
+
+    min-width: 1900px;
+}
+
+
+/* =====================================================
+   FIREFOX
+   ===================================================== */
+
+#ncms-floating-scrollbar {
+    scrollbar-width: auto;
+}
+
+
+/* =====================================================
+   CHROME / EDGE
+   ===================================================== */
+
+#ncms-floating-scrollbar::-webkit-scrollbar {
+    height: 16px !important;
+
+    display: block !important;
+}
+
+#ncms-floating-scrollbar::-webkit-scrollbar-track {
+    background: #e5e7eb !important;
+
+    border-radius: 8px;
+}
+
+#ncms-floating-scrollbar::-webkit-scrollbar-thumb {
+    background: #087f4f !important;
+
+    border-radius: 8px;
+
+    border: 3px solid #e5e7eb;
+}
+
+#ncms-floating-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #065f3b !important;
+}
+
+
+/* =====================================================
+   RESPONSIVE POSITION
+   ===================================================== */
+
+@media (max-width: 1400px) {
+
+    #ncms-floating-scrollbar {
+        left: 305px;
+        right: 12px;
     }
 
+}
 
-    /* =====================================================
-       HERO
-       ===================================================== */
 
-    .squad-monitor-hero {
-        background: linear-gradient(
-            135deg,
-            #087f4f 0%,
-            #11995f 100%
-        );
-        color: #ffffff;
-        border-radius: 14px;
-        padding: 22px 24px;
-        margin-bottom: 18px;
-        box-shadow:
-            0 8px 24px rgba(0, 0, 0, 0.07);
+@media (max-width: 800px) {
 
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 20px;
+    #ncms-floating-scrollbar {
+        left: 8px;
+        right: 8px;
+        bottom: 12px;
     }
 
-    .squad-monitor-hero h2 {
-        margin: 0 0 5px 0;
-        color: #ffffff;
-        font-size: 1.35rem;
-        font-weight: 800;
+}
+
+
+@media (max-width: 600px) {
+
+    #ncms-floating-scrollbar {
+        left: 8px;
+        right: 8px;
+        bottom: 10px;
     }
 
-    .squad-monitor-hero p {
-        margin: 0;
-        opacity: 0.9;
-        font-size: 0.78rem;
-    }
-
-    .campaign-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 7px 12px;
-        border-radius: 999px;
-        border: 1px solid rgba(255,255,255,0.35);
-        background: rgba(255,255,255,0.12);
-        color: #ffffff;
-        font-size: 0.72rem;
-        font-weight: 800;
-        white-space: nowrap;
-    }
+}
 
 
-    /* =====================================================
-       SUMMARY KPI CARDS
-       ===================================================== */
+/* =====================================================
+   MEMBER DETAILS
+   ===================================================== */
+
+.member-list {
+    min-width: 180px;
+}
+
+.member-item {
+    margin-bottom: 4px;
+    line-height: 1.35;
+}
+
+.member-item:last-child {
+    margin-bottom: 0;
+}
+
+.member-name {
+    color: #344054;
+    font-weight: 700;
+}
+
+.member-office {
+    color: #98a2b3;
+    font-size: 0.63rem;
+}
+
+
+/* =====================================================
+   PERCENTAGES
+   ===================================================== */
+
+.percent-good {
+    color: #087f4f;
+    font-weight: 800;
+}
+
+.percent-low {
+    color: #d92d20;
+    font-weight: 800;
+}
+
+.percent-zero {
+    color: #98a2b3;
+    font-weight: 800;
+}
+
+
+/* =====================================================
+   STATUS BADGES
+   ===================================================== */
+
+.status-badge {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 999px;
+
+    padding: 5px 8px;
+
+    font-size: 0.61rem;
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+.status-submitted {
+    background: #e5f6ed;
+    color: #087f4f;
+}
+
+.status-pending {
+    background: #fff4db;
+    color: #a15c00;
+}
+
+.status-achieved {
+    background: #e5f6ed;
+    color: #087f4f;
+}
+
+.status-low {
+    background: #fde8ea;
+    color: #c92a3a;
+}
+
+
+/* =====================================================
+   REASONS
+   ===================================================== */
+
+.reason-text {
+    max-width: 230px;
+
+    white-space: normal;
+
+    line-height: 1.4;
+
+    color: #667085;
+
+    font-size: 0.67rem;
+}
+
+.reason-none {
+    color: #b0b7c3;
+}
+
+
+/* =====================================================
+   PASHUDHAN SHORTFALL
+   ===================================================== */
+
+.shortfall-badge {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 42px;
+
+    padding: 5px 9px;
+
+    border-radius: 999px;
+
+    font-size: .68rem;
+    font-weight: 800;
+
+    font-variant-numeric: tabular-nums;
+}
+
+.shortfall-pending {
+    background: #fde8ea;
+    color: #c92a3a;
+}
+
+.shortfall-clear {
+    background: #e5f6ed;
+    color: #087f4f;
+}
+
+
+/* =====================================================
+   EMPTY
+   ===================================================== */
+
+.empty-monitor {
+    text-align: center;
+
+    padding: 45px 20px;
+
+    color: #667085;
+}
+
+.empty-monitor i {
+    display: block;
+
+    color: #98a2b3;
+
+    font-size: 2rem;
+
+    margin-bottom: 10px;
+}
+
+.no-filter-results {
+    display: none;
+
+    text-align: center;
+
+    padding: 28px;
+
+    color: #667085;
+
+    font-size: 0.78rem;
+}
+
+
+/* =====================================================
+   ALLOW RE-SUBMISSION
+   ===================================================== */
+
+.allow-resubmission-btn {
+    border: 1px solid #b42318;
+
+    background: #ffffff;
+    color: #b42318;
+
+    border-radius: 7px;
+
+    padding: 6px 10px;
+
+    font-size: 0.66rem;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition: all 0.15s ease;
+}
+
+.allow-resubmission-btn:hover {
+    background: #b42318;
+    color: #ffffff;
+}
+
+.allow-resubmission-btn:active {
+    transform: translateY(1px);
+}
+
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 1400px) {
 
     .monitor-summary {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 14px;
-        margin-bottom: 20px;
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+}
+
+@media (max-width: 800px) {
+
+    .monitor-summary {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    #ncms-floating-scrollbar {
+        left: 0;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .squad-monitor-hero {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .monitor-summary {
+        grid-template-columns: 1fr;
     }
 
     .summary-card {
-        background: #ffffff;
-        border: 1px solid #e4e9ef;
-        border-radius: 16px;
-        padding: 22px 16px 18px;
-        min-width: 0;
-        min-height: 205px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        box-shadow: 0 6px 18px rgba(15, 23, 42, .05);
-        transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
-    }
-
-    .summary-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 24px rgba(15, 23, 42, .08);
-        border-color: #d5ddd9;
-    }
-
-    .summary-icon {
-        width: 54px;
-        height: 54px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 15px;
-        border-radius: 50%;
-        background: #eaf8f0;
-        color: #0b9654;
-        font-size: 1.35rem;
-    }
-
-    .summary-label {
-        width: 100%;
-        margin-bottom: 8px;
-        color: #475467;
-        font-size: .72rem;
-        font-weight: 800;
-        line-height: 1.3;
-        text-transform: uppercase;
-        letter-spacing: .045em;
-        white-space: normal;
-    }
-
-    .summary-value {
-        width: 100%;
-        color: #087f4f;
-        font-size: 1.55rem;
-        font-weight: 800;
-        line-height: 1.15;
-        font-variant-numeric: tabular-nums;
-        white-space: nowrap;
-    }
-
-    .summary-separator {
-        width: 100%;
-        margin: 14px 0 11px;
-        border-top: 1px dashed #d9e1e7;
-    }
-
-    .summary-note {
-        width: 100%;
-        margin: 0;
-        color: #667085;
-        font-size: .72rem;
-        line-height: 1.45;
-        white-space: normal;
-    }
-
-    .summary-card.good {
-        border-color: #cce8d8;
-    }
-
-    .summary-card.attention {
-        border-color: #f1c6ca;
-        background: #fffdfd;
-    }
-
-    .summary-card.attention .summary-icon {
-        background: #fdecee;
-        color: #cf3040;
-    }
-
-    .summary-card.attention .summary-value {
-        color: #cf3040;
-    }
-
-    /* =====================================================
-       MAIN CARD
-       ===================================================== */
-
-    .monitor-card {
-        background: #ffffff;
-        border: 1px solid #e4e7ec;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow:
-            0 4px 16px rgba(0,0,0,0.04);
-    }
-
-    .monitor-card-header {
-        padding: 15px 16px;
-        border-bottom: 1px solid #e7ebef;
-    }
-
-    .monitor-card-title {
-        color: #172033;
-        font-size: 0.92rem;
-        font-weight: 800;
-        margin-bottom: 2px;
-    }
-
-    .monitor-card-subtitle {
-        color: #667085;
-        font-size: 0.7rem;
-    }
-
-
-    /* =====================================================
-       FILTERS
-       ===================================================== */
-
-    .filter-area {
-        padding: 12px 16px;
-        border-bottom: 1px solid #e7ebef;
-        background: #ffffff;
-    }
-
-    .filter-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 7px;
-        margin-bottom: 10px;
-    }
-
-    .filter-btn {
-        border: 1px solid #d8dee5;
-        background: #ffffff;
-        color: #475467;
-        border-radius: 999px;
-        padding: 6px 11px;
-        font-size: 0.68rem;
-        font-weight: 800;
-        cursor: pointer;
-        transition: 0.15s ease;
-    }
-
-    .filter-btn:hover {
-        background: #f8fafb;
-    }
-
-    .filter-btn.active {
-        background: #087f4f;
-        border-color: #087f4f;
-        color: #ffffff;
-    }
-
-    .filter-count {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 20px;
-        height: 20px;
-        margin-left: 4px;
-        padding: 0 5px;
-        border-radius: 999px;
-        background: #f2f4f7;
-        color: #475467;
-        font-size: 0.62rem;
-    }
-
-    .filter-btn.active .filter-count {
-        background: rgba(255,255,255,0.18);
-        color: #ffffff;
+        min-height: auto;
+        padding: 20px;
     }
 
     .search-row {
-        display: flex;
-        gap: 10px;
+        display: block;
     }
 
     .monitor-search {
-        width: 100%;
-        max-width: 360px;
-        border: 1px solid #d8dee5;
-        border-radius: 8px;
-        padding: 8px 11px;
-        font-size: 0.74rem;
-        color: #344054;
-        outline: none;
+        max-width: none;
     }
 
-    .monitor-search:focus {
-        border-color: #087f4f;
-        box-shadow:
-            0 0 0 3px rgba(8,127,79,0.08);
+    #ncms-floating-scrollbar {
+        left: 0;
+        right: 0;
     }
 
-
-    /* =====================================================
-       TABLE
-       ===================================================== */
-
-    .table-responsive {
-        width: 100%;
-        overflow-x: auto;
-    }
-
-    .squad-table {
-        width: 100%;
-        min-width: 1480px;
-        border-collapse: collapse;
-    }
-
-    .squad-table thead th {
-        background: #f8fafb;
-        color: #475467;
-        font-size: 0.64rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        white-space: nowrap;
-        padding: 11px 10px;
-        border-bottom: 1px solid #e4e7ec;
-    }
-
-    .squad-table tbody td {
-        color: #344054;
-        font-size: 0.72rem;
-        padding: 11px 10px;
-        border-bottom: 1px solid #edf0f3;
-        vertical-align: middle;
-    }
-
-    .squad-table tbody tr:hover {
-        background: #fbfcfd;
-    }
-
-    .squad-table tbody tr:last-child td {
-        border-bottom: 0;
-    }
-
-    .squad-number {
-        color: #172033;
-        font-weight: 800;
-    }
-
-    .panchayath-name {
-        color: #172033;
-        font-weight: 700;
-    }
-
-
-    /* =====================================================
-       MEMBER DETAILS
-       ===================================================== */
-
-    .member-list {
-        min-width: 180px;
-    }
-
-    .member-item {
-        margin-bottom: 4px;
-        line-height: 1.35;
-    }
-
-    .member-item:last-child {
-        margin-bottom: 0;
-    }
-
-    .member-name {
-        color: #344054;
-        font-weight: 700;
-    }
-
-    .member-office {
-        color: #98a2b3;
-        font-size: 0.63rem;
-    }
-
-
-    /* =====================================================
-       PERCENTAGES
-       ===================================================== */
-
-    .percent-good {
-        color: #087f4f;
-        font-weight: 800;
-    }
-
-    .percent-low {
-        color: #d92d20;
-        font-weight: 800;
-    }
-
-    .percent-zero {
-        color: #98a2b3;
-        font-weight: 800;
-    }
-
-
-    /* =====================================================
-       STATUS BADGES
-       ===================================================== */
-
-    .status-badge {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 999px;
-        padding: 5px 8px;
-        font-size: 0.61rem;
-        font-weight: 800;
-        white-space: nowrap;
-    }
-
-    .status-submitted {
-        background: #e5f6ed;
-        color: #087f4f;
-    }
-
-    .status-pending {
-        background: #fff4db;
-        color: #a15c00;
-    }
-
-    .status-achieved {
-        background: #e5f6ed;
-        color: #087f4f;
-    }
-
-    .status-low {
-        background: #fde8ea;
-        color: #c92a3a;
-    }
-
-
-    /* =====================================================
-       REASONS
-       ===================================================== */
-
-    .reason-text {
-        max-width: 230px;
-        white-space: normal;
-        line-height: 1.4;
-        color: #667085;
-        font-size: 0.67rem;
-    }
-
-    .reason-none {
-        color: #b0b7c3;
-    }
-
-
-    /* =====================================================
-       PASHUDHAN SHORTFALL
-       ===================================================== */
-
-    .shortfall-badge {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 42px;
-        padding: 5px 9px;
-        border-radius: 999px;
-        font-size: .68rem;
-        font-weight: 800;
-        font-variant-numeric: tabular-nums;
-    }
-
-    .shortfall-pending {
-        background: #fde8ea;
-        color: #c92a3a;
-    }
-
-    .shortfall-clear {
-        background: #e5f6ed;
-        color: #087f4f;
-    }
-
-
-    /* =====================================================
-       EMPTY
-       ===================================================== */
-
-    .empty-monitor {
-        text-align: center;
-        padding: 45px 20px;
-        color: #667085;
-    }
-
-    .empty-monitor i {
-        display: block;
-        color: #98a2b3;
-        font-size: 2rem;
-        margin-bottom: 10px;
-    }
-
-    .no-filter-results {
-        display: none;
-        text-align: center;
-        padding: 28px;
-        color: #667085;
-        font-size: 0.78rem;
-    }
-
-
-    /* =====================================================
-       RESPONSIVE
-       ===================================================== */
-
-    @media (max-width: 1400px) {
-
-        .monitor-summary {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-        }
-
-    }
-
-    @media (max-width: 800px) {
-
-        .monitor-summary {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-    }
-
-    @media (max-width: 600px) {
-
-        .squad-monitor-hero {
-            align-items: flex-start;
-            flex-direction: column;
-        }
-
-        .monitor-summary {
-            grid-template-columns: 1fr;
-        }
-
-        .summary-card {
-            min-height: auto;
-            padding: 20px;
-        }
-
-        .search-row {
-            display: block;
-        }
-
-        .monitor-search {
-            max-width: none;
-        }
-
-    }
-
-    /* =====================================================
-    ALLOW RE-SUBMISSION
-    ===================================================== */
-
-    .allow-resubmission-btn {
-        border: 1px solid #b42318;
-        background: #ffffff;
-        color: #b42318;
-        border-radius: 7px;
-        padding: 6px 10px;
-        font-size: 0.66rem;
-        font-weight: 800;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: all 0.15s ease;
-    }
-
-    .allow-resubmission-btn:hover {
-        background: #b42318;
-        color: #ffffff;
-    }
-
-    .allow-resubmission-btn:active {
-        transform: translateY(1px);
-    }
+}
 
 </style>
 
@@ -635,39 +967,65 @@
                 )
             %}
 
+
             {% set vacc_pct =
                 item.squad.vaccination_percentage
                 |default(0, true)
             %}
+
 
             {% set pash_pct =
                 item.squad.pashudhan_percentage
                 |default(0, true)
             %}
 
+
             {% if vacc_pct >= 83 %}
-                {% set ns.vacc_achieved = ns.vacc_achieved + 1 %}
+
+                {% set ns.vacc_achieved =
+                    ns.vacc_achieved + 1 %}
+
             {% else %}
-                {% set ns.low_vacc = ns.low_vacc + 1 %}
+
+                {% set ns.low_vacc =
+                    ns.low_vacc + 1 %}
+
             {% endif %}
+
 
             {% if pash_pct >= 97 %}
-                {% set ns.pash_achieved = ns.pash_achieved + 1 %}
+
+                {% set ns.pash_achieved =
+                    ns.pash_achieved + 1 %}
+
             {% else %}
-                {% set ns.low_pash = ns.low_pash + 1 %}
+
+                {% set ns.low_pash =
+                    ns.low_pash + 1 %}
+
             {% endif %}
+
 
             {% if vacc_pct >= 83 and pash_pct >= 97 %}
-                {% set ns.both_achieved = ns.both_achieved + 1 %}
+
+                {% set ns.both_achieved =
+                    ns.both_achieved + 1 %}
+
             {% endif %}
 
+
             {% if vacc_pct < 83 and pash_pct < 97 %}
-                {% set ns.low_both = ns.low_both + 1 %}
+
+                {% set ns.low_both =
+                    ns.low_both + 1 %}
+
             {% endif %}
+
 
         {% else %}
 
-            {% set ns.pending = ns.pending + 1 %}
+            {% set ns.pending =
+                ns.pending + 1 %}
 
         {% endif %}
 
@@ -675,6 +1033,9 @@
 
 
     <div class="monitor-summary">
+
+
+        <!-- TOTAL -->
 
         <div class="summary-card">
 
@@ -699,6 +1060,8 @@
         </div>
 
 
+        <!-- SUBMITTED -->
+
         <div class="summary-card good">
 
             <div class="summary-icon">
@@ -722,7 +1085,16 @@
         </div>
 
 
-        <div class="summary-card {% if ns.pending > 0 %}attention{% else %}good{% endif %}">
+        <!-- PENDING -->
+
+        <div class="
+            summary-card
+            {% if ns.pending > 0 %}
+                attention
+            {% else %}
+                good
+            {% endif %}
+        ">
 
             <div class="summary-icon">
                 <i class="bi bi-hourglass-split"></i>
@@ -744,6 +1116,8 @@
 
         </div>
 
+
+        <!-- BOTH ACHIEVED -->
 
         <div class="summary-card good">
 
@@ -768,14 +1142,27 @@
         </div>
 
 
-        <div class="summary-card {% if ns.pashudhan_shortfall > 0 %}attention{% else %}good{% endif %}">
+        <!-- SHORTFALL -->
+
+        <div class="
+            summary-card
+            {% if ns.pashudhan_shortfall > 0 %}
+                attention
+            {% else %}
+                good
+            {% endif %}
+        ">
 
             <div class="summary-icon">
 
                 {% if ns.pashudhan_shortfall > 0 %}
+
                     <i class="bi bi-exclamation-triangle"></i>
+
                 {% else %}
+
                     <i class="bi bi-check2-circle"></i>
+
                 {% endif %}
 
             </div>
@@ -793,9 +1180,13 @@
             <div class="summary-note">
 
                 {% if ns.pashudhan_shortfall > 0 %}
+
                     Pashudhan entries pending
+
                 {% else %}
+
                     No Pashudhan entry shortfall
+
                 {% endif %}
 
             </div>
@@ -811,6 +1202,7 @@
 
     <section class="monitor-card">
 
+
         <div class="monitor-card-header">
 
             <div class="monitor-card-title">
@@ -824,23 +1216,27 @@
         </div>
 
 
-        <!-- ==============================================
+        <!-- ==================================================
              FILTERS
-             ============================================== -->
+             ================================================== -->
 
         <div class="filter-area">
 
             <div class="filter-buttons">
+
 
                 <button
                     type="button"
                     class="filter-btn active"
                     data-filter="all"
                 >
+
                     All
+
                     <span class="filter-count">
                         {{ squad_rows|length }}
                     </span>
+
                 </button>
 
 
@@ -849,10 +1245,13 @@
                     class="filter-btn"
                     data-filter="submitted"
                 >
+
                     Submitted
+
                     <span class="filter-count">
                         {{ ns.submitted }}
                     </span>
+
                 </button>
 
 
@@ -861,10 +1260,13 @@
                     class="filter-btn"
                     data-filter="pending"
                 >
+
                     Pending
+
                     <span class="filter-count">
                         {{ ns.pending }}
                     </span>
+
                 </button>
 
 
@@ -873,10 +1275,13 @@
                     class="filter-btn"
                     data-filter="vaccination-achieved"
                 >
+
                     Vaccination Target Achieved
+
                     <span class="filter-count">
                         {{ ns.vacc_achieved }}
                     </span>
+
                 </button>
 
 
@@ -885,10 +1290,13 @@
                     class="filter-btn"
                     data-filter="pashudhan-achieved"
                 >
+
                     Pashudhan Target Achieved
+
                     <span class="filter-count">
                         {{ ns.pash_achieved }}
                     </span>
+
                 </button>
 
 
@@ -897,10 +1305,13 @@
                     class="filter-btn"
                     data-filter="both-achieved"
                 >
+
                     Both Achieved
+
                     <span class="filter-count">
                         {{ ns.both_achieved }}
                     </span>
+
                 </button>
 
 
@@ -909,10 +1320,13 @@
                     class="filter-btn"
                     data-filter="low-vaccination"
                 >
+
                     Low Vaccination
+
                     <span class="filter-count">
                         {{ ns.low_vacc }}
                     </span>
+
                 </button>
 
 
@@ -921,10 +1335,13 @@
                     class="filter-btn"
                     data-filter="low-pashudhan"
                 >
+
                     Low Pashudhan
+
                     <span class="filter-count">
                         {{ ns.low_pash }}
                     </span>
+
                 </button>
 
 
@@ -933,10 +1350,13 @@
                     class="filter-btn"
                     data-filter="low-both"
                 >
+
                     Low Both
+
                     <span class="filter-count">
                         {{ ns.low_both }}
                     </span>
+
                 </button>
 
             </div>
@@ -956,13 +1376,16 @@
         </div>
 
 
-        <!-- ==============================================
+        <!-- ==================================================
              TABLE
-             ============================================== -->
+             ================================================== -->
 
         {% if squad_rows %}
 
-            <div class="table-responsive">
+            <div
+                id="squadTableWrapper"
+                class="squad-table-scroll"
+            >
 
                 <table class="squad-table">
 
@@ -1011,9 +1434,11 @@
 
                     <tbody id="squadTableBody">
 
+
                         {% for item in squad_rows %}
 
                             {% set squad = item.squad %}
+
 
                             {% if item.submitted %}
 
@@ -1073,10 +1498,15 @@
                                 }}"
                             >
 
+
+                                <!-- SL -->
+
                                 <td>
                                     {{ loop.index }}
                                 </td>
 
+
+                                <!-- SQUAD -->
 
                                 <td class="squad-number">
 
@@ -1089,6 +1519,8 @@
                                 </td>
 
 
+                                <!-- PANCHAYATH -->
+
                                 <td class="panchayath-name">
 
                                     {{
@@ -1097,6 +1529,8 @@
 
                                 </td>
 
+
+                                <!-- MEMBERS -->
 
                                 <td>
 
@@ -1109,28 +1543,36 @@
                                                 <div class="member-item">
 
                                                     <div class="member-name">
+
                                                         {{
                                                             member.member_name
                                                         }}
+
                                                     </div>
+
 
                                                     {% if member.office %}
 
                                                         <div class="member-office">
+
                                                             {{
                                                                 member.office
                                                             }}
+
                                                         </div>
 
                                                     {% endif %}
 
+
                                                     {% if member.pashudhan_id %}
 
                                                         <div class="member-office">
+
                                                             ID:
                                                             {{
                                                                 member.pashudhan_id
                                                             }}
+
                                                         </div>
 
                                                     {% endif %}
@@ -1152,6 +1594,8 @@
                                 </td>
 
 
+                                <!-- DAYS ALLOTTED -->
+
                                 <td>
 
                                     {{
@@ -1163,6 +1607,8 @@
 
                                 </td>
 
+
+                                <!-- TARGET -->
 
                                 <td>
 
@@ -1177,6 +1623,8 @@
                                 {% if item.submitted %}
 
 
+                                    <!-- VACCINATED -->
+
                                     <td>
 
                                         {{
@@ -1187,24 +1635,30 @@
                                     </td>
 
 
+                                    <!-- VACCINATION % -->
+
                                     <td>
 
                                         {% if vacc_pct >= 83 %}
 
                                             <span class="percent-good">
+
                                                 {{
                                                     vacc_pct
                                                     |round(1)
                                                 }}%
+
                                             </span>
 
                                         {% elif vacc_pct > 0 %}
 
                                             <span class="percent-low">
+
                                                 {{
                                                     vacc_pct
                                                     |round(1)
                                                 }}%
+
                                             </span>
 
                                         {% else %}
@@ -1217,6 +1671,8 @@
 
                                     </td>
 
+
+                                    <!-- PASHUDHAN -->
 
                                     <td>
 
@@ -1228,24 +1684,30 @@
                                     </td>
 
 
+                                    <!-- PASHUDHAN % -->
+
                                     <td>
 
                                         {% if pash_pct >= 97 %}
 
                                             <span class="percent-good">
+
                                                 {{
                                                     pash_pct
                                                     |round(1)
                                                 }}%
+
                                             </span>
 
                                         {% elif pash_pct > 0 %}
 
                                             <span class="percent-low">
+
                                                 {{
                                                     pash_pct
                                                     |round(1)
                                                 }}%
+
                                             </span>
 
                                         {% else %}
@@ -1259,6 +1721,8 @@
                                     </td>
 
 
+                                    <!-- SHORTFALL -->
+
                                     <td>
 
                                         {% set shortfall =
@@ -1266,19 +1730,30 @@
                                             |default(0, true)
                                         %}
 
+
                                         {% if shortfall > 0 %}
 
                                             <span
-                                                class="shortfall-badge shortfall-pending"
+                                                class="
+                                                    shortfall-badge
+                                                    shortfall-pending
+                                                "
                                                 title="Pashudhan entries pending"
                                             >
-                                                {{ "{:,}".format(shortfall) }}
+
+                                                {{
+                                                    "{:,}".format(shortfall)
+                                                }}
+
                                             </span>
 
                                         {% else %}
 
                                             <span
-                                                class="shortfall-badge shortfall-clear"
+                                                class="
+                                                    shortfall-badge
+                                                    shortfall-clear
+                                                "
                                                 title="No Pashudhan entry shortfall"
                                             >
                                                 0
@@ -1289,6 +1764,8 @@
                                     </td>
 
 
+                                    <!-- DAYS WORKED -->
+
                                     <td>
 
                                         {{
@@ -1298,6 +1775,8 @@
 
                                     </td>
 
+
+                                    <!-- STATUS -->
 
                                     <td>
 
@@ -1312,6 +1791,8 @@
 
                                     </td>
 
+
+                                    <!-- REFERENCE -->
 
                                     <td>
 
@@ -1331,6 +1812,8 @@
 
                                     </td>
 
+
+                                    <!-- LOW VACCINATION REASON -->
 
                                     <td>
 
@@ -1358,6 +1841,8 @@
 
                                     </td>
 
+
+                                    <!-- LOW PASHUDHAN REASON -->
 
                                     <td>
 
@@ -1389,12 +1874,7 @@
                                 {% else %}
 
 
-                                    <td>
-                                        <span class="reason-none">
-                                            -
-                                        </span>
-                                    </td>
-
+                                    <!-- PENDING DATA -->
 
                                     <td>
                                         <span class="reason-none">
@@ -1402,6 +1882,11 @@
                                         </span>
                                     </td>
 
+                                    <td>
+                                        <span class="reason-none">
+                                            -
+                                        </span>
+                                    </td>
 
                                     <td>
                                         <span class="reason-none">
@@ -1409,6 +1894,11 @@
                                         </span>
                                     </td>
 
+                                    <td>
+                                        <span class="reason-none">
+                                            -
+                                        </span>
+                                    </td>
 
                                     <td>
                                         <span class="reason-none">
@@ -1416,20 +1906,17 @@
                                         </span>
                                     </td>
 
-
                                     <td>
                                         <span class="reason-none">
                                             -
                                         </span>
                                     </td>
 
-
                                     <td>
                                         <span class="reason-none">
                                             -
                                         </span>
                                     </td>
-
 
                                     <td>
 
@@ -1444,20 +1931,17 @@
 
                                     </td>
 
-
                                     <td>
                                         <span class="reason-none">
                                             -
                                         </span>
                                     </td>
 
-
                                     <td>
                                         <span class="reason-none">
                                             -
                                         </span>
                                     </td>
-
 
                                     <td>
                                         <span class="reason-none">
@@ -1467,6 +1951,10 @@
 
 
                                 {% endif %}
+
+
+                                <!-- ACTION -->
+
                                 <td>
 
                                     {% if item.submitted %}
@@ -1475,13 +1963,13 @@
                                             method="POST"
                                             action="{{ url_for(
                                                 'monitoring.allow_resubmission',
-                                                squad_id=squad.id
+                                                squad_id=squad.squad_id
                                             ) }}"
                                             onsubmit="return confirm(
                                                 'Allow re-submission for this squad? The existing submission will be archived and removed from live data.'
                                             );"
                                         >
-
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                             <button
                                                 type="submit"
                                                 class="allow-resubmission-btn"
@@ -1546,12 +2034,244 @@
 
         {% endif %}
 
+
     </section>
 
 </div>
 
 
+<!-- =====================================================
+     FLOATING SCROLLBAR
+     Created outside the table so it remains fixed while
+     scrolling vertically through the 173 squads.
+     ===================================================== -->
+
 <script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const tableWrapper =
+            document.getElementById(
+                "squadTableWrapper"
+            );
+
+        const table =
+            document.querySelector(
+                "#squadTableWrapper .squad-table"
+            );
+
+
+        if (!tableWrapper || !table) {
+            return;
+        }
+
+
+        /*
+         * -------------------------------------------------
+         * CREATE FLOATING SCROLLBAR
+         * -------------------------------------------------
+         */
+
+        const floatingBar =
+            document.createElement("div");
+
+        floatingBar.id =
+            "ncms-floating-scrollbar";
+
+
+        const floatingInner =
+            document.createElement("div");
+
+        floatingInner.id =
+            "ncms-floating-scrollbar-inner";
+
+
+        floatingBar.appendChild(
+            floatingInner
+        );
+
+
+        document.body.appendChild(
+            floatingBar
+        );
+
+
+        /*
+         * -------------------------------------------------
+         * UPDATE FLOATING BAR WIDTH
+         * -------------------------------------------------
+         */
+
+        function updateScrollbar() {
+
+            const tableWidth =
+                Math.max(
+                    table.scrollWidth,
+                    table.offsetWidth,
+                    1900
+                );
+
+
+            floatingInner.style.width =
+                tableWidth + "px";
+
+
+            /*
+             * Keep floating scrollbar at same
+             * horizontal position as table.
+             */
+
+            if (
+                Math.abs(
+                    floatingBar.scrollLeft -
+                    tableWrapper.scrollLeft
+                ) > 1
+            ) {
+
+                floatingBar.scrollLeft =
+                    tableWrapper.scrollLeft;
+
+            }
+
+        }
+
+
+        /*
+         * -------------------------------------------------
+         * SYNCHRONIZATION FLAGS
+         * -------------------------------------------------
+         */
+
+        let syncingFromFloating = false;
+
+        let syncingFromTable = false;
+
+
+        /*
+         * -------------------------------------------------
+         * FLOATING BAR -> TABLE
+         * -------------------------------------------------
+         */
+
+        floatingBar.addEventListener(
+            "scroll",
+            function () {
+
+                if (syncingFromTable) {
+                    return;
+                }
+
+
+                syncingFromFloating = true;
+
+
+                tableWrapper.scrollLeft =
+                    floatingBar.scrollLeft;
+
+
+                syncingFromFloating = false;
+
+            }
+        );
+
+
+        /*
+         * -------------------------------------------------
+         * TABLE -> FLOATING BAR
+         * -------------------------------------------------
+         */
+
+        tableWrapper.addEventListener(
+            "scroll",
+            function () {
+
+                if (syncingFromFloating) {
+                    return;
+                }
+
+
+                syncingFromTable = true;
+
+
+                floatingBar.scrollLeft =
+                    tableWrapper.scrollLeft;
+
+
+                syncingFromTable = false;
+
+            }
+        );
+
+
+        /*
+         * -------------------------------------------------
+         * INITIALIZE
+         * -------------------------------------------------
+         */
+
+        updateScrollbar();
+
+
+        /*
+         * -------------------------------------------------
+         * WINDOW RESIZE
+         * -------------------------------------------------
+         */
+
+        window.addEventListener(
+            "resize",
+            updateScrollbar
+        );
+
+
+        /*
+         * -------------------------------------------------
+         * TABLE SIZE CHANGES
+         * -------------------------------------------------
+         */
+
+        if (window.ResizeObserver) {
+
+            const resizeObserver =
+                new ResizeObserver(
+                    function () {
+                        updateScrollbar();
+                    }
+                );
+
+
+            resizeObserver.observe(
+                table
+            );
+
+        }
+
+
+        /*
+         * -------------------------------------------------
+         * FORCE INITIAL UPDATE
+         * -------------------------------------------------
+         */
+
+        setTimeout(
+            updateScrollbar,
+            100
+        );
+
+        setTimeout(
+            updateScrollbar,
+            500
+        );
+
+    }
+);
+
+
+/* =====================================================
+   FILTER + SEARCH
+   ===================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -1564,6 +2284,7 @@ document.addEventListener(
                 )
             );
 
+
         const filterButtons =
             Array.from(
                 document.querySelectorAll(
@@ -1571,15 +2292,18 @@ document.addEventListener(
                 )
             );
 
+
         const searchInput =
             document.getElementById(
                 "squadSearch"
             );
 
+
         const noResults =
             document.getElementById(
                 "noFilterResults"
             );
+
 
         let activeFilter = "all";
 
@@ -1592,14 +2316,18 @@ document.addEventListener(
             const submitted =
                 row.dataset.submitted === "true";
 
+
             const vaccAchieved =
                 row.dataset.vaccAchieved === "true";
+
 
             const pashAchieved =
                 row.dataset.pashAchieved === "true";
 
+
             const lowVacc =
                 row.dataset.lowVacc === "true";
+
 
             const lowPash =
                 row.dataset.lowPash === "true";
@@ -1608,44 +2336,67 @@ document.addEventListener(
             switch (filter) {
 
                 case "submitted":
+
                     return submitted;
 
+
                 case "pending":
+
                     return !submitted;
 
+
                 case "vaccination-achieved":
-                    return submitted && vaccAchieved;
+
+                    return (
+                        submitted &&
+                        vaccAchieved
+                    );
+
 
                 case "pashudhan-achieved":
-                    return submitted && pashAchieved;
+
+                    return (
+                        submitted &&
+                        pashAchieved
+                    );
+
 
                 case "both-achieved":
+
                     return (
-                        submitted
-                        && vaccAchieved
-                        && pashAchieved
+                        submitted &&
+                        vaccAchieved &&
+                        pashAchieved
                     );
+
 
                 case "low-vaccination":
+
                     return (
-                        submitted
-                        && lowVacc
+                        submitted &&
+                        lowVacc
                     );
+
 
                 case "low-pashudhan":
+
                     return (
-                        submitted
-                        && lowPash
+                        submitted &&
+                        lowPash
                     );
+
 
                 case "low-both":
+
                     return (
-                        submitted
-                        && lowVacc
-                        && lowPash
+                        submitted &&
+                        lowVacc &&
+                        lowPash
                     );
 
+
                 default:
+
                     return true;
 
             }
@@ -1664,6 +2415,7 @@ document.addEventListener(
                 .trim()
                 .toLowerCase();
 
+
             let visibleCount = 0;
 
 
@@ -1676,28 +2428,33 @@ document.addEventListener(
                             activeFilter
                         );
 
+
                     const rowText =
                         row.textContent
                         .toLowerCase();
 
+
                     const matchesSearch =
                         (
-                            !searchTerm
-                            || rowText.includes(
+                            !searchTerm ||
+                            rowText.includes(
                                 searchTerm
                             )
                         );
 
+
                     const visible =
                         (
-                            matchesFilter
-                            && matchesSearch
+                            matchesFilter &&
+                            matchesSearch
                         );
+
 
                     row.style.display =
                         visible
                         ? ""
                         : "none";
+
 
                     if (visible) {
                         visibleCount += 1;
@@ -1726,20 +2483,26 @@ document.addEventListener(
                     "click",
                     function () {
 
+
                         filterButtons.forEach(
                             function (item) {
+
                                 item.classList.remove(
                                     "active"
                                 );
+
                             }
                         );
+
 
                         button.classList.add(
                             "active"
                         );
 
+
                         activeFilter =
                             button.dataset.filter;
+
 
                         applyFilters();
 
