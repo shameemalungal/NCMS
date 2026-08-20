@@ -33,3 +33,4 @@ from app.auth.models import (  # noqa: E402,F401
 # ==========================================================
 
 from app.auth import routes  # noqa: E402,F401
+from app.auth import user_management  # noqa: E402,F401

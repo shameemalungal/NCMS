@@ -8,7 +8,10 @@ from flask import (
 )
 
 from app.auth import auth_bp
-from app.auth.decorators import get_current_user
+from app.auth.decorators import (
+    get_current_user,
+    login_required,
+)
 from app.auth.models import User
 from app.extensions import db
 from app.utils.audit import log_audit
@@ -155,7 +158,151 @@ def login():
         page_title="Administrator Login",
     )
 
+# ==========================================================
+# Change Password
+# ==========================================================
 
+@auth_bp.route(
+    "/change-password",
+    methods=["GET", "POST"],
+)
+@login_required
+def change_password():
+
+    user = get_current_user()
+
+    if user is None:
+        return redirect(
+            url_for("auth.login")
+        )
+
+    # ------------------------------------------------------
+    # Password Change Submission
+    # ------------------------------------------------------
+
+    if request.method == "POST":
+
+        current_password = request.form.get(
+            "current_password",
+            "",
+        )
+
+        new_password = request.form.get(
+            "new_password",
+            "",
+        )
+
+        confirm_password = request.form.get(
+            "confirm_password",
+            "",
+        )
+
+        # --------------------------------------------------
+        # Verify current password
+        # --------------------------------------------------
+
+        if not user.check_password(
+            current_password
+        ):
+
+            flash(
+                "Current password is incorrect.",
+                "danger",
+            )
+
+            return render_template(
+                "auth/change_password.html",
+                page_title="Change Password",
+            )
+
+        # --------------------------------------------------
+        # Validate password length
+        # --------------------------------------------------
+
+        if len(new_password) < 8:
+
+            flash(
+                "New password must be at least 8 characters.",
+                "danger",
+            )
+
+            return render_template(
+                "auth/change_password.html",
+                page_title="Change Password",
+            )
+
+        # --------------------------------------------------
+        # Confirm password
+        # --------------------------------------------------
+
+        if new_password != confirm_password:
+
+            flash(
+                "New passwords do not match.",
+                "danger",
+            )
+
+            return render_template(
+                "auth/change_password.html",
+                page_title="Change Password",
+            )
+
+        # --------------------------------------------------
+        # Prevent reuse of current password
+        # --------------------------------------------------
+
+        if user.check_password(new_password):
+
+            flash(
+                "New password must be different from "
+                "the current password.",
+                "danger",
+            )
+
+            return render_template(
+                "auth/change_password.html",
+                page_title="Change Password",
+            )
+
+        # --------------------------------------------------
+        # Set new password
+        # --------------------------------------------------
+
+        user.set_password(new_password)
+
+        user.must_change_password = False
+
+        db.session.commit()
+
+        # --------------------------------------------------
+        # Audit
+        # --------------------------------------------------
+
+        log_audit(
+            username=user.username,
+            module="Authentication",
+            action="Password Changed",
+        )
+
+        flash(
+            "Your password has been changed successfully.",
+            "success",
+        )
+
+        return redirect(
+            url_for(
+                "dashboard.index"
+            )
+        )
+
+    # ------------------------------------------------------
+    # Change Password Screen
+    # ------------------------------------------------------
+
+    return render_template(
+        "auth/change_password.html",
+        page_title="Change Password",
+    )
 # ==========================================================
 # User Logout
 # ==========================================================
