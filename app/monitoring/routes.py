@@ -10,7 +10,10 @@ from flask import (
 from app.services.monitoring_service import MonitoringService
 from app.services.resubmission_service import ResubmissionService
 
-from app.auth.decorators import admin_required
+from app.auth.decorators import (
+    require_permission,
+    get_current_user,
+)
 
 
 # ==========================================================
@@ -29,7 +32,7 @@ monitoring_bp = Blueprint(
 # ==========================================================
 
 @monitoring_bp.route("/")
-@admin_required
+@require_permission("monitoring.view")
 def index():
 
     data = MonitoringService.get_dashboard()
@@ -49,7 +52,7 @@ def index():
 # ==========================================================
 
 @monitoring_bp.route("/squads")
-@admin_required
+@require_permission("monitoring.squads.view")
 def squads():
 
     data = MonitoringService.get_dashboard()
@@ -134,14 +137,15 @@ def squads():
     "/squads/<int:squad_id>/allow-resubmission",
     methods=["POST"],
 )
-@admin_required
+@require_permission("monitoring.resubmission")
 def allow_resubmission(squad_id):
 
+    user = get_current_user()
+
     username = (
-        session.get("admin_username")
-        or session.get("username")
-        or session.get("user")
-        or "Administrator"
+        user.username
+        if user
+        else "Administrator"
     )
 
     result = (
@@ -175,7 +179,7 @@ def allow_resubmission(squad_id):
 # ==========================================================
 
 @monitoring_bp.route("/submission-history")
-@admin_required
+@require_permission("monitoring.history.view")
 def submission_history():
 
     history = (

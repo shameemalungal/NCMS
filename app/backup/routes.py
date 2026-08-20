@@ -5,7 +5,10 @@ import pandas as pd
 from flask import send_file, session
 
 from app.backup import backup_bp
-from app.auth.decorators import admin_required
+from app.auth.decorators import (
+    require_permission,
+    get_current_user,
+)
 from app.extensions import db
 from app.models import (
     AuditLog,
@@ -21,7 +24,7 @@ from app.utils.audit import log_audit
 
 
 @backup_bp.route("/download")
-@admin_required
+@require_permission("backup.download")
 def download_backup():
 
     output = BytesIO()
@@ -182,12 +185,17 @@ def download_backup():
 
     filename = "NCMS_Backup.xlsx"
 
+    user = get_current_user()
+
+    username = (
+        user.username
+        if user
+        else "Admin"
+    )
+
     history = BackupHistory(
         filename=filename,
-        created_by=session.get(
-            "admin_username",
-            "Admin",
-        ),
+        created_by=username,
     )
 
     try:
@@ -197,10 +205,7 @@ def download_backup():
         db.session.rollback()
 
     log_audit(
-        username=session.get(
-            "admin_username",
-            "Admin"
-        ),
+        username=username,
         module="Backup",
         action="Downloaded NCMS backup"
     )

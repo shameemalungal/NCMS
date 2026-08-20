@@ -1,7 +1,4 @@
-from hmac import compare_digest
-
 from flask import (
-    current_app,
     flash,
     redirect,
     render_template,
@@ -11,11 +8,14 @@ from flask import (
 )
 
 from app.auth import auth_bp
+from app.auth.decorators import get_current_user
+from app.auth.models import User
+from app.extensions import db
 from app.utils.audit import log_audit
 
 
 # ==========================================================
-# Admin Login
+# User Login
 # ==========================================================
 
 @auth_bp.route(
@@ -24,8 +24,11 @@ from app.utils.audit import log_audit
 )
 def login():
 
+    # ------------------------------------------------------
     # Already logged in
-    if session.get("admin_authenticated"):
+    # ------------------------------------------------------
+
+    if session.get("user_id"):
 
         return redirect(
             url_for("dashboard.index")
@@ -40,83 +43,107 @@ def login():
         username = (
             request.form.get(
                 "username",
-                ""
+                "",
             )
             .strip()
         )
 
         password = request.form.get(
             "password",
-            ""
+            "",
         )
 
-        expected_username = (
-            current_app.config.get(
-                "ADMIN_USERNAME",
-                "",
-            )
+        # --------------------------------------------------
+        # Find database user
+        # --------------------------------------------------
+
+        user = (
+            User.query
+            .filter_by(username=username)
+            .first()
         )
 
-        expected_password = (
-            current_app.config.get(
-                "ADMIN_PASSWORD",
-                "",
-            )
-        )
+        # --------------------------------------------------
+        # Validate credentials
+        # --------------------------------------------------
 
-        username_ok = compare_digest(
-            username,
-            expected_username,
-        )
-
-        password_ok = compare_digest(
-            password,
-            expected_password,
-        )
-
-        if username_ok and password_ok:
-
-            session.clear()
-
-            session[
-                "admin_authenticated"
-            ] = True
-
-            session[
-                "admin_username"
-            ] = username
+        if (
+            user is None
+            or not user.is_active
+            or not user.check_password(password)
+        ):
 
             log_audit(
-                username=username,
+                username=username or "Unknown",
                 module="Authentication",
-                action="Administrator Login",
+                action="Failed Login",
             )
 
-            # ----------------------------------------------
-            # Return to requested admin page
-            # ----------------------------------------------
-
-            next_url = request.args.get(
-                "next"
+            flash(
+                "Invalid username or password.",
+                "danger",
             )
 
-            if (
-                next_url
-                and next_url.startswith("/")
-                and not next_url.startswith("//")
-            ):
-
-                return redirect(next_url)
-
-            return redirect(
-                url_for(
-                    "dashboard.index"
-                )
+            return render_template(
+                "auth/login.html",
+                page_title="Administrator Login",
             )
 
-        flash(
-            "Invalid username or password.",
-            "danger",
+        # --------------------------------------------------
+        # Successful authentication
+        # --------------------------------------------------
+
+        session.clear()
+
+        session[
+            "user_id"
+        ] = user.id
+
+        session[
+            "username"
+        ] = user.username
+
+
+        # --------------------------------------------------
+        # Update last login
+        # --------------------------------------------------
+
+        from datetime import datetime
+
+        user.last_login_at = datetime.utcnow()
+
+        db.session.commit()
+
+        # --------------------------------------------------
+        # Audit
+        # --------------------------------------------------
+
+        log_audit(
+            username=user.username,
+            module="Authentication",
+            action="User Login",
+        )
+
+        # --------------------------------------------------
+        # Return to requested page
+        # --------------------------------------------------
+
+        next_url = request.args.get(
+            "next"
+        )
+
+        if (
+            next_url
+            and next_url.startswith("/")
+            and not next_url.startswith("//")
+        ):
+
+            return redirect(next_url)
+
+        return redirect(
+            url_for(
+                "dashboard.index"
+            )
         )
 
     # ------------------------------------------------------
@@ -130,7 +157,7 @@ def login():
 
 
 # ==========================================================
-# Admin Logout
+# User Logout
 # ==========================================================
 
 @auth_bp.route(
@@ -139,13 +166,18 @@ def login():
 )
 def logout():
 
+    user = get_current_user()
+
+    username = (
+        user.username
+        if user
+        else "Unknown"
+    )
+
     log_audit(
-        username=session.get(
-            "admin_username",
-            "Unknown",
-        ),
+        username=username,
         module="Authentication",
-        action="Administrator Logout",
+        action="User Logout",
     )
 
     session.clear()

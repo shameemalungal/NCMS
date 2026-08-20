@@ -1,12 +1,12 @@
 from flask import render_template
 
 from app.audit import audit_bp
-from app.auth.decorators import admin_required
+from app.auth.decorators import require_permission
 from app.models import AuditLog
 
 
 @audit_bp.route("/")
-@admin_required
+@require_permission("audit.view")
 def index():
 
     logs = (
