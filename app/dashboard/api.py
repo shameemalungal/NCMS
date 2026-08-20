@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify
 
 from app.services.dashboard_service import DashboardService
 
-from app.auth.decorators import admin_required
+from app.auth.decorators import require_permission
 
 
 bp = Blueprint(
@@ -13,7 +13,7 @@ bp = Blueprint(
 
 
 @bp.get("/summary")
-@admin_required
+@require_permission("monitoring.view")
 def summary():
 
     return jsonify(

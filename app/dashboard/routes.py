@@ -2,7 +2,7 @@ from flask import render_template
 
 from app.dashboard import dashboard_bp
 from app.services.dashboard_service import DashboardService
-from app.auth.decorators import admin_required
+from app.auth.decorators import require_permission
 from app.models import (
     Campaign,
     Panchayath,
@@ -11,7 +11,7 @@ from app.models import (
 )
 
 @dashboard_bp.route("/")
-@admin_required
+@require_permission("monitoring.view")
 def index():
 
     dashboard = DashboardService.get_dashboard()

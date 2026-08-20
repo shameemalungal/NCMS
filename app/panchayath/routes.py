@@ -10,11 +10,11 @@ from app.extensions import db
 from app.models import Panchayath
 from app.panchayath import panchayath_bp
 from app.panchayath.forms import PanchayathForm
-from app.auth.decorators import admin_required
+from app.auth.decorators import require_permission
 
 
 @panchayath_bp.route("/")
-@admin_required
+@require_permission("panchayath.view")
 def index():
 
     search = request.args.get("search", "").strip()
@@ -40,7 +40,7 @@ def index():
 
 
 @panchayath_bp.route("/add", methods=["GET", "POST"])
-@admin_required
+@require_permission("panchayath.create")
 def add():
 
     form = PanchayathForm()
@@ -71,7 +71,7 @@ def add():
 
 
 @panchayath_bp.route("/edit/<int:id>", methods=["GET", "POST"])
-@admin_required
+@require_permission("panchayath.edit")
 def edit(id):
 
     panchayath = Panchayath.query.get_or_404(id)
@@ -104,7 +104,7 @@ def edit(id):
 
 
 @panchayath_bp.route("/delete/<int:id>", methods=["POST"])
-@admin_required
+@require_permission("panchayath.delete")
 def delete(id):
 
     panchayath = Panchayath.query.get_or_404(id)

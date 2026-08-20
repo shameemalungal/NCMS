@@ -7,6 +7,8 @@ database/*.sqlite
 database/*.sqlite3
 
 .env
+.env.production
+
 .venv/
 venv/
 
@@ -15,3 +17,5 @@ venv/
 
 .DS_Store
 Thumbs.db
+
+backups/

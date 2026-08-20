@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: ncms
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: flask db upgrade && gunicorn --workers 1 --threads 4 --timeout 120 'app:create_app()'
+    healthCheckPath: /health
+    envVars:
+      - key: NCMS_ENVIRONMENT
+        value: production
+      - key: NCMS_SECRET_KEY
+        generateValue: true
+      - key: NCMS_ADMIN_USERNAME
+        sync: false
+      - key: NCMS_ADMIN_PASSWORD
+        sync: false
+      - key: NCMS_SESSION_COOKIE_SECURE
+        value: true
+      - key: NCMS_TRUSTED_HOSTS
+        sync: false

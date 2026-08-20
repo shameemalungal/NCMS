@@ -131,7 +131,7 @@
                             </label>
 
                             <div>
-                                {{ submission.submitted_at.strftime('%d-%m-%Y %I:%M %p') }}
+                                {{ submission.submitted_at | ist_datetime }}
                             </div>
 
                         </div>

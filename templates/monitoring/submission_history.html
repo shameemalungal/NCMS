@@ -1,0 +1,653 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+/* ==========================================================
+   SUBMISSION HISTORY
+   NCMS NATIVE PAGE STYLING
+   ========================================================== */
+
+.submission-history-page {
+    padding: 28px 24px 40px;
+}
+
+
+/* ==========================================================
+   HERO
+   ========================================================== */
+
+.submission-history-hero {
+    background: linear-gradient(
+        135deg,
+        #07834f 0%,
+        #11965d 100%
+    );
+
+    color: #ffffff;
+
+    border-radius: 16px;
+
+    padding: 24px 28px;
+
+    margin-bottom: 22px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    box-shadow:
+        0 8px 22px rgba(
+            8,
+            127,
+            79,
+            0.12
+        );
+}
+
+.submission-history-hero-content h2 {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 1.35rem;
+
+    font-weight: 800;
+
+    letter-spacing: -0.02em;
+}
+
+.submission-history-hero-content p {
+    margin: 6px 0 0;
+
+    color: rgba(
+        255,
+        255,
+        255,
+        0.88
+    );
+
+    font-size: 0.78rem;
+}
+
+.submission-history-hero-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 8px 14px;
+
+    border: 1px solid rgba(
+        255,
+        255,
+        255,
+        0.35
+    );
+
+    border-radius: 999px;
+
+    color: #ffffff;
+
+    background: rgba(
+        255,
+        255,
+        255,
+        0.08
+    );
+
+    font-size: 0.68rem;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   HISTORY CARD
+   ========================================================== */
+
+.submission-history-card {
+    background: #ffffff;
+
+    border: 1px solid #eaecf0;
+
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 4px 12px rgba(
+            16,
+            24,
+            40,
+            0.04
+        );
+}
+
+.submission-history-card-header {
+    padding: 20px 22px;
+
+    border-bottom: 1px solid #eaecf0;
+}
+
+.submission-history-card-header h3 {
+    margin: 0;
+
+    color: #101828;
+
+    font-size: 0.95rem;
+
+    font-weight: 800;
+}
+
+.submission-history-card-header p {
+    margin: 5px 0 0;
+
+    color: #667085;
+
+    font-size: 0.72rem;
+}
+
+
+/* ==========================================================
+   TABLE
+   ========================================================== */
+
+.submission-history-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+.submission-history-table {
+    width: 100%;
+
+    min-width: 1100px;
+
+    border-collapse: collapse;
+
+    margin: 0;
+}
+
+.submission-history-table th {
+    background: #f9fafb;
+
+    color: #344054;
+
+    font-size: 0.67rem;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+
+    padding: 13px 12px;
+
+    border-bottom: 1px solid #eaecf0;
+
+    text-align: left;
+}
+
+.submission-history-table td {
+    color: #344054;
+
+    font-size: 0.70rem;
+
+    padding: 15px 12px;
+
+    border-bottom: 1px solid #f2f4f7;
+
+    white-space: nowrap;
+
+    vertical-align: middle;
+}
+
+.submission-history-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.submission-history-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+
+/* ==========================================================
+   SQUAD
+   ========================================================== */
+
+.history-squad {
+    color: #101828;
+
+    font-weight: 800;
+}
+
+.history-panchayath {
+    color: #344054;
+
+    font-weight: 600;
+}
+
+
+/* ==========================================================
+   PERCENTAGES
+   ========================================================== */
+
+.history-percent {
+    font-weight: 800;
+}
+
+.history-percent-good {
+    color: #087f4f;
+}
+
+.history-percent-low {
+    color: #d92d20;
+}
+
+
+/* ==========================================================
+   STATUS
+   ========================================================== */
+
+.history-status {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 5px 9px;
+
+    border-radius: 999px;
+
+    background: #e5f6ed;
+
+    color: #087f4f;
+
+    font-size: 0.63rem;
+
+    font-weight: 800;
+}
+
+
+/* ==========================================================
+   EMPTY STATE
+   ========================================================== */
+
+.history-empty {
+    text-align: center;
+
+    padding: 55px 20px;
+
+    color: #667085;
+}
+
+.history-empty i {
+    display: block;
+
+    font-size: 2rem;
+
+    margin-bottom: 10px;
+
+    color: #98a2b3;
+}
+
+.history-empty h4 {
+    margin: 0 0 6px;
+
+    color: #344054;
+
+    font-size: 0.95rem;
+}
+
+.history-empty p {
+    margin: 0;
+
+    font-size: 0.72rem;
+}
+
+
+/* ==========================================================
+   BACK BUTTON
+   ========================================================== */
+
+.history-back-button {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 8px 13px;
+
+    border: 1px solid rgba(
+        255,
+        255,
+        255,
+        0.35
+    );
+
+    border-radius: 8px;
+
+    color: #ffffff;
+
+    background: rgba(
+        255,
+        255,
+        255,
+        0.08
+    );
+
+    text-decoration: none;
+
+    font-size: 0.68rem;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.history-back-button:hover {
+    color: #ffffff;
+
+    background: rgba(
+        255,
+        255,
+        255,
+        0.16
+    );
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+@media (max-width: 800px) {
+
+    .submission-history-page {
+        padding: 20px 14px 30px;
+    }
+
+    .submission-history-hero {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        padding: 20px;
+    }
+
+    .history-back-button {
+        align-self: flex-start;
+    }
+
+}
+
+</style>
+
+
+<div class="submission-history-page">
+
+
+    <!-- =====================================================
+         GREEN NCMS HERO
+         ===================================================== -->
+
+    <div class="submission-history-hero">
+
+        <div class="submission-history-hero-content">
+
+            <h2>
+                Submission History
+            </h2>
+
+            <p>
+                Archived submissions from the re-submission workflow.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('monitoring.squads') }}"
+            class="history-back-button"
+        >
+
+            <i class="bi bi-arrow-left"></i>
+
+            Squad Monitoring
+
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         HISTORY CARD
+         ===================================================== -->
+
+    <div class="submission-history-card">
+
+
+        <div class="submission-history-card-header">
+
+            <h3>
+                Archived Submissions
+            </h3>
+
+            <p>
+                Previous live submissions preserved during
+                administrator-authorised re-submission.
+            </p>
+
+        </div>
+
+
+        {% if history %}
+
+
+            <div class="submission-history-table-wrapper">
+
+                <table class="submission-history-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Sl.</th>
+
+                            <th>Squad</th>
+
+                            <th>Panchayath</th>
+
+                            <th>Days Worked</th>
+
+                            <th>Vaccinated</th>
+
+                            <th>Vacc. %</th>
+
+                            <th>Pashudhan</th>
+
+                            <th>Pash. %</th>
+
+                            <th>Submitted On</th>
+
+                            <th>Archived On</th>
+
+                            <th>Archived By</th>
+
+                            <th>Source</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for record, squad in history %}
+
+                            <tr>
+
+                                <td>
+                                    {{ loop.index }}
+                                </td>
+
+
+                                <td>
+                                    <span class="history-squad">
+                                        Squad {{ squad.squad_no }}
+                                    </span>
+                                </td>
+
+
+                                <td>
+                                    <span class="history-panchayath">
+                                        {{ squad.panchayath.name }}
+                                    </span>
+                                </td>
+
+
+                                <td>
+                                    {{ record.days_worked or 0 }}
+                                </td>
+
+
+                                <td>
+                                    {{ record.vaccinations_done or 0 }}
+                                </td>
+
+
+                                <td>
+
+                                    {% if record.vaccination_percentage is not none %}
+
+                                        <span class="history-percent
+                                            {% if record.vaccination_percentage >= 83 %}
+                                                history-percent-good
+                                            {% else %}
+                                                history-percent-low
+                                            {% endif %}
+                                        ">
+
+                                            {{ "%.2f"|format(
+                                                record.vaccination_percentage
+                                            ) }}%
+
+                                        </span>
+
+                                    {% else %}
+
+                                        -
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+                                    {{ record.pashudhan_entries or 0 }}
+                                </td>
+
+
+                                <td>
+
+                                    {% if record.pashudhan_percentage is not none %}
+
+                                        <span class="history-percent
+                                            {% if record.pashudhan_percentage >= 97 %}
+                                                history-percent-good
+                                            {% else %}
+                                                history-percent-low
+                                            {% endif %}
+                                        ">
+
+                                            {{ "%.2f"|format(
+                                                record.pashudhan_percentage
+                                            ) }}%
+
+                                        </span>
+
+                                    {% else %}
+
+                                        -
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+
+                                    {% if record.submitted_at %}
+
+                                        {{ record.submitted_at | ist_datetime }}
+
+                                    {% else %}
+
+                                        -
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+
+                                    {{ record.archived_at | ist_datetime }}
+
+                                </td>
+
+
+                                <td>
+                                    {{ record.archived_by }}
+                                </td>
+
+
+                                <td>
+                                    {{ record.source or "-" }}
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+        {% else %}
+
+
+            <div class="history-empty">
+
+                <i class="bi bi-clock-history"></i>
+
+                <h4>
+                    No Submission History
+                </h4>
+
+                <p>
+                    No archived submissions are available.
+                </p>
+
+            </div>
+
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

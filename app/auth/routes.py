@@ -1,5 +1,4 @@
 from flask import (
-    current_app,
     flash,
     redirect,
     render_template,
@@ -9,11 +8,17 @@ from flask import (
 )
 
 from app.auth import auth_bp
+from app.auth.decorators import (
+    get_current_user,
+    login_required,
+)
+from app.auth.models import User
+from app.extensions import db
 from app.utils.audit import log_audit
 
 
 # ==========================================================
-# Admin Login
+# User Login
 # ==========================================================
 
 @auth_bp.route(
@@ -22,8 +27,11 @@ from app.utils.audit import log_audit
 )
 def login():
 
+    # ------------------------------------------------------
     # Already logged in
-    if session.get("admin_authenticated"):
+    # ------------------------------------------------------
+
+    if session.get("user_id"):
 
         return redirect(
             url_for("dashboard.index")
@@ -38,82 +46,107 @@ def login():
         username = (
             request.form.get(
                 "username",
-                ""
+                "",
             )
             .strip()
         )
 
-        password = (
-            request.form.get(
-                "password",
-                ""
-            )
+        password = request.form.get(
+            "password",
+            "",
         )
 
-        expected_username = (
-            current_app.config.get(
-                "ADMIN_USERNAME"
-            )
+        # --------------------------------------------------
+        # Find database user
+        # --------------------------------------------------
+
+        user = (
+            User.query
+            .filter_by(username=username)
+            .first()
         )
 
-        expected_password = (
-            current_app.config.get(
-                "ADMIN_PASSWORD"
-            )
-        )
-
+        # --------------------------------------------------
+        # Validate credentials
+        # --------------------------------------------------
 
         if (
-            username == expected_username
-            and
-            password == expected_password
+            user is None
+            or not user.is_active
+            or not user.check_password(password)
         ):
 
-            session.clear()
-
-            session[
-                "admin_authenticated"
-            ] = True
-
-            session[
-                "admin_username"
-            ] = username
-
             log_audit(
-                username=username,
+                username=username or "Unknown",
                 module="Authentication",
-                action="Administrator Login",
+                action="Failed Login",
             )
 
-            # ----------------------------------------------
-            # Return to requested admin page
-            # ----------------------------------------------
-
-            next_url = request.args.get(
-                "next"
+            flash(
+                "Invalid username or password.",
+                "danger",
             )
 
-            if (
-                next_url
-                and
-                next_url.startswith("/")
-                and
-                not next_url.startswith("//")
-            ):
-
-                return redirect(
-                    next_url
-                )
-
-            return redirect(
-                url_for(
-                    "dashboard.index"
-                )
+            return render_template(
+                "auth/login.html",
+                page_title="Administrator Login",
             )
 
-        flash(
-            "Invalid username or password.",
-            "danger",
+        # --------------------------------------------------
+        # Successful authentication
+        # --------------------------------------------------
+
+        session.clear()
+
+        session[
+            "user_id"
+        ] = user.id
+
+        session[
+            "username"
+        ] = user.username
+
+
+        # --------------------------------------------------
+        # Update last login
+        # --------------------------------------------------
+
+        from datetime import datetime
+
+        user.last_login_at = datetime.utcnow()
+
+        db.session.commit()
+
+        # --------------------------------------------------
+        # Audit
+        # --------------------------------------------------
+
+        log_audit(
+            username=user.username,
+            module="Authentication",
+            action="User Login",
+        )
+
+        # --------------------------------------------------
+        # Return to requested page
+        # --------------------------------------------------
+
+        next_url = request.args.get(
+            "next"
+        )
+
+        if (
+            next_url
+            and next_url.startswith("/")
+            and not next_url.startswith("//")
+        ):
+
+            return redirect(next_url)
+
+        return redirect(
+            url_for(
+                "dashboard.index"
+            )
         )
 
     # ------------------------------------------------------
@@ -125,9 +158,153 @@ def login():
         page_title="Administrator Login",
     )
 
-
 # ==========================================================
-# Admin Logout
+# Change Password
+# ==========================================================
+
+@auth_bp.route(
+    "/change-password",
+    methods=["GET", "POST"],
+)
+@login_required
+def change_password():
+
+    user = get_current_user()
+
+    if user is None:
+        return redirect(
+            url_for("auth.login")
+        )
+
+    # ------------------------------------------------------
+    # Password Change Submission
+    # ------------------------------------------------------
+
+    if request.method == "POST":
+
+        current_password = request.form.get(
+            "current_password",
+            "",
+        )
+
+        new_password = request.form.get(
+            "new_password",
+            "",
+        )
+
+        confirm_password = request.form.get(
+            "confirm_password",
+            "",
+        )
+
+        # --------------------------------------------------
+        # Verify current password
+        # --------------------------------------------------
+
+        if not user.check_password(
+            current_password
+        ):
+
+            flash(
+                "Current password is incorrect.",
+                "danger",
+            )
+
+            return render_template(
+                "auth/change_password.html",
+                page_title="Change Password",
+            )
+
+        # --------------------------------------------------
+        # Validate password length
+        # --------------------------------------------------
+
+        if len(new_password) < 8:
+
+            flash(
+                "New password must be at least 8 characters.",
+                "danger",
+            )
+
+            return render_template(
+                "auth/change_password.html",
+                page_title="Change Password",
+            )
+
+        # --------------------------------------------------
+        # Confirm password
+        # --------------------------------------------------
+
+        if new_password != confirm_password:
+
+            flash(
+                "New passwords do not match.",
+                "danger",
+            )
+
+            return render_template(
+                "auth/change_password.html",
+                page_title="Change Password",
+            )
+
+        # --------------------------------------------------
+        # Prevent reuse of current password
+        # --------------------------------------------------
+
+        if user.check_password(new_password):
+
+            flash(
+                "New password must be different from "
+                "the current password.",
+                "danger",
+            )
+
+            return render_template(
+                "auth/change_password.html",
+                page_title="Change Password",
+            )
+
+        # --------------------------------------------------
+        # Set new password
+        # --------------------------------------------------
+
+        user.set_password(new_password)
+
+        user.must_change_password = False
+
+        db.session.commit()
+
+        # --------------------------------------------------
+        # Audit
+        # --------------------------------------------------
+
+        log_audit(
+            username=user.username,
+            module="Authentication",
+            action="Password Changed",
+        )
+
+        flash(
+            "Your password has been changed successfully.",
+            "success",
+        )
+
+        return redirect(
+            url_for(
+                "dashboard.index"
+            )
+        )
+
+    # ------------------------------------------------------
+    # Change Password Screen
+    # ------------------------------------------------------
+
+    return render_template(
+        "auth/change_password.html",
+        page_title="Change Password",
+    )
+# ==========================================================
+# User Logout
 # ==========================================================
 
 @auth_bp.route(
@@ -136,13 +313,18 @@ def login():
 )
 def logout():
 
+    user = get_current_user()
+
+    username = (
+        user.username
+        if user
+        else "Unknown"
+    )
+
     log_audit(
-        username=session.get(
-            "admin_username",
-            "Unknown",
-        ),
+        username=username,
         module="Authentication",
-        action="Administrator Logout",
+        action="User Logout",
     )
 
     session.clear()

@@ -6,7 +6,7 @@ from flask import (
     url_for,
 )
 
-from app.auth.decorators import admin_required
+from app.auth.decorators import require_permission
 from app.campaign.forms import CampaignForm
 from app.extensions import db
 from app.models import Campaign
@@ -24,7 +24,7 @@ campaign_bp = Blueprint(
 # ==========================================================
 
 @campaign_bp.route("/")
-@admin_required
+@require_permission("campaign.view")
 def index():
 
     campaigns = Campaign.query.order_by(
@@ -46,7 +46,7 @@ def index():
     "/add",
     methods=["GET", "POST"],
 )
-@admin_required
+@require_permission("campaign.create")
 def add():
 
     form = CampaignForm()
@@ -107,7 +107,7 @@ def add():
     "/edit/<int:id>",
     methods=["GET", "POST"],
 )
-@admin_required
+@require_permission("campaign.edit")
 def edit(id):
 
     campaign = Campaign.query.get_or_404(id)
@@ -169,7 +169,7 @@ def edit(id):
     "/delete/<int:id>",
     methods=["POST"],
 )
-@admin_required
+@require_permission("campaign.delete")
 def delete(id):
 
     campaign = (
